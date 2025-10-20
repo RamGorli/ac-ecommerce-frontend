@@ -227,7 +227,7 @@ function ACList() {
     }
   };
 
-  // Initial fetch
+  // Initial fetch and when active filters change
   useEffect(() => {
     fetchProducts();
   }, [activeType, activePrice, activePriceType]);
@@ -252,7 +252,7 @@ function ACList() {
           className="px-4 py-2 rounded-lg border w-full sm:w-64"
         />
 
-        {/* Price filter - applied on button click */}
+        {/* Price filter - applied via button */}
         <div className="flex gap-2 items-center">
           <input
             type="number"
@@ -280,7 +280,7 @@ function ACList() {
           </button>
         </div>
 
-        {/* Reset all */}
+        {/* Reset filters */}
         <button
           onClick={() => {
             setTypeInput("");
@@ -299,7 +299,7 @@ function ACList() {
       {loading ? (
         <p className="text-center mt-10 text-lg">Loading products...</p>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <div
               key={product.id}
@@ -309,10 +309,10 @@ function ACList() {
                 <img
                   src={`https://e-commerce-cndv.onrender.com${product.image}`}
                   alt={product.name}
-                  className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover rounded-xl mb-3"
+                  className="w-full h-48 sm:h-52 lg:h-56 object-cover rounded-xl mb-3"
                 />
               ) : (
-                <div className="w-full h-48 sm:h-52 md:h-56 lg:h-60 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
+                <div className="w-full h-48 sm:h-52 lg:h-56 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
                   No Image
                 </div>
               )}
@@ -339,7 +339,6 @@ function ACList() {
 }
 
 export default ACList;
-
 
 
 
