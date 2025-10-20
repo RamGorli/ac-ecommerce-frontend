@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 export default function Contact() {
@@ -20,24 +21,24 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4">
-      <div className="w-full max-w-3xl p-10 rounded-3xl shadow-lg backdrop-blur-md bg-white/30 border border-white/30 text-slate-800">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 sm:py-16">
+      <div className="w-full max-w-3xl p-6 sm:p-10 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800 transition-all duration-300">
         {/* Title */}
-        <h1 className="text-5xl font-extrabold text-center mb-10 text-blue-900">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-8 sm:mb-10 text-blue-900">
           Contact
         </h1>
 
         {/* Contact Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name and Email */}
-          <div className="flex flex-col sm:flex-row gap-6">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="Name"
-              className="flex-1 px-4 py-3 border border-blue-300 rounded-xl bg-white/40 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="flex-1 px-4 py-3 sm:py-4 border border-blue-300 rounded-xl bg-white/50 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               required
             />
             <input
@@ -46,7 +47,7 @@ export default function Contact() {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email *"
-              className="flex-1 px-4 py-3 border border-blue-300 rounded-xl bg-white/40 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+              className="flex-1 px-4 py-3 sm:py-4 border border-blue-300 rounded-xl bg-white/50 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
               required
             />
           </div>
@@ -58,7 +59,7 @@ export default function Contact() {
             value={formData.phone}
             onChange={handleChange}
             placeholder="Phone number"
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl bg-white/40 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+            className="w-full px-4 py-3 sm:py-4 border border-blue-300 rounded-xl bg-white/50 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           />
 
           {/* Comment */}
@@ -68,7 +69,7 @@ export default function Contact() {
             onChange={handleChange}
             placeholder="Comment"
             rows="5"
-            className="w-full px-4 py-3 border border-blue-300 rounded-xl bg-white/40 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none"
+            className="w-full px-4 py-3 sm:py-4 border border-blue-300 rounded-xl bg-white/50 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition resize-none"
             required
           ></textarea>
 
@@ -76,7 +77,7 @@ export default function Contact() {
           <div className="text-center">
             <button
               type="submit"
-              className="w-32 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold rounded-xl shadow-md hover:scale-105 transition"
+              className="w-full sm:w-36 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition"
             >
               Send
             </button>

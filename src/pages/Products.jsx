@@ -30,7 +30,14 @@ function ACList() {
     try {
       let res;
 
-      if (filterType.trim() !== "") {
+      if (filterType.trim() !== "" && filterPrice.trim() !== "") {
+        // Both type and price filters together
+        const endpoint =
+          priceFilterType === "less"
+            ? `/products/filter?type=${filterType}&priceLess=${filterPrice}`
+            : `/products/filter?type=${filterType}&priceGreater=${filterPrice}`;
+        res = await api.get(endpoint);
+      } else if (filterType.trim() !== "") {
         // Filter by type
         res = await api.get(`/products/find-by-type?type=${filterType}`);
       } else if (filterPrice.trim() !== "") {
@@ -41,7 +48,7 @@ function ACList() {
             : `/products/greater-than?price=${filterPrice}`;
         res = await api.get(endpoint);
       } else {
-        // No filters, fetch all
+        // No filters
         res = await api.get("/products/find-all");
       }
 
@@ -58,17 +65,17 @@ function ACList() {
     fetchProducts();
   }, []);
 
-  // Trigger filtering automatically when filter inputs change
+  // Dynamic filtering on input change
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       fetchFilteredProducts();
-    }, 400); // debounce for smoother typing experience
+    }, 400); // debounce for typing
 
     return () => clearTimeout(delayDebounce);
   }, [filterType, filterPrice, priceFilterType]);
 
   if (loading) {
-    return <p className="text-center mt-10">Loading products...</p>;
+    return <p className="text-center mt-10 text-lg">Loading products...</p>;
   }
 
   return (
@@ -78,7 +85,7 @@ function ACList() {
       </h1>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center flex-wrap">
         <input
           type="text"
           placeholder="Filter by type"
@@ -119,30 +126,32 @@ function ACList() {
 
       {/* Product Grid */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {products.map((product) => (
             <div
               key={product.id}
-              className="bg-gray-50 rounded-2xl shadow-lg hover:shadow-xl transition p-4 flex flex-col h-full"
+              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col h-full"
             >
               {product.image ? (
                 <img
                   src={`https://e-commerce-cndv.onrender.com${product.image}`}
                   alt={product.name}
-                  className="w-full h-48 sm:h-52 lg:h-56 object-cover rounded-xl mb-3"
+                  className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover rounded-xl mb-3"
                 />
               ) : (
-                <div className="w-full h-48 sm:h-52 lg:h-56 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
+                <div className="w-full h-48 sm:h-52 md:h-56 lg:h-60 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
                   No Image
                 </div>
               )}
 
-              <h2 className="text-lg font-semibold mb-1">{product.name}</h2>
-              <p className="text-gray-600 text-sm mb-1">Type: {product.type}</p>
-              <p className="text-gray-600 text-sm mb-2">{product.description}</p>
-              <p className="font-bold text-lg mb-4 text-blue-600">
-                ₹{product.price}
+              <h2 className="text-lg font-semibold mb-1 truncate">{product.name}</h2>
+              <p className="text-gray-600 text-sm mb-1 truncate">
+                Type: {product.type}
               </p>
+              <p className="text-gray-600 text-sm mb-2 line-clamp-3">
+                {product.description}
+              </p>
+              <p className="font-bold text-lg mb-4 text-blue-600">₹{product.price}</p>
 
               <Link
                 to={`/products/${product.id}`}
@@ -163,17 +172,3 @@ function ACList() {
 }
 
 export default ACList;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
