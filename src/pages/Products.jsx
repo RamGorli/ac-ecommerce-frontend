@@ -9,7 +9,7 @@ function ACList() {
   // Filter states
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
-  const [priceFilterType, setPriceFilterType] = useState("less"); // 'less' or 'greater'
+  const [priceFilterType, setPriceFilterType] = useState("less");
 
   // Fetch all products
   const fetchProducts = async () => {
@@ -24,8 +24,8 @@ function ACList() {
     }
   };
 
-  // Fetch filtered products
-  const handleFilter = async () => {
+  // Fetch filtered products dynamically
+  const fetchFilteredProducts = async () => {
     setLoading(true);
     try {
       let res;
@@ -40,7 +40,7 @@ function ACList() {
             : `/products/greater-than?price=${filterPrice}`;
         res = await api.get(endpoint);
       } else {
-        // No filters, fetch all
+        // No filters, show all
         res = await api.get("/products/find-all");
       }
       setProducts(res.data || []);
@@ -51,9 +51,18 @@ function ACList() {
     }
   };
 
+  // Initial fetch
   useEffect(() => {
     fetchProducts();
   }, []);
+
+  // Auto-fetch when filters change (with small debounce)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchFilteredProducts();
+    }, 400); // debounce for smoother typing
+    return () => clearTimeout(timer);
+  }, [filterType, filterPrice, priceFilterType]);
 
   if (loading) {
     return <p className="text-center mt-10">Loading products...</p>;
@@ -69,7 +78,7 @@ function ACList() {
       <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center">
         <input
           type="text"
-          placeholder="Filter by type"
+          placeholder="Filter by type..."
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
           className="px-4 py-2 rounded-lg border w-full sm:w-64"
@@ -78,7 +87,7 @@ function ACList() {
         <div className="flex gap-2 items-center">
           <input
             type="number"
-            placeholder="Price"
+            placeholder="Enter price..."
             value={filterPrice}
             onChange={(e) => setFilterPrice(e.target.value)}
             className="px-4 py-2 rounded-lg border w-32"
@@ -92,13 +101,6 @@ function ACList() {
             <option value="greater">Greater Than</option>
           </select>
         </div>
-
-        <button
-          onClick={handleFilter}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-        >
-          Apply Filter
-        </button>
 
         <button
           onClick={() => {
@@ -160,6 +162,14 @@ function ACList() {
 export default ACList;
 
 
+
+
+
+
+
+
+
+
 // import { useEffect, useState } from "react";
 // import api from "../services/api";
 // import { Link } from "react-router-dom";
@@ -168,6 +178,12 @@ export default ACList;
 //   const [products, setProducts] = useState([]);
 //   const [loading, setLoading] = useState(true);
 
+//   // Filter states
+//   const [filterType, setFilterType] = useState("");
+//   const [filterPrice, setFilterPrice] = useState("");
+//   const [priceFilterType, setPriceFilterType] = useState("less"); // 'less' or 'greater'
+
+//   // Fetch all products
 //   const fetchProducts = async () => {
 //     setLoading(true);
 //     try {
@@ -175,6 +191,33 @@ export default ACList;
 //       setProducts(res.data || []);
 //     } catch (err) {
 //       console.error("Failed to fetch products:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   // Fetch filtered products
+//   const handleFilter = async () => {
+//     setLoading(true);
+//     try {
+//       let res;
+//       if (filterType) {
+//         // Filter by type
+//         res = await api.get(`/products/find-by-type?type=${filterType}`);
+//       } else if (filterPrice) {
+//         // Filter by price
+//         const endpoint =
+//           priceFilterType === "less"
+//             ? `/products/less-than?price=${filterPrice}`
+//             : `/products/greater-than?price=${filterPrice}`;
+//         res = await api.get(endpoint);
+//       } else {
+//         // No filters, fetch all
+//         res = await api.get("/products/find-all");
+//       }
+//       setProducts(res.data || []);
+//     } catch (err) {
+//       console.error("Failed to fetch filtered products:", err);
 //     } finally {
 //       setLoading(false);
 //     }
@@ -194,6 +237,54 @@ export default ACList;
 //         Our Products
 //       </h1>
 
+//       {/* Filters */}
+//       <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center">
+//         <input
+//           type="text"
+//           placeholder="Filter by type"
+//           value={filterType}
+//           onChange={(e) => setFilterType(e.target.value)}
+//           className="px-4 py-2 rounded-lg border w-full sm:w-64"
+//         />
+
+//         <div className="flex gap-2 items-center">
+//           <input
+//             type="number"
+//             placeholder="Price"
+//             value={filterPrice}
+//             onChange={(e) => setFilterPrice(e.target.value)}
+//             className="px-4 py-2 rounded-lg border w-32"
+//           />
+//           <select
+//             value={priceFilterType}
+//             onChange={(e) => setPriceFilterType(e.target.value)}
+//             className="px-2 py-2 rounded-lg border"
+//           >
+//             <option value="less">Less Than</option>
+//             <option value="greater">Greater Than</option>
+//           </select>
+//         </div>
+
+//         <button
+//           onClick={handleFilter}
+//           className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+//         >
+//           Apply Filter
+//         </button>
+
+//         <button
+//           onClick={() => {
+//             setFilterType("");
+//             setFilterPrice("");
+//             fetchProducts();
+//           }}
+//           className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+//         >
+//           Reset
+//         </button>
+//       </div>
+
+//       {/* Product Grid */}
 //       {products.length > 0 ? (
 //         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 //           {products.map((product) => (
