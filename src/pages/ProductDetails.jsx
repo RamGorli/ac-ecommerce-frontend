@@ -24,12 +24,12 @@ function ProductDetails() {
   }, [id]);
 
   const handleAddToCart = () => {
-    console.log("Added to cart:", product);
+    alert(`${product.name} added to cart 🛒`);
     // your add-to-cart logic here
   };
 
   const handleOrderNow = () => {
-    console.log("Order now:", product);
+    alert(`Proceeding to order ${product.name} 🛍️`);
     // direct order logic or navigate to checkout
   };
 
