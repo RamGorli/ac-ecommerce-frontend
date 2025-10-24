@@ -31,6 +31,7 @@ export function AuthProvider({ children }) {
       const decoded = jwtDecode(res.data.token);
       setUser({ email: decoded.sub, role: decoded.role });
 
+      localStorage.setItem("email", decoded.sub);
       return true;
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
