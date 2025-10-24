@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
+import { addToCart } from "../services/cartApi";
 
 function ProductDetails() {
   const { id } = useParams(); // get product id from URL
@@ -23,9 +24,14 @@ function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = () => {
-    alert(`${product.name} added to cart 🛒`);
-    // your add-to-cart logic here
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(localStorage.getItem("email"), product.id);
+      alert(`${product.name} added to cart 🛒`);
+    } catch (err) {
+      alert("Failed to add to cart");
+      console.error(err);
+    }
   };
 
   const handleOrderNow = () => {
