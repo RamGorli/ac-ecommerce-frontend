@@ -1,39 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { getCart, removeFromCart, emptyCart } from "../services/cartApi";
 import api from "../services/api";
+
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
-  const email = localStorage.getItem("email");
+  const email = localStorage.getItem("email"); // make sure email exists
 
   useEffect(() => {
-    fetchCart();
-  }, []);
+    if (email) fetchCart();
+  }, [email]);
 
   const fetchCart = async () => {
     try {
+      if (!email) return;
+
       const { cart } = await getCart(email);
       setCart(cart);
-      // Fetch full product details using product IDs
+
+      // Fetch full product details using correct API route
       const productData = await Promise.all(
-        cart.map((id) => api.get(`/product/${id}`).then((res) => res.data))
+        cart.map((id) =>
+          api.get(`/products/find-by-id/${id}`).then((res) => res.data)
+        )
       );
       setProducts(productData);
     } catch (error) {
-      alert("Error loading cart"+error);
+      console.error("Error loading cart:", error);
+      alert("Error loading cart. Please try again.");
     }
   };
 
   const handleRemove = async (productId) => {
-    await removeFromCart(email, productId);
-    alert("Product removed");
-    fetchCart();
+    try {
+      await removeFromCart(email, productId);
+      alert("Product removed");
+      fetchCart();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to remove product");
+    }
   };
 
   const handleEmpty = async () => {
-    await emptyCart(email);
-    alert("Cart cleared");
-    fetchCart();
+    try {
+      await emptyCart(email);
+      alert("Cart cleared");
+      fetchCart();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to clear cart");
+    }
   };
 
   return (
@@ -47,8 +64,14 @@ const Cart = () => {
           <ul>
             {products.map((p) => (
               <li key={p.id} style={{ marginBottom: "10px" }}>
-                <img src={p.imageUrl} alt={p.name} width="80" />
-                <span style={{ marginLeft: "10px" }}>{p.name} - ₹{p.price}</span>
+                <img
+                  src={p.image ? `https://e-commerce-cndv.onrender.com${p.image}` : ""}
+                  alt={p.name}
+                  width="80"
+                />
+                <span style={{ marginLeft: "10px" }}>
+                  {p.name} - ₹{p.price}
+                </span>
                 <button
                   style={{ marginLeft: "10px" }}
                   onClick={() => handleRemove(p.id)}
