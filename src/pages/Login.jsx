@@ -104,11 +104,10 @@
 // export default Login;
 
 
-
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import jwtDecode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 function Login() {
   const { login } = useContext(AuthContext);
@@ -124,33 +123,35 @@ function Login() {
     setLoading(true);
     setError("");
 
-    const success = await login(username, password);
+    try {
+      const success = await login(username, password);
 
-    if (success) {
+      if (!success) {
+        setError("Invalid credentials. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       const token = localStorage.getItem("token");
-
       if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          const roles = decoded.roles || [];
+        const decoded = jwtDecode(token);
+        const roles = decoded.roles || [];
 
-          if (roles.includes("ADMIN")) {
-            navigate("/admin"); // Admin goes to admin panel
-          } else {
-            navigate("/products"); // Normal user goes to products layout
-          }
-        } catch (err) {
-          console.error("Token decode failed:", err);
-          navigate("/products"); // fallback
+        if (roles.includes("ADMIN")) {
+          navigate("/admin"); // Admin goes to admin panel
+        } else {
+          navigate("/products"); // Normal user goes to products
         }
       } else {
-        navigate("/products"); // fallback if no token
+        // Fallback if token missing
+        navigate("/products");
       }
-    } else {
-      setError("Invalid credentials. Please try again.");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
