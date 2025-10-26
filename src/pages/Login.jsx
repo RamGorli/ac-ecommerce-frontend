@@ -135,8 +135,9 @@ function Login() {
       const token = localStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token);
+         console.log("Decoded JWT:", decoded); // 🔍 Debug
         const roles = decoded.roles || [];
-
+           console.log("Roles:", roles); // 🔍 Debug
         if (roles.includes("ADMIN")) {
           navigate("/admin"); // Admin goes to admin panel
         } else {
