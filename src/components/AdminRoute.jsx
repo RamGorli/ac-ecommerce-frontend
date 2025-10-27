@@ -7,7 +7,7 @@ const AdminRoute = ({ children }) => {
 
   if (loading) return <p>Loading...</p>;
   if (!user) return <Navigate to="/login" />;
-  if (!user.roles?.includes("ADMIN")) return <Navigate to="/" />;
+  if (!user.roles?.includes("ROLE_ADMIN")) return <Navigate to="/" />
 
   return children;
 };
