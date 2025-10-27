@@ -30,14 +30,11 @@ function Login() {
       const token = localStorage.getItem("token");
       if (token) {
         const decoded = jwtDecode(token);
-         console.log("Decoded JWT:", decoded); // 🔍 Debug
         const roles = decoded.roles || [];
-           console.log("Roles:", roles); // 🔍 Debug
+
         if (roles.includes("ROLE_ADMIN")) {
-          console.log("Going into admin");
           navigate("/admin"); // Admin goes to admin panel
         }else {
-          console.log("Going into user");
           navigate("/products"); // Normal user goes to products
         }
       } else {
