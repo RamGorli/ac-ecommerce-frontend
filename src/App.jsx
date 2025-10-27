@@ -79,7 +79,7 @@ function App() {
   return (
     <Routes>
 
-          {/* Admin routes (protected) */}
+      {/* Admin routes (protected) */}
       <Route
         path="/admin/*"
         element={
@@ -93,7 +93,7 @@ function App() {
       </Route>
 
       {/* User-facing routes */}
-      <Route path="/*" element={<Layout />}>
+      <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="products" element={<Products />} />
         <Route path="products/:id" element={<ProductDetails />} />
