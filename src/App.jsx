@@ -78,6 +78,20 @@ import "./index.css";
 function App() {
   return (
     <Routes>
+
+          {/* Admin routes (protected) */}
+      <Route
+        path="/admin/*"
+        element={
+          <AdminRoute>
+            <AdminLayout />
+          </AdminRoute>
+        }
+      >
+        <Route path="products" element={<ProductManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
+      </Route>
+
       {/* User-facing routes */}
       <Route path="/*" element={<Layout />}>
         <Route index element={<Home />} />
@@ -93,18 +107,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      {/* Admin routes (protected) */}
-      <Route
-        path="/admin/*"
-        element={
-          <AdminRoute>
-            <AdminLayout />
-          </AdminRoute>
-        }
-      >
-        <Route path="products" element={<ProductManagement />} />
-        <Route path="orders" element={<OrderManagement />} />
-      </Route>
+
     </Routes>
   );
 }
