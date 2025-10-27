@@ -61,8 +61,8 @@ const AdminLayout = () => {
   };
 
   const navItems = [
-    { path: "/admin/products", label: "🛠 Product Management" },
-    { path: "/admin/orders", label: "📦 Order Management" },
+    { path: "/admin/products", label: "Product Management" },
+    { path: "/admin/orders", label: "Order Management" },
   ];
 
   return (
@@ -71,7 +71,7 @@ const AdminLayout = () => {
       <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white py-4 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 px-6">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-wide">
-            ⚙️ Admin Panel
+            Admin Panel
           </h1>
 
           {/* Navigation Buttons */}
@@ -95,7 +95,7 @@ const AdminLayout = () => {
               onClick={handleLogout}
               className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium shadow-md transition-all"
             >
-              🚪 Logout
+              Logout
             </button>
           </nav>
         </div>
