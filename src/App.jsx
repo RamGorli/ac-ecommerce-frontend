@@ -57,7 +57,7 @@ function App() {
   return (
     <Routes>
       {/* User-facing routes */}
-      <Route path="/*" element={<Layout />}>
+      <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:id" element={<ProductDetails />} />
@@ -73,7 +73,7 @@ function App() {
 
       {/* Admin routes */}
       <Route
-        path="/admin/*"
+        path="/admin"
         element={
           <AdminRoute>
             <AdminLayout />
