@@ -198,11 +198,14 @@
 
 
 
-
-
 import { useEffect, useState, useMemo, useContext } from "react";
-import api from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
+import {
+  fetchAllProducts,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+} from "../../services/productApi";
 
 const ProductManagement = () => {
   const { user } = useContext(AuthContext);
@@ -221,30 +224,27 @@ const ProductManagement = () => {
     type: "",
     price: "",
     description: "",
-    image: null,
   });
-  const [previewImage, setPreviewImage] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ Fetch products
-  const fetchProducts = async () => {
+  // ✅ Fetch all products
+  const loadProducts = async () => {
     try {
-      const res = await api.get("/products/find-all");
-      setProducts(res.data || []);
-      setFilteredProducts(res.data || []);
+      const data = await fetchAllProducts();
+      setProducts(data || []);
+      setFilteredProducts(data || []);
     } catch (err) {
-      console.error("❌ Failed to fetch products:", err);
+      console.error("❌ Failed to load products:", err);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    loadProducts();
   }, []);
 
-  // ✅ Unique product types
+  // ✅ Product Types
   const productTypes = useMemo(() => {
-    const types = [...new Set(products.map((p) => p.type))];
-    return types.sort();
+    return [...new Set(products.map((p) => p.type))].sort();
   }, [products]);
 
   // ✅ Filter logic
@@ -270,14 +270,6 @@ const ProductManagement = () => {
     setFilteredProducts(products);
   };
 
-  // ✅ Image upload preview
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    setForm({ ...form, image: file });
-    if (file) setPreviewImage(URL.createObjectURL(file));
-    else setPreviewImage(null);
-  };
-
   // ✅ Add / Update Product
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -289,8 +281,7 @@ const ProductManagement = () => {
 
     try {
       if (isEditing) {
-        // 🔹 Update Product
-        const res = await api.put("/products/update", {
+        await updateProduct({
           id: form.id,
           name: form.name,
           type: form.type,
@@ -299,8 +290,7 @@ const ProductManagement = () => {
         });
         alert("✅ Product updated successfully!");
       } else {
-        // 🔹 Add Product
-        const res = await api.post("/products/add", {
+        await addProduct({
           name: form.name,
           type: form.type,
           price: parseFloat(form.price),
@@ -309,24 +299,16 @@ const ProductManagement = () => {
         alert("✅ Product added successfully!");
       }
 
-      setForm({
-        id: null,
-        name: "",
-        type: "",
-        price: "",
-        description: "",
-        image: null,
-      });
-      setPreviewImage(null);
+      setForm({ id: null, name: "", type: "", price: "", description: "" });
       setIsEditing(false);
-      fetchProducts();
+      loadProducts();
     } catch (err) {
-      console.error("❌ Error submitting form:", err);
+      console.error("❌ Error saving product:", err);
       alert("Failed to save product!");
     }
   };
 
-  // ✅ Edit button click
+  // ✅ Edit product
   const handleEdit = (p) => {
     setForm({
       id: p.id,
@@ -334,21 +316,18 @@ const ProductManagement = () => {
       type: p.type,
       price: p.price,
       description: p.description || "",
-      image: null,
     });
-    setPreviewImage(null);
     setIsEditing(true);
   };
 
-  // ✅ Delete button click
-  const handleDelete = async (product) => {
+  // ✅ Delete product
+  const handleDelete = async (p) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
     try {
-      // Your backend expects @RequestBody Product
-      await api.delete("/products/delete", { data: product });
+      await deleteProduct(p);
       alert("🗑 Product deleted successfully!");
-      fetchProducts();
+      loadProducts();
     } catch (err) {
       console.error("❌ Delete failed:", err);
       alert("Failed to delete product!");
@@ -361,7 +340,7 @@ const ProductManagement = () => {
         🛠️ Product Management
       </h2>
 
-      {/* Form */}
+      {/* Product Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md p-6 rounded-xl mb-6"
