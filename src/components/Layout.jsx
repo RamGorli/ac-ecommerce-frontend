@@ -19,7 +19,7 @@ function Layout() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-200 via-white to-blue-200
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-200 via-blue-100 to-blue-200
  text-slate-800">
       {/* Top delivery notice */}
       <div className="bg-blue-100 text-blue-900 text-center py-2 px-3 text-sm sm:text-base font-medium shadow-sm">
