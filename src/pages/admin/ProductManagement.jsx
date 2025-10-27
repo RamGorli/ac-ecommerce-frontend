@@ -129,43 +129,27 @@ const ProductManagement = () => {
     }
   };
 
-  // // ✅ Edit product
-  // const handleEdit = (p) => {
-  //   setForm({
-  //     id: p.id,
-  //     name: p.name,
-  //     type: p.type,
-  //     price: p.price,
-  //     description: p.description || "",
-  //     image: null,
-  //   });
-  //   setPreview(
-  //     p.image ? `https://e-commerce-cndv.onrender.com${p.image}` : null
-  //   );
-  //   setIsEditing(true);
-  // };
-
   // ✅ Edit product
-const handleEdit = (p) => {
-  setForm({
-    id: p.id,
-    name: p.name,
-    type: p.type,
-    price: p.price,
-    description: p.description || "",
-    image: null,
-  });
-  setPreview(
-    p.image ? `https://e-commerce-cndv.onrender.com${p.image}` : null
-  );
-  setIsEditing(true);
+  const handleEdit = (p) => {
+    setForm({
+      id: p.id,
+      name: p.name,
+      type: p.type,
+      price: p.price,
+      description: p.description || "",
+      image: null,
+    });
+    setPreview(
+      p.image ? `https://e-commerce-cndv.onrender.com${p.image}` : null
+    );
+    setIsEditing(true);
 
-  // 🆕 Scroll smoothly to top when editing
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+    // 🆕 Scroll smoothly to top when editing
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
 
   // ✅ Delete product

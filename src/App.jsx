@@ -32,6 +32,7 @@ function App() {
           </AdminRoute>
         }
       >
+        <Route index element={<ProductManagement />} />
         <Route path="products" element={<ProductManagement />} />
         <Route path="orders" element={<OrderManagement />} />
       </Route>
