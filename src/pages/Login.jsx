@@ -138,7 +138,7 @@ function Login() {
          console.log("Decoded JWT:", decoded); // 🔍 Debug
         const roles = decoded.roles || [];
            console.log("Roles:", roles); // 🔍 Debug
-        if (roles.includes("ADMIN")) {
+        if (roles.includes("ROLE_ADMIN")) {
           navigate("/admin"); // Admin goes to admin panel
         } else {
           navigate("/products"); // Normal user goes to products
