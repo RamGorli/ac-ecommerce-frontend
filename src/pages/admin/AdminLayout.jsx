@@ -32,7 +32,8 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-200 via-white to-blue-200">
+    <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-200 via-white to-blue-200
+">
       {/* Header */}
       <header className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white py-4 shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 px-6">
