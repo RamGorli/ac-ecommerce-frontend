@@ -67,14 +67,15 @@ function Home() {
         </Link>
       </div>
 
-      {/* Offer banner positioned below hero */}
-      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
-        <img
-          src="/10-percent-off-Laughinks.png"
+      {/* Offer banner  */}
+      <div className="absolute top-6 left-6 z-20">
+      <img
+          src="/disc1.png"
           alt="10% Off Offer"
-          className="w-[250px] sm:w-[300px] md:w-[350px] animate-bounce"
+          className="w-[180px] sm:w-[220px] md:w-[260px] animate-bounce"
         />
       </div>
+
     </div>
   );
 }
