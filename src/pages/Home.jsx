@@ -69,12 +69,13 @@ function Home() {
 
       {/* Offer banner  */}
       <div className="absolute top-6 left-6 z-20">
-      <img
+        <img
           src="/disc1.png"
           alt="10% Off Offer"
-          className="w-[180px] sm:w-[220px] md:w-[260px] animate-bounce"
+          className="w-[140px] sm:w-[180px] md:w-[200px] animate-pulse"
         />
       </div>
+
 
     </div>
   );
