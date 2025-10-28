@@ -18,7 +18,7 @@ const AdminLayout = () => {
     { path: "/admin/orders", label: "Order Management" },
   ];
 
-  // ✅ Function to determine if a nav item is active
+  // Function to determine if a nav item is active
   const isActive = (itemPath) => {
     // Highlight Product Management for both /admin and /admin/products
     if (itemPath === "/admin/products") {
@@ -74,7 +74,7 @@ const AdminLayout = () => {
 
       {/* Footer */}
       <footer className="bg-blue-950 text-blue-100 text-center py-6 mt-auto shadow-inner">
-        <p>© {new Date().getFullYear()} CoolAir Admin — Control Center</p>
+        <p>© {new Date().getFullYear()} AirXSolar Admin — Control Center</p>
       </footer>
     </div>
   );

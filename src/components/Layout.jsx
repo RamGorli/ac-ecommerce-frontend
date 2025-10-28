@@ -28,7 +28,7 @@ function Layout() {
           href="mailto:support@coolair.com"
           className="underline font-semibold hover:text-blue-600 transition"
         >
-          support@coolair.com
+          support@AirXSolar.com
         </a>
         .
       </div>
@@ -199,7 +199,7 @@ function Layout() {
       <footer className="bg-blue-950 text-blue-100 text-center py-6 mt-auto shadow-inner">
         <p className="text-sm sm:text-base font-light px-3">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold">CoolAir</span> — Stay Cool with
+          <span className="font-semibold">AirXSolar</span> — Stay Cool with
           Comfort.
         </p>
       </footer>
