@@ -42,7 +42,7 @@ function Layout() {
             className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2 hover:scale-105 transition-transform"
           >
             <span>❄️</span>
-            <span className="text-blue-300">CoolAir</span>
+            <span className="text-blue-300">AirXSolar</span>
           </Link>
 
           {/* Mobile Menu Toggle */}
