@@ -1,7 +1,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import api from "../services/api";
+import { fetchAllProducts } from "../services/productApi";
 
 function ACList() {
   const [allProducts, setAllProducts] = useState([]);
@@ -15,20 +15,21 @@ function ACList() {
 
   // Load products initially
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const res = await api.get("/products/find-all");
-        setAllProducts(res.data || []);
-        setFilteredProducts(res.data || []);
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProducts();
-  }, []);
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchAllProducts(); // ✅ Use our service
+      setAllProducts(data || []);
+      setFilteredProducts(data || []);
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchProducts();
+}, []);
+
 
   // Compute unique product types dynamically
   const productTypes = useMemo(() => {
@@ -125,9 +126,9 @@ function ACList() {
               key={product.id}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col h-full"
             >
-              {product.image ? (
+              {product.imageBase64 ? (
                 <img
-                  src={`https://e-commerce-cndv.onrender.com${product.image}`}
+                  src={product.imageBase64}
                   alt={product.name}
                   className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover rounded-xl mb-3"
                 />
