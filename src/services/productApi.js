@@ -3,7 +3,7 @@ import api from "./api";
 // ✅ Fetch all products (public)
 export const fetchAllProducts = async () => {
   const res = await api.get("/products/find-all");
-
+  console.log(products);
   // 🔄 Convert byte[] (from backend) → Base64 string
   const products = res.data.map((p) => {
     if (p.image && Array.isArray(p.image)) {
