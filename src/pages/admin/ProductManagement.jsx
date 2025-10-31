@@ -11,13 +11,6 @@ const ProductManagement = () => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  // Filters
-  const [filterType, setFilterType] = useState("");
-  const [filterPrice, setFilterPrice] = useState("");
-  const [priceFilterType, setPriceFilterType] = useState("less");
-
-  // Form
   const [form, setForm] = useState({
     id: null,
     name: "",
@@ -28,8 +21,11 @@ const ProductManagement = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [filterType, setFilterType] = useState("");
+  const [filterPrice, setFilterPrice] = useState("");
+  const [priceFilterType, setPriceFilterType] = useState("less");
 
-  // ✅ Load all products
+  // ✅ Load products
   const loadProducts = async () => {
     try {
       const data = await fetchAllProducts();
@@ -44,12 +40,7 @@ const ProductManagement = () => {
     loadProducts();
   }, []);
 
-  // ✅ Product types list
-  const productTypes = useMemo(() => {
-    return [...new Set(products.map((p) => p.type))].sort();
-  }, [products]);
-
-  // ✅ Filtering logic
+  // ✅ Filter logic
   useEffect(() => {
     let result = [...products];
     if (filterType) result = result.filter((p) => p.type === filterType);
@@ -65,6 +56,12 @@ const ProductManagement = () => {
     setFilteredProducts(result);
   }, [filterType, filterPrice, priceFilterType, products]);
 
+  // ✅ Unique product types
+  const productTypes = useMemo(
+    () => [...new Set(products.map((p) => p.type))].sort(),
+    [products]
+  );
+
   const resetFilters = () => {
     setFilterType("");
     setFilterPrice("");
@@ -72,7 +69,7 @@ const ProductManagement = () => {
     setFilteredProducts(products);
   };
 
-  // ✅ Handle image upload
+  // ✅ Handle image select
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -80,7 +77,7 @@ const ProductManagement = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  // ✅ Handle add/update
+  // ✅ Submit add/update
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -90,37 +87,25 @@ const ProductManagement = () => {
     }
 
     try {
-      // Prepare FormData for multipart upload
       const formData = new FormData();
       formData.append("name", form.name);
       formData.append("type", form.type);
       formData.append("price", form.price);
       formData.append("description", form.description);
-      if (selectedFile) {
-        formData.append("image", selectedFile); // ✅ append binary file
-      }
-      if (isEditing && form.id) {
-        formData.append("id", form.id);
-      }
+      if (selectedFile) formData.append("image", selectedFile);
+      if (isEditing && form.id) formData.append("id", form.id);
 
       if (isEditing) {
-        await updateProduct(formData); // expects multipart/form-data
+        await updateProduct(formData);
         alert("✅ Product updated successfully!");
       } else {
         await addProduct(formData);
         alert("✅ Product added successfully!");
       }
 
-      // Reset
-      setForm({
-        id: null,
-        name: "",
-        type: "",
-        price: "",
-        description: "",
-      });
-      setPreview(null);
+      setForm({ id: null, name: "", type: "", price: "", description: "" });
       setSelectedFile(null);
+      setPreview(null);
       setIsEditing(false);
       loadProducts();
     } catch (err) {
@@ -129,7 +114,7 @@ const ProductManagement = () => {
     }
   };
 
-  // ✅ Edit product
+  // ✅ Edit existing product
   const handleEdit = (p) => {
     setForm({
       id: p.id,
@@ -144,7 +129,7 @@ const ProductManagement = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ✅ Delete product
+  // ✅ Delete
   const handleDelete = async (p) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
@@ -160,11 +145,9 @@ const ProductManagement = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-blue-900">
-        🛠️ Product Management
-      </h2>
+      <h2 className="text-3xl font-bold mb-6 text-blue-900">🛠️ Product Management</h2>
 
-      {/* Product Form */}
+      {/* Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md p-6 rounded-xl mb-6"
@@ -228,7 +211,7 @@ const ProductManagement = () => {
         </button>
       </form>
 
-      {/* ✅ Filters */}
+      {/* Filters */}
       <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
         <select
           value={filterType}
@@ -237,9 +220,7 @@ const ProductManagement = () => {
         >
           <option value="">All Types</option>
           {productTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
+            <option key={type} value={type}>{type}</option>
           ))}
         </select>
 

@@ -6,32 +6,15 @@ function ACList() {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Filters
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
-  const [priceFilterType, setPriceFilterType] = useState("less"); // 'less' or 'greater'
+  const [priceFilterType, setPriceFilterType] = useState("less");
 
-  // Load products initially
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const data = await fetchAllProducts(); // ✅ Use our service
-
-        // 🔍 Debug logs to inspect backend image data
-        console.log("✅ Raw Products Fetched:", data);
-
-        data.forEach((p, index) => {
-          console.log(
-            `Product ${index + 1}:`,
-            "\nID:", p.id,
-            "\nName:", p.name,
-            "\nImage:", p.image ? `[${p.image.length} bytes]` : "❌ No image",
-            "\nImageBase64 present:", !!p.imageBase64
-          );
-        });
-
+        const data = await fetchAllProducts();
         setAllProducts(data || []);
         setFilteredProducts(data || []);
       } catch (err) {
@@ -43,20 +26,13 @@ function ACList() {
     fetchProducts();
   }, []);
 
-  // Compute unique product types dynamically
   const productTypes = useMemo(() => {
-    const types = [...new Set(allProducts.map((p) => p.type))];
-    return types.sort();
+    return [...new Set(allProducts.map((p) => p.type))].sort();
   }, [allProducts]);
 
-  // Filter logic (runs smoothly without reloading)
   useEffect(() => {
     let result = [...allProducts];
-
-    if (filterType) {
-      result = result.filter((p) => p.type === filterType);
-    }
-
+    if (filterType) result = result.filter((p) => p.type === filterType);
     if (filterPrice.trim() !== "") {
       const price = parseFloat(filterPrice);
       if (!isNaN(price)) {
@@ -66,7 +42,6 @@ function ACList() {
             : result.filter((p) => p.price >= price);
       }
     }
-
     setFilteredProducts(result);
   }, [filterType, filterPrice, priceFilterType, allProducts]);
 
@@ -77,45 +52,37 @@ function ACList() {
     setFilteredProducts(allProducts);
   };
 
-  if (loading) {
-    return <p className="text-center mt-10 text-lg">Loading products...</p>;
-  }
+  if (loading) return <p className="text-center mt-10">Loading products...</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
-      <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6 text-center">
-        Our Products
-      </h1>
+    <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Our Products</h1>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center flex-wrap">
-        {/* Dropdown for Type */}
+      <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value)}
-          className="px-4 py-2 rounded-lg border w-full sm:w-64"
+          className="border p-2 rounded w-40"
         >
           <option value="">All Types</option>
           {productTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
+            <option key={type} value={type}>{type}</option>
           ))}
         </select>
 
-        {/* Price Filter */}
         <div className="flex gap-2 items-center">
           <input
             type="number"
             placeholder="Price"
             value={filterPrice}
             onChange={(e) => setFilterPrice(e.target.value)}
-            className="px-4 py-2 rounded-lg border w-32"
+            className="px-3 py-2 border rounded w-24"
           />
           <select
             value={priceFilterType}
             onChange={(e) => setPriceFilterType(e.target.value)}
-            className="px-2 py-2 rounded-lg border"
+            className="border px-2 py-2 rounded"
           >
             <option value="less">Less Than</option>
             <option value="greater">Greater Than</option>
@@ -124,55 +91,43 @@ function ACList() {
 
         <button
           onClick={resetFilters}
-          className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
         >
           Reset
         </button>
       </div>
 
-      {/* Product Grid */}
-      {filteredProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-300">
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col h-full"
+      {/* Grid */}
+      <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
+        {filteredProducts.map((p) => (
+          <div
+            key={p.id}
+            className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
+          >
+            {p.imageBase64 ? (
+              <img
+                src={p.imageBase64}
+                alt={p.name}
+                className="w-full h-48 object-cover rounded-lg mb-3"
+              />
+            ) : (
+              <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                No Image
+              </div>
+            )}
+            <h4 className="font-semibold">{p.name}</h4>
+            <p>₹{p.price}</p>
+            <p className="text-gray-600 text-sm">{p.type}</p>
+            <p className="text-gray-500 text-sm">{p.description}</p>
+            <Link
+              to={`/products/${p.id}`}
+              className="block mt-3 bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600"
             >
-              {product.imageBase64 ? (
-                <img
-                  src={product.imageBase64 || "https://via.placeholder.com/200"}
-                  alt={product.name}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              ) : (
-                <div className="w-full h-48 sm:h-52 md:h-56 lg:h-60 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
-                  No Image
-                </div>
-              )}
-
-              <h2 className="text-lg font-semibold mb-1 truncate">{product.name}</h2>
-              <p className="text-gray-600 text-sm mb-1 truncate">
-                Type: {product.type}
-              </p>
-              <p className="text-gray-600 text-sm mb-2 line-clamp-3">
-                {product.description}
-              </p>
-              <p className="font-bold text-lg mb-4 text-blue-600">₹{product.price}</p>
-
-              <Link
-                to={`/products/${product.id}`}
-                className="w-full py-2 text-center bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 transition"
-              >
-                View Details
-              </Link>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-10 text-lg">
-          No products available.
-        </p>
-      )}
+              View Details
+            </Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
