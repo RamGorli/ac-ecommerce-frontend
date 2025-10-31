@@ -11,21 +11,23 @@ const ProductManagement = () => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+
+  const [filterType, setFilterType] = useState("");
+  const [filterPrice, setFilterPrice] = useState("");
+  const [priceFilterType, setPriceFilterType] = useState("less");
+
   const [form, setForm] = useState({
     id: null,
     name: "",
     type: "",
     price: "",
     description: "",
+    image: null,
   });
-  const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [filterType, setFilterType] = useState("");
-  const [filterPrice, setFilterPrice] = useState("");
-  const [priceFilterType, setPriceFilterType] = useState("less");
 
-  // ✅ Load products
+  // ✅ Fetch all products
   const loadProducts = async () => {
     try {
       const data = await fetchAllProducts();
@@ -39,6 +41,10 @@ const ProductManagement = () => {
   useEffect(() => {
     loadProducts();
   }, []);
+
+  const productTypes = useMemo(() => {
+    return [...new Set(products.map((p) => p.type))].sort();
+  }, [products]);
 
   // ✅ Filter logic
   useEffect(() => {
@@ -56,12 +62,6 @@ const ProductManagement = () => {
     setFilteredProducts(result);
   }, [filterType, filterPrice, priceFilterType, products]);
 
-  // ✅ Unique product types
-  const productTypes = useMemo(
-    () => [...new Set(products.map((p) => p.type))].sort(),
-    [products]
-  );
-
   const resetFilters = () => {
     setFilterType("");
     setFilterPrice("");
@@ -69,15 +69,27 @@ const ProductManagement = () => {
     setFilteredProducts(products);
   };
 
-  // ✅ Handle image select
-  const handleImageChange = (e) => {
+  // ✅ Convert image to Base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result.split(",")[1]);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  // ✅ Handle image preview
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setSelectedFile(file);
+
+    const base64Image = await fileToBase64(file);
+    setForm({ ...form, image: base64Image });
     setPreview(URL.createObjectURL(file));
   };
 
-  // ✅ Submit add/update
+  // ✅ Add / Update Product
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,24 +99,31 @@ const ProductManagement = () => {
     }
 
     try {
-      const formData = new FormData();
-      formData.append("name", form.name);
-      formData.append("type", form.type);
-      formData.append("price", form.price);
-      formData.append("description", form.description);
-      if (selectedFile) formData.append("image", selectedFile);
-      if (isEditing && form.id) formData.append("id", form.id);
+      const productPayload = {
+        id: form.id,
+        name: form.name,
+        type: form.type,
+        price: parseFloat(form.price),
+        description: form.description,
+        image: form.image || null,
+      };
 
       if (isEditing) {
-        await updateProduct(formData);
+        await updateProduct(productPayload);
         alert("✅ Product updated successfully!");
       } else {
-        await addProduct(formData);
+        await addProduct(productPayload);
         alert("✅ Product added successfully!");
       }
 
-      setForm({ id: null, name: "", type: "", price: "", description: "" });
-      setSelectedFile(null);
+      setForm({
+        id: null,
+        name: "",
+        type: "",
+        price: "",
+        description: "",
+        image: null,
+      });
       setPreview(null);
       setIsEditing(false);
       loadProducts();
@@ -114,7 +133,7 @@ const ProductManagement = () => {
     }
   };
 
-  // ✅ Edit existing product
+  // ✅ Edit product
   const handleEdit = (p) => {
     setForm({
       id: p.id,
@@ -122,14 +141,15 @@ const ProductManagement = () => {
       type: p.type,
       price: p.price,
       description: p.description || "",
+      image: null,
     });
-    setPreview(p.imageBase64 || null);
-    setSelectedFile(null);
+    setPreview(null);
     setIsEditing(true);
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ✅ Delete
+  // ✅ Delete product
   const handleDelete = async (p) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
@@ -144,14 +164,15 @@ const ProductManagement = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6 text-blue-900">🛠️ Product Management</h2>
+    <div className="p-6 bg-gradient-to-r from-blue-50 via-white to-blue-50 min-h-screen">
+      <h2 className="text-3xl font-bold mb-6 text-blue-900 text-center">
+        🛠️ Product Management
+      </h2>
 
-      {/* Form */}
+      {/* Product Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md p-6 rounded-xl mb-6"
-        encType="multipart/form-data"
+        className="bg-white shadow-md p-6 rounded-xl mb-6 max-w-2xl mx-auto"
       >
         <h3 className="text-lg font-semibold mb-3">
           {isEditing ? "Edit Product" : "Add New Product"}
@@ -220,7 +241,9 @@ const ProductManagement = () => {
         >
           <option value="">All Types</option>
           {productTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
+            <option key={type} value={type}>
+              {type}
+            </option>
           ))}
         </select>
 
@@ -250,18 +273,18 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      {/* Product Grid */}
+      {/* ✅ Product Grid */}
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
         {filteredProducts.map((p) => (
           <div
             key={p.id}
             className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition"
           >
-            {p.imageBase64 ? (
+            {p.image ? (
               <img
-                src={p.imageBase64}
+                src={`data:image/jpeg;base64,${p.image}`}
                 alt={p.name}
-                className="w-full h-48 object-cover rounded-lg mb-3 border"
+                className="w-full h-48 object-cover rounded-lg mb-3"
               />
             ) : (
               <div className="w-full h-48 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-500">
