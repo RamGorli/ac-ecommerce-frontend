@@ -3,20 +3,15 @@ import api from "./api";
 // ✅ Fetch all products (public)
 export const fetchAllProducts = async () => {
   const res = await api.get("/products/find-all");
-  console.log(products);
-  // 🔄 Convert byte[] (from backend) → Base64 string
+
   const products = res.data.map((p) => {
     if (p.image && Array.isArray(p.image)) {
-      try {
-        const binary = Uint8Array.from(p.image);
-        let base64 = "";
-        for (let i = 0; i < binary.length; i++) {
-          base64 += String.fromCharCode(binary[i]);
-        }
-        p.imageBase64 = `data:image/jpeg;base64,${btoa(base64)}`;
-      } catch (err) {
-        console.error("Error converting image for product:", p.id, err);
-      }
+      // Convert byte array to Base64
+      const binary = Uint8Array.from(p.image);
+      const base64String = btoa(
+        binary.reduce((data, byte) => data + String.fromCharCode(byte), "")
+      );
+      p.imageBase64 = `data:image/jpeg;base64,${base64String}`;
     }
     return p;
   });

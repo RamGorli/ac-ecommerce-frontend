@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { fetchAllProducts } from "../services/productApi";
@@ -15,21 +14,34 @@ function ACList() {
 
   // Load products initially
   useEffect(() => {
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const data = await fetchAllProducts(); // ✅ Use our service
-      setAllProducts(data || []);
-      setFilteredProducts(data || []);
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchProducts();
-}, []);
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchAllProducts(); // ✅ Use our service
 
+        // 🔍 Debug logs to inspect backend image data
+        console.log("✅ Raw Products Fetched:", data);
+
+        data.forEach((p, index) => {
+          console.log(
+            `Product ${index + 1}:`,
+            "\nID:", p.id,
+            "\nName:", p.name,
+            "\nImage:", p.image ? `[${p.image.length} bytes]` : "❌ No image",
+            "\nImageBase64 present:", !!p.imageBase64
+          );
+        });
+
+        setAllProducts(data || []);
+        setFilteredProducts(data || []);
+      } catch (err) {
+        console.error("❌ Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // Compute unique product types dynamically
   const productTypes = useMemo(() => {
@@ -128,9 +140,9 @@ function ACList() {
             >
               {product.imageBase64 ? (
                 <img
-                  src={product.imageBase64}
+                  src={product.imageBase64 || "https://via.placeholder.com/200"}
                   alt={product.name}
-                  className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover rounded-xl mb-3"
+                  className="w-full h-48 object-cover rounded-lg"
                 />
               ) : (
                 <div className="w-full h-48 sm:h-52 md:h-56 lg:h-60 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
