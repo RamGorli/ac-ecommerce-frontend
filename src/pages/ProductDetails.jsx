@@ -38,37 +38,30 @@ function ProductDetails() {
     }
   };
 
-  const handleOrderNow = async () => {
-    const email = localStorage.getItem("email");
-    if (!email) {
-      alert("Please log in to place an order.");
-      return;
-    }
+const handleOrderNow = async () => {
+  const email = localStorage.getItem("email");
+  if (!email) return alert("Please log in to place an order.");
 
-    if (!address || !pinCode) {
-      alert("Please enter delivery address and pin code.");
-      return;
-    }
+  if (!address || !pinCode) return alert("Please enter delivery address and pin code.");
 
-    const orderData = {
-      productId: product.id,
-      userEmail: email,
-      orderStatus: "PLACED",
-      address,
-      pinCode: parseInt(pinCode),
-      orderTime: new Date().toISOString(),
-    };
-
-    try {
-      const res = await placeOrder(orderData);
-      alert(res.message || `✅ ${product.name} ordered successfully!`);
-      setAddress("");
-      setPinCode("");
-    } catch (err) {
-      console.error("❌ Error placing order:", err);
-      alert("❌ Failed to place order. Please try again later.");
-    }
+  const orderData = {
+    productId: product.id,
+    userEmail: email,
+    orderStatus: "PLACED",
+    address,
+    pinCode: parseInt(pinCode),
   };
+
+  try {
+    const res = await placeOrder(orderData);
+    alert(res.message || `✅ ${product.name} ordered successfully!`);
+    setAddress("");
+    setPinCode("");
+  } catch (err) {
+    console.error("❌ Error placing order:", err);
+    alert("❌ Failed to place order. Please try again later.");
+  }
+};
 
   if (loading)
     return (
