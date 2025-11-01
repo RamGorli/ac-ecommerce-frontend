@@ -113,7 +113,7 @@ import api from "../services/api";
 import { addToCart } from "../services/cartApi";
 
 function ProductDetails() {
-  const { id } = useParams();
+  const { id } = useParams(); // get product id from URL
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -138,13 +138,14 @@ function ProductDetails() {
       await addToCart(localStorage.getItem("email"), product.id);
       alert(`${product.name} added to cart 🛒`);
     } catch (err) {
-      alert("Failed to add to cart");
+      alert("❌ Failed to add to cart");
       console.error(err);
     }
   };
 
   const handleOrderNow = () => {
     alert(`Proceeding to order ${product.name} 🛍️`);
+    // direct order logic or navigate to checkout
   };
 
   if (loading) {
@@ -163,28 +164,14 @@ function ProductDetails() {
     );
   }
 
-  // ✅ Determine image source (Base64 or URL)
-  const getImageSrc = (image) => {
-    if (!image) return null;
-    if (image.startsWith("/")) {
-      // URL path from backend (e.g., /uploads/image.jpg)
-      return `https://e-commerce-cndv.onrender.com${image}`;
-    } else if (image.length > 100) {
-      // Base64 image string
-      return `data:image/jpeg;base64,${image}`;
-    } else {
-      return null;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 flex flex-col md:flex-row gap-8">
-        {/* Product Image */}
+        {/* ✅ Product Image */}
         <div className="flex-1 flex justify-center items-center">
-          {getImageSrc(product.image) ? (
+          {product.image ? (
             <img
-              src={getImageSrc(product.image)}
+              src={`data:image/jpeg;base64,${product.image}`}
               alt={product.name}
               className="w-full max-w-sm h-auto rounded-2xl object-cover shadow-md"
             />
@@ -204,9 +191,7 @@ function ProductDetails() {
           <p className="text-gray-700 text-base leading-relaxed">
             {product.description || "No description available."}
           </p>
-          <p className="text-2xl font-bold text-blue-600 mt-4">
-            ₹{product.price}
-          </p>
+          <p className="text-2xl font-bold text-blue-600 mt-4">₹{product.price}</p>
 
           <div className="flex gap-4 mt-6 flex-col sm:flex-row">
             <button
