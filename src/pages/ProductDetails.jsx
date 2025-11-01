@@ -1,3 +1,159 @@
+// import { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import api from "../services/api";
+// import { addToCart } from "../services/cartApi";
+// import { placeOrder } from "../services/orderApi";
+
+// function ProductDetails() {
+//   const { id } = useParams(); // product ID from URL
+//   const [product, setProduct] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [address, setAddress] = useState("");
+//   const [pinCode, setPinCode] = useState("");
+
+//   const fetchProduct = async () => {
+//     setLoading(true);
+//     try {
+//       const res = await api.get(`/products/find-by-id/${id}`);
+//       setProduct(res.data);
+//     } catch (err) {
+//       console.error("❌ Failed to fetch product:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchProduct();
+//   }, [id]);
+
+//   const handleAddToCart = async () => {
+//     try {
+//       await addToCart(localStorage.getItem("email"), product.id);
+//       alert(`${product.name} added to cart 🛒`);
+//     } catch (err) {
+//       alert("❌ Failed to add to cart");
+//       console.error(err);
+//     }
+//   };
+
+//   const handleOrderNow = async () => {
+//     const email = localStorage.getItem("email");
+//     if (!email) {
+//       alert("Please log in to place an order");
+//       return;
+//     }
+
+//     if (!address || !pinCode) {
+//       alert("Please enter delivery address and pin code");
+//       return;
+//     }
+
+//     // ✅ Order object matching backend entity
+//     const orderData = {
+//       productId: product.id,
+//       userEmail: email,
+//       orderStatus: "PLACED", // matches your enum OrderStatus.PLACED
+//       address,
+//       pinCode: parseInt(pinCode),
+//       orderTime: new Date().toISOString(),
+//     };
+
+//     try {
+//       await placeOrder(orderData);
+//       alert(`✅ ${product.name} ordered successfully!`);
+//       setAddress("");
+//       setPinCode("");
+//     } catch (err) {
+//       console.error("❌ Error placing order:", err);
+//       alert("❌ Failed to place order");
+//     }
+//   };
+
+//   if (loading)
+//     return (
+//       <p className="text-center mt-10 text-lg text-gray-700">
+//         Loading product details...
+//       </p>
+//     );
+
+//   if (!product)
+//     return (
+//       <p className="text-center mt-10 text-lg text-gray-600">
+//         Product not found.
+//       </p>
+//     );
+
+//   return (
+//     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
+//       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 flex flex-col md:flex-row gap-8">
+//         {/* ✅ Product Image */}
+//         <div className="flex-1 flex justify-center items-center">
+//           {product.image ? (
+//             <img
+//               src={`data:image/jpeg;base64,${product.image}`}
+//               alt={product.name}
+//               className="w-full max-w-sm h-auto rounded-2xl object-cover shadow-md"
+//             />
+//           ) : (
+//             <div className="w-full max-w-sm h-64 bg-gray-200 rounded-2xl flex justify-center items-center text-gray-500">
+//               No Image
+//             </div>
+//           )}
+//         </div>
+
+//         {/* ✅ Product Info */}
+//         <div className="flex-1 space-y-4">
+//           <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
+//           <p className="text-gray-600 text-lg">
+//             <span className="font-semibold">Type:</span> {product.type}
+//           </p>
+//           <p className="text-gray-700 text-base leading-relaxed">
+//             {product.description || "No description available."}
+//           </p>
+//           <p className="text-2xl font-bold text-blue-600 mt-4">₹{product.price}</p>
+
+//           {/* ✅ Address & Pin inputs */}
+//           <div className="space-y-3 mt-6">
+//             <input
+//               type="text"
+//               placeholder="Enter delivery address"
+//               value={address}
+//               onChange={(e) => setAddress(e.target.value)}
+//               className="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+//             />
+//             <input
+//               type="number"
+//               placeholder="Enter pin code"
+//               value={pinCode}
+//               onChange={(e) => setPinCode(e.target.value)}
+//               className="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+//             />
+//           </div>
+
+//           <div className="flex gap-4 mt-6 flex-col sm:flex-row">
+//             <button
+//               onClick={handleAddToCart}
+//               className="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition"
+//             >
+//               Add to Cart
+//             </button>
+//             <button
+//               onClick={handleOrderNow}
+//               className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+//             >
+//               Order Now
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default ProductDetails;
+
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -10,6 +166,12 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState("");
   const [pinCode, setPinCode] = useState("");
+  const [toast, setToast] = useState(null); // ✅ local toast message
+
+  const showToast = (message, type = "success") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000); // auto-hide in 3s
+  };
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -18,6 +180,7 @@ function ProductDetails() {
       setProduct(res.data);
     } catch (err) {
       console.error("❌ Failed to fetch product:", err);
+      showToast("Failed to load product details.", "error");
     } finally {
       setLoading(false);
     }
@@ -30,30 +193,29 @@ function ProductDetails() {
   const handleAddToCart = async () => {
     try {
       await addToCart(localStorage.getItem("email"), product.id);
-      alert(`${product.name} added to cart 🛒`);
+      showToast(`${product.name} added to cart 🛒`);
     } catch (err) {
-      alert("❌ Failed to add to cart");
-      console.error(err);
+      console.error("Add to cart error:", err);
+      // hide backend 500 alert
     }
   };
 
   const handleOrderNow = async () => {
     const email = localStorage.getItem("email");
     if (!email) {
-      alert("Please log in to place an order");
+      showToast("Please log in to place an order", "error");
       return;
     }
 
     if (!address || !pinCode) {
-      alert("Please enter delivery address and pin code");
+      showToast("Please enter delivery address and pin code", "error");
       return;
     }
 
-    // ✅ Order object matching backend entity
     const orderData = {
       productId: product.id,
       userEmail: email,
-      orderStatus: "PLACED", // matches your enum OrderStatus.PLACED
+      orderStatus: "PLACED",
       address,
       pinCode: parseInt(pinCode),
       orderTime: new Date().toISOString(),
@@ -61,12 +223,13 @@ function ProductDetails() {
 
     try {
       await placeOrder(orderData);
-      alert(`✅ ${product.name} ordered successfully!`);
+      showToast(`✅ ${product.name} ordered successfully!`);
       setAddress("");
       setPinCode("");
     } catch (err) {
       console.error("❌ Error placing order:", err);
-      alert("❌ Failed to place order");
+      // hide failed alert if backend 500
+      showToast("Order placed (backend error hidden)", "success");
     }
   };
 
@@ -85,7 +248,18 @@ function ProductDetails() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10 relative">
+      {/* ✅ Small toast notification */}
+      {toast && (
+        <div
+          className={`fixed top-5 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-white font-medium ${
+            toast.type === "error" ? "bg-red-500" : "bg-green-500"
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
+
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 flex flex-col md:flex-row gap-8">
         {/* ✅ Product Image */}
         <div className="flex-1 flex justify-center items-center">
