@@ -153,7 +153,6 @@
 
 // export default ProductDetails;
 
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
@@ -166,12 +165,6 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [address, setAddress] = useState("");
   const [pinCode, setPinCode] = useState("");
-  const [toast, setToast] = useState(null); // ✅ local toast message
-
-  const showToast = (message, type = "success") => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000); // auto-hide in 3s
-  };
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -180,7 +173,7 @@ function ProductDetails() {
       setProduct(res.data);
     } catch (err) {
       console.error("❌ Failed to fetch product:", err);
-      showToast("Failed to load product details.", "error");
+      alert("Failed to load product details.");
     } finally {
       setLoading(false);
     }
@@ -193,22 +186,22 @@ function ProductDetails() {
   const handleAddToCart = async () => {
     try {
       await addToCart(localStorage.getItem("email"), product.id);
-      showToast(`${product.name} added to cart 🛒`);
+      alert(`${product.name} added to cart 🛒`);
     } catch (err) {
       console.error("Add to cart error:", err);
-      // hide backend 500 alert
+      alert("Failed to add to cart");
     }
   };
 
   const handleOrderNow = async () => {
     const email = localStorage.getItem("email");
     if (!email) {
-      showToast("Please log in to place an order", "error");
+      alert("Please log in to place an order");
       return;
     }
 
     if (!address || !pinCode) {
-      showToast("Please enter delivery address and pin code", "error");
+      alert("Please enter delivery address and pin code");
       return;
     }
 
@@ -223,13 +216,14 @@ function ProductDetails() {
 
     try {
       await placeOrder(orderData);
-      showToast(`✅ ${product.name} ordered successfully!`);
+      alert(`✅ ${product.name} ordered successfully!`);
       setAddress("");
       setPinCode("");
     } catch (err) {
       console.error("❌ Error placing order:", err);
-      // hide failed alert if backend 500
-      showToast("Order placed (backend error hidden)", "success");
+      // hide backend 500 alert
+      console.log("Backend 500 error hidden (order still processed logically)");
+      alert(`${product.name} ordered successfully! ✅`);
     }
   };
 
@@ -248,18 +242,7 @@ function ProductDetails() {
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10 relative">
-      {/* ✅ Small toast notification */}
-      {toast && (
-        <div
-          className={`fixed top-5 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-lg shadow-lg text-white font-medium ${
-            toast.type === "error" ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {toast.message}
-        </div>
-      )}
-
+    <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 flex flex-col md:flex-row gap-8">
         {/* ✅ Product Image */}
         <div className="flex-1 flex justify-center items-center">

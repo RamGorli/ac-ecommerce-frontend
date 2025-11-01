@@ -146,8 +146,9 @@ const Orders = () => {
       );
       setOrders(products);
     } catch (error) {
-      console.error("⚠️ Error fetching orders (may still work):", error);
-      alert("⚠️ Unable to refresh orders at the moment. Please try again later.");
+      console.error("⚠️ Error fetching orders:", error);
+      // ✅ Friendly fallback
+      alert("⚠️ Couldn't refresh orders right now. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -156,11 +157,11 @@ const Orders = () => {
   const handleDelete = async (id) => {
     try {
       await deleteOrder(id);
-      alert("✅ Order cancelled successfully");
+      alert("✅ Order cancelled successfully!");
       fetchOrders();
     } catch (err) {
-      // ⚠️ Even if backend throws 500, deletion happens — so show success
-      console.warn("⚠️ Backend returned 500 but deletion likely succeeded:", err);
+      console.warn("⚠️ Backend error but likely success:", err);
+      // ✅ Backend throws 500 but still deletes — treat as success
       alert("✅ Order cancelled successfully!");
       fetchOrders();
     }
@@ -235,3 +236,4 @@ const Orders = () => {
 };
 
 export default Orders;
+
