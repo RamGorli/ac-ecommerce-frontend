@@ -5,9 +5,11 @@ import { addToCart } from "../services/cartApi";
 import { placeOrder } from "../services/orderApi";
 
 function ProductDetails() {
-  const { id } = useParams(); // get product id from URL
+  const { id } = useParams(); // product ID from URL
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [address, setAddress] = useState("");
+  const [pinCode, setPinCode] = useState("");
 
   const fetchProduct = async () => {
     setLoading(true);
@@ -42,39 +44,45 @@ function ProductDetails() {
       return;
     }
 
-    // ✅ Create order object to match backend expectation
+    if (!address || !pinCode) {
+      alert("Please enter delivery address and pin code");
+      return;
+    }
+
+    // ✅ Order object matching backend entity
     const orderData = {
-      email,
       productId: product.id,
-      productName: product.name,
-      price: product.price,
-      status: "PLACED", // Enum expected by backend
+      userEmail: email,
+      orderStatus: "PLACED", // matches your enum OrderStatus.PLACED
+      address,
+      pinCode: parseInt(pinCode),
+      orderTime: new Date().toISOString(),
     };
 
     try {
       await placeOrder(orderData);
       alert(`✅ ${product.name} ordered successfully!`);
+      setAddress("");
+      setPinCode("");
     } catch (err) {
       console.error("❌ Error placing order:", err);
       alert("❌ Failed to place order");
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
       <p className="text-center mt-10 text-lg text-gray-700">
         Loading product details...
       </p>
     );
-  }
 
-  if (!product) {
+  if (!product)
     return (
       <p className="text-center mt-10 text-lg text-gray-600">
         Product not found.
       </p>
     );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
@@ -104,6 +112,24 @@ function ProductDetails() {
             {product.description || "No description available."}
           </p>
           <p className="text-2xl font-bold text-blue-600 mt-4">₹{product.price}</p>
+
+          {/* ✅ Address & Pin inputs */}
+          <div className="space-y-3 mt-6">
+            <input
+              type="text"
+              placeholder="Enter delivery address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+            />
+            <input
+              type="number"
+              placeholder="Enter pin code"
+              value={pinCode}
+              onChange={(e) => setPinCode(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200"
+            />
+          </div>
 
           <div className="flex gap-4 mt-6 flex-col sm:flex-row">
             <button

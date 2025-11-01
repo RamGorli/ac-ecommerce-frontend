@@ -16,7 +16,7 @@ const Orders = () => {
       setLoading(true);
       const data = await fetchUserOrders(email);
 
-      // ✅ Combine order with corresponding product details
+      // ✅ Attach product details
       const products = await Promise.all(
         data.map((order) =>
           api.get(`/products/find-by-id/${order.productId}`).then((res) => ({
@@ -25,7 +25,6 @@ const Orders = () => {
           }))
         )
       );
-
       setOrders(products);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -38,7 +37,7 @@ const Orders = () => {
   const handleDelete = async (id) => {
     try {
       await deleteOrder(id);
-      alert("Order deleted successfully");
+      alert("Order cancelled successfully");
       fetchOrders();
     } catch (err) {
       console.error(err);
@@ -46,9 +45,8 @@ const Orders = () => {
     }
   };
 
-  if (loading) {
+  if (loading)
     return <p className="text-center mt-10 text-lg">Loading your orders...</p>;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-100 via-blue-50 to-blue-100 px-4 sm:px-6 lg:px-10 py-10">
@@ -61,8 +59,8 @@ const Orders = () => {
           You haven’t placed any orders yet.
         </p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-300">
-          {orders.map(({ id, product, status }) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-300">
+          {orders.map(({ id, product, orderStatus, address, pinCode }) => (
             <div
               key={id}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col h-full"
@@ -71,10 +69,10 @@ const Orders = () => {
                 <img
                   src={`data:image/jpeg;base64,${product.image}`}
                   alt={product.name}
-                  className="w-full h-48 sm:h-52 md:h-56 lg:h-60 object-cover rounded-xl mb-3"
+                  className="w-full h-56 object-cover rounded-xl mb-3"
                 />
               ) : (
-                <div className="w-full h-48 sm:h-52 md:h-56 lg:h-60 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
+                <div className="w-full h-56 bg-gray-200 rounded-xl mb-3 flex items-center justify-center text-gray-500">
                   No Image
                 </div>
               )}
@@ -83,23 +81,22 @@ const Orders = () => {
                 {product?.name || "Unknown Product"}
               </h2>
               <p className="text-gray-600 text-sm mb-1">Type: {product?.type}</p>
-              <p className="text-gray-600 text-sm mb-2 line-clamp-3">
-                {product?.description}
-              </p>
+              <p className="text-gray-600 text-sm mb-1">📍 {address}</p>
+              <p className="text-gray-600 text-sm mb-2">PIN: {pinCode}</p>
               <p className="font-bold text-lg mb-2 text-blue-600">
                 ₹{product?.price}
               </p>
 
               <p
                 className={`font-semibold mb-4 ${
-                  status === "PLACED"
+                  orderStatus === "PLACED"
                     ? "text-green-600"
-                    : status === "ONGOING"
+                    : orderStatus === "ONGOING"
                     ? "text-yellow-600"
                     : "text-gray-600"
                 }`}
               >
-                Status: {status}
+                Status: {orderStatus}
               </p>
 
               <button
