@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { addToCart } from "../services/cartApi";
+import { placeOrder } from "../services/orderApi"; 
 
 function ProductDetails() {
   const { id } = useParams(); // get product id from URL
@@ -35,9 +36,20 @@ function ProductDetails() {
     }
   };
 
-  const handleOrderNow = () => {
-    alert(`Proceeding to order ${product.name} 🛍️`);
-    // direct order logic or navigate to checkout
+  const handleOrderNow = async () => {
+    const email = localStorage.getItem("email");
+    if (!email) {
+      alert("Please log in to place an order");
+      return;
+    }
+
+    try {
+      await placeOrder(email, product.id);
+      alert(`✅ ${product.name} ordered successfully!`);
+    } catch (err) {
+      console.error(err);
+      alert("❌ Failed to place order");
+    }
   };
 
   if (loading) {
