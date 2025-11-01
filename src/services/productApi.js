@@ -19,7 +19,16 @@ export const updateProduct = async (product) => {
 };
 
 // Delete product (admin)
+// export const deleteProduct = async (product) => {
+//   const res = await api.delete("/products/delete", { data: product });
+//   return res.data;
+// };
 export const deleteProduct = async (product) => {
-  const res = await api.delete("/products/delete", { data: product });
+  const res = await api.delete("/products/delete", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify(product),
+  });
   return res.data;
 };
