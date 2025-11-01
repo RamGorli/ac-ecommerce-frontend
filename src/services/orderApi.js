@@ -8,7 +8,7 @@ export const placeOrder = async (email, productId) => {
 
 // Fetch all orders for a user
 export const fetchUserOrders = async (email) => {
-  const res = await api.get(`/orders/user/${email}`);
+  const res = await api.get(`/orders/find-by-email/${email}`);
   return res.data;
 };
 
