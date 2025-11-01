@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../services/api";
 import { addToCart } from "../services/cartApi";
-import { placeOrder } from "../services/orderApi"; 
+import { placeOrder } from "../services/orderApi";
 
 function ProductDetails() {
   const { id } = useParams(); // get product id from URL
@@ -43,11 +42,20 @@ function ProductDetails() {
       return;
     }
 
+    // ✅ Create order object to match backend expectation
+    const orderData = {
+      email,
+      productId: product.id,
+      productName: product.name,
+      price: product.price,
+      status: "PLACED", // Enum expected by backend
+    };
+
     try {
-      await placeOrder(email, product.id);
+      await placeOrder(orderData);
       alert(`✅ ${product.name} ordered successfully!`);
     } catch (err) {
-      console.error(err);
+      console.error("❌ Error placing order:", err);
       alert("❌ Failed to place order");
     }
   };
@@ -86,7 +94,7 @@ function ProductDetails() {
           )}
         </div>
 
-        {/* Product Info */}
+        {/* ✅ Product Info */}
         <div className="flex-1 space-y-4">
           <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
           <p className="text-gray-600 text-lg">

@@ -15,7 +15,8 @@ const Orders = () => {
     try {
       setLoading(true);
       const data = await fetchUserOrders(email);
-      // get product details for each order
+
+      // ✅ Combine order with corresponding product details
       const products = await Promise.all(
         data.map((order) =>
           api.get(`/products/find-by-id/${order.productId}`).then((res) => ({
@@ -24,6 +25,7 @@ const Orders = () => {
           }))
         )
       );
+
       setOrders(products);
     } catch (error) {
       console.error("Error fetching orders:", error);
@@ -65,7 +67,7 @@ const Orders = () => {
               key={id}
               className="bg-white rounded-2xl shadow-md hover:shadow-xl transition p-4 flex flex-col h-full"
             >
-              {product.image ? (
+              {product?.image ? (
                 <img
                   src={`data:image/jpeg;base64,${product.image}`}
                   alt={product.name}
@@ -77,10 +79,16 @@ const Orders = () => {
                 </div>
               )}
 
-              <h2 className="text-lg font-semibold mb-1 truncate">{product.name}</h2>
-              <p className="text-gray-600 text-sm mb-1">Type: {product.type}</p>
-              <p className="text-gray-600 text-sm mb-2 line-clamp-3">{product.description}</p>
-              <p className="font-bold text-lg mb-2 text-blue-600">₹{product.price}</p>
+              <h2 className="text-lg font-semibold mb-1 truncate">
+                {product?.name || "Unknown Product"}
+              </h2>
+              <p className="text-gray-600 text-sm mb-1">Type: {product?.type}</p>
+              <p className="text-gray-600 text-sm mb-2 line-clamp-3">
+                {product?.description}
+              </p>
+              <p className="font-bold text-lg mb-2 text-blue-600">
+                ₹{product?.price}
+              </p>
 
               <p
                 className={`font-semibold mb-4 ${
