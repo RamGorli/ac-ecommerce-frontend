@@ -1,21 +1,5 @@
-// import React from 'react'
-
-// const OrderManagement = () => {
-//   return (
-//     <div className="text-4xl sm:text-5xl font-bold text-blue-900 text-center my-8">
-//       Order Management
-//     </div>  
-//   )
-// }
-
-// export default OrderManagement;
-
-
 import { useEffect, useState } from "react";
-import {
-  fetchAllOrders,
-  deleteOrder,
-} from "../../services/orderApi";
+import { fetchAllOrders, deleteOrder } from "../../services/orderApi";
 import api from "../../services/api";
 
 const OrderManagement = () => {
@@ -27,18 +11,27 @@ const OrderManagement = () => {
       setLoading(true);
       const data = await fetchAllOrders();
 
-      // Fetch product info for each order
+      // ✅ Gracefully handle missing products (404)
       const withProducts = await Promise.all(
         data.map(async (order) => {
-          const res = await api.get(`/products/find-by-id/${order.productId}`);
-          return { ...order, product: res.data };
+          try {
+            const res = await api.get(`/products/find-by-id/${order.productId}`);
+            return { ...order, product: res.data };
+          } catch (err) {
+            if (err.response && err.response.status === 404) {
+              console.warn(`⚠️ Product not found for order ${order.id}`);
+              return { ...order, product: null }; // fallback
+            } else {
+              throw err;
+            }
+          }
         })
       );
 
       setOrders(withProducts);
     } catch (err) {
       console.error("❌ Error loading orders:", err);
-      alert("Failed to load orders.");
+      alert("⚠️ Some orders could not be loaded properly.");
     } finally {
       setLoading(false);
     }
@@ -48,28 +41,15 @@ const OrderManagement = () => {
     loadOrders();
   }, []);
 
-  // const handleStatusChange = async (id, newStatus) => {
-  //   try {
-  //     await updateOrderStatus(id, newStatus);
-  //     alert("✅ Status updated successfully!");
-  //     loadOrders();
-  //   } catch (err) {
-  //     console.error("❌ Failed to update status:", err);
-  //     alert("Could not update status.");
-  //   }
-  // };
-
+  // 🧩 Simulate status change for now
   const handleStatusChange = async (id, newStatus) => {
     try {
-      // Temporarily simulate success
       alert(`✅ Status for order ${id} changed to ${newStatus} (UI only)`);
-
     } catch (err) {
       console.error("❌ Failed to update status:", err);
       alert("Could not update status.");
     }
   };
-
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this order?")) return;
@@ -79,6 +59,7 @@ const OrderManagement = () => {
       loadOrders();
     } catch (err) {
       console.error("❌ Delete failed:", err);
+      alert("⚠️ Could not delete order.");
     }
   };
 
@@ -112,8 +93,12 @@ const OrderManagement = () => {
                 <tr key={o.id} className="border-b hover:bg-blue-50">
                   <td className="p-3">{o.id}</td>
                   <td className="p-3">{o.userEmail}</td>
-                  <td className="p-3">{o.product?.name || "Unknown"}</td>
-                  <td className="p-3">₹{o.product?.price}</td>
+                  <td className="p-3">
+                    {o.product ? o.product.name : "❌ Product not found"}
+                  </td>
+                  <td className="p-3">
+                    {o.product ? `₹${o.product.price}` : "--"}
+                  </td>
                   <td className="p-3 font-semibold">
                     <select
                       value={o.orderStatus}
