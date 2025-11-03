@@ -10,6 +10,7 @@ import Contact from "./pages/Contact.jsx";
 import ProductDetails from "./pages/ProductDetails.jsx";
 import Orders from "./pages/Orders.jsx";
 import Products from "./pages/Products.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
 
 // Admin imports
 import AdminRoute from "./components/AdminRoute";
@@ -44,6 +45,7 @@ function App() {
         <Route path="products/:id" element={<ProductDetails />} />
         <Route path="profile" element={<Profile />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="checkout" element={<CheckoutPage />} /> 
         <Route path="orders" element={<Orders />} />
         <Route path="contact" element={<Contact />} />
       </Route>
