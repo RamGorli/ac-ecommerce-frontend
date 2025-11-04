@@ -46,7 +46,9 @@ function Layout() {
               alt="AirXSolar Logo"
               className="w-10 h-10 sm:w-11 sm:h-11 object-contain bg-white p-1 rounded-lg border border-blue-300 shadow-md"
             />
-            <span className="text-blue-300">AirXSolar</span>
+            <span className="bg-gradient-to-r from-blue-500 via-blue-700 via-green-600 to-orange-500 bg-clip-text text-transparent">
+              AirXSolar
+            </span>
           </Link>
 
 
