@@ -1,3 +1,4 @@
+
 // import { useEffect, useState, useMemo } from "react";
 // import { Link } from "react-router-dom";
 // import { fetchAllProducts } from "../services/productApi";
@@ -15,8 +16,26 @@
 //       setLoading(true);
 //       try {
 //         const data = await fetchAllProducts();
-//         setAllProducts(data || []);
-//         setFilteredProducts(data || []);
+
+//         // ✅ Convert backend byte[] to Base64 for frontend display
+//         const converted = data.map((p) => {
+//           if (p.image && Array.isArray(p.image)) {
+//             const binary = Uint8Array.from(p.image);
+//             let base64 = "";
+//             for (let i = 0; i < binary.length; i++) {
+//               base64 += String.fromCharCode(binary[i]);
+//             }
+//             return { ...p, imageBase64: `data:image/jpeg;base64,${btoa(base64)}` };
+//           }
+//           // In case backend already returns base64
+//           if (typeof p.image === "string" && !p.image.startsWith("data:")) {
+//             return { ...p, imageBase64: `data:image/jpeg;base64,${p.image}` };
+//           }
+//           return { ...p };
+//         });
+
+//         setAllProducts(converted || []);
+//         setFilteredProducts(converted || []);
 //       } catch (err) {
 //         console.error("❌ Failed to fetch products:", err);
 //       } finally {
@@ -56,7 +75,9 @@
 
 //   return (
 //     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
-//       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Our Products</h1>
+//       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+//         Our Products
+//       </h1>
 
 //       {/* Filters */}
 //       <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
@@ -67,7 +88,9 @@
 //         >
 //           <option value="">All Types</option>
 //           {productTypes.map((type) => (
-//             <option key={type} value={type}>{type}</option>
+//             <option key={type} value={type}>
+//               {type}
+//             </option>
 //           ))}
 //         </select>
 
@@ -97,7 +120,7 @@
 //         </button>
 //       </div>
 
-//       {/* Grid */}
+//       {/* Product Grid */}
 //       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
 //         {filteredProducts.map((p) => (
 //           <div
@@ -115,6 +138,7 @@
 //                 No Image
 //               </div>
 //             )}
+
 //             <h4 className="font-semibold">{p.name}</h4>
 //             <p>₹{p.price}</p>
 //             <p className="text-gray-600 text-sm">{p.type}</p>
@@ -134,8 +158,7 @@
 
 // export default ACList;
 
-
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { fetchAllProducts } from "../services/productApi";
 
@@ -147,13 +170,16 @@ function ACList() {
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
 
+  // 👇 For pagination
+  const [visibleCount, setVisibleCount] = useState(9);
+  const observerRef = useRef(null);
+
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
         const data = await fetchAllProducts();
 
-        // ✅ Convert backend byte[] to Base64 for frontend display
         const converted = data.map((p) => {
           if (p.image && Array.isArray(p.image)) {
             const binary = Uint8Array.from(p.image);
@@ -163,7 +189,6 @@ function ACList() {
             }
             return { ...p, imageBase64: `data:image/jpeg;base64,${btoa(base64)}` };
           }
-          // In case backend already returns base64
           if (typeof p.image === "string" && !p.image.startsWith("data:")) {
             return { ...p, imageBase64: `data:image/jpeg;base64,${p.image}` };
           }
@@ -198,6 +223,7 @@ function ACList() {
       }
     }
     setFilteredProducts(result);
+    setVisibleCount(9); // reset pagination on filter change
   }, [filterType, filterPrice, priceFilterType, allProducts]);
 
   const resetFilters = () => {
@@ -205,7 +231,29 @@ function ACList() {
     setFilterPrice("");
     setPriceFilterType("less");
     setFilteredProducts(allProducts);
+    setVisibleCount(9);
   };
+
+  // 👇 Infinite Scroll Effect
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        if (entry.isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 9, filteredProducts.length));
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(observerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [filteredProducts.length]);
 
   if (loading) return <p className="text-center mt-10">Loading products...</p>;
 
@@ -258,7 +306,7 @@ function ACList() {
 
       {/* Product Grid */}
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-        {filteredProducts.map((p) => (
+        {filteredProducts.slice(0, visibleCount).map((p) => (
           <div
             key={p.id}
             className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
@@ -288,6 +336,13 @@ function ACList() {
           </div>
         ))}
       </div>
+
+      {/* 👇 Invisible trigger div for infinite scroll */}
+      {visibleCount < filteredProducts.length && (
+        <div ref={observerRef} className="h-10 flex justify-center items-center mt-4 text-gray-500">
+          Loading more...
+        </div>
+      )}
     </div>
   );
 }
