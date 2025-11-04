@@ -44,7 +44,7 @@ function Layout() {
             <img
               src="/logo.png"
               alt="AirXSolar Logo"
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-blue-300 shadow-md"
+              className="w-10 h-10 sm:w-11 sm:h-11 object-contain bg-white p-1 rounded-lg border border-blue-300 shadow-md"
             />
             <span className="text-blue-300">AirXSolar</span>
           </Link>
