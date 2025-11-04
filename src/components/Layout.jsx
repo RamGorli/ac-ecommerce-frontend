@@ -39,11 +39,16 @@ function Layout() {
           {/* Logo */}
           <Link
             to="/"
-            className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2 hover:scale-105 transition-transform"
+            className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-3 hover:scale-105 transition-transform"
           >
-            <span>❄️</span>
+            <img
+              src="/logo.png"
+              alt="AirXSolar Logo"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-blue-300 shadow-md"
+            />
             <span className="text-blue-300">AirXSolar</span>
           </Link>
+
 
           {/* Mobile Menu Toggle */}
           <button
@@ -196,11 +201,10 @@ function Layout() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-blue-950 text-blue-100 text-center py-6 mt-auto shadow-inner">
-        <p className="text-sm sm:text-base font-light px-3">
+      <footer className="bg-blue-950 text-blue-100 text-center py-3 mt-auto shadow-inner">
+        <p className="text-xs sm:text-sm font-light px-3">
           © {new Date().getFullYear()}{" "}
-          <span className="font-semibold">AirXSolar</span> — Stay Cool with
-          Comfort.
+          <span className="font-semibold">AirXSolar</span> — Stay Cool with Comfort.
         </p>
       </footer>
     </div>
