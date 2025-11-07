@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { getCart, emptyCart } from "../services/cartApi";
-import { placeOrder } from "../services/orderApi";
+import { placeOrder, placeMultipleOrders } from "../services/orderApi";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -16,6 +16,7 @@ const CheckoutPage = () => {
 
   const productId = location.state?.productId;
 
+  // 🔹 Fetch products (single or cart)
   useEffect(() => {
     if (!email) {
       alert("Please log in to continue.");
@@ -60,6 +61,7 @@ const CheckoutPage = () => {
     }
   };
 
+  // 🔹 Smart order handler (single or multiple)
   const handlePlaceOrder = async () => {
     if (!address || !pinCode) {
       alert("Please enter delivery address and pin code.");
@@ -67,33 +69,60 @@ const CheckoutPage = () => {
     }
 
     try {
-      for (const p of products) {
-        await placeOrder({
+      if (products.length === 0) {
+        alert("No products found to order.");
+        return;
+      }
+
+      // If multiple products → call /add-all
+      if (products.length > 1) {
+        const orders = products.map((p) => ({
           productId: p.id,
           userEmail: email,
           orderStatus: "PLACED",
           address,
           pinCode: parseInt(pinCode),
-        });
+        }));
+
+        await placeMultipleOrders(orders);
+        console.log("✅ Bulk order placed:", orders);
+      } else {
+        const order = {
+          productId: products[0].id,
+          userEmail: email,
+          orderStatus: "PLACED",
+          address,
+          pinCode: parseInt(pinCode),
+        };
+        await placeOrder(order);
+        console.log("✅ Single order placed:", order);
       }
 
       if (!productId) await emptyCart(email);
 
-      alert("✅ Order placed successfully!");
+      alert("✅ Order placed successfully! Check your email for confirmation.");
       navigate("/orders");
     } catch (err) {
       console.error("Order error:", err);
-      alert("❌ Failed to place order. Try again.");
+      alert("❌ Failed to place order. Try again later.");
     }
   };
 
   if (loading)
-    return <p className="text-center mt-10 text-lg text-gray-700">Loading checkout...</p>;
+    return (
+      <p className="text-center mt-10 text-lg text-gray-700">
+        Loading checkout...
+      </p>
+    );
 
   if (products.length === 0)
-    return <p className="text-center mt-10 text-gray-500">No products to checkout.</p>;
+    return (
+      <p className="text-center mt-10 text-gray-500">
+        No products to checkout.
+      </p>
+    );
 
-  // Calculate total price
+  // 🔹 Calculate total
   const totalPrice = products.reduce((sum, p) => sum + p.price, 0);
 
   return (
@@ -101,7 +130,9 @@ const CheckoutPage = () => {
       <div className="max-w-6xl w-full bg-white rounded-3xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2">
         {/* Left Section – Order Summary */}
         <div className="p-8 lg:p-10 bg-gray-50 border-r border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Order Summary</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            Order Summary
+          </h2>
           <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
             {products.map((p) => (
               <div
@@ -160,7 +191,7 @@ const CheckoutPage = () => {
               />
             </div>
 
-            {/* Payment Section (UI only) */}
+            {/* Payment (UI only) */}
             <div className="mt-8">
               <h2 className="text-xl font-semibold text-gray-800 mb-4">
                 Payment Method
@@ -193,7 +224,6 @@ const CheckoutPage = () => {
               Place Order
             </button>
           </div>
-
         </div>
       </div>
     </div>
