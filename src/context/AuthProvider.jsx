@@ -43,13 +43,23 @@ export function AuthProvider({ children }) {
     }
   };
 
+   const signup = async (username, password) => {
+    try {
+      await api.post("/auth/register", { username, password });
+      return true;
+    } catch (err) {
+      console.error("Signup failed:", err.response?.data || err.message);
+      return false;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, setUser }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );
