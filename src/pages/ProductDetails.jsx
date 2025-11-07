@@ -96,17 +96,23 @@ function ProductDetails() {
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <button
               onClick={handleAddToCart}
-              className="flex-1 py-2 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition"
+              className="flex-1 py-3 bg-green-500 text-white rounded-xl font-semibold 
+                        hover:bg-green-600 active:bg-green-700 
+                        transition duration-150 ease-in-out text-lg"
             >
               Add to Cart
             </button>
+
             <button
               onClick={handleOrderNow}
-              className="flex-1 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+              className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-semibold 
+                        hover:bg-blue-700 active:bg-blue-800 
+                        transition duration-150 ease-in-out text-lg"
             >
               Order Now
             </button>
           </div>
+
         </div>
       </div>
     </div>

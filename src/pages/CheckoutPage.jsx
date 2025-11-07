@@ -183,14 +183,6 @@ const CheckoutPage = () => {
           </div>
 
           {/* Place Order Button */}
-          {/* <div className="mt-10 text-center">
-            <button
-              onClick={handlePlaceOrder}
-              className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition text-lg"
-            >
-              Place Order
-            </button>
-          </div> */}
           <div className="mt-10 text-center">
             <button
               onClick={handlePlaceOrder}

@@ -138,12 +138,21 @@ function ACList() {
           </select>
         </div>
 
-        <button
+        {/* <button
           onClick={resetFilters}
           className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
         >
           Reset
+        </button> */}
+        <button
+          onClick={resetFilters}
+          className="px-4 py-2 bg-gray-300 rounded-lg font-medium text-gray-800 
+                    hover:bg-gray-400 active:bg-gray-500 
+                    transition duration-150 ease-in-out"
+          >
+          Reset
         </button>
+
       </div>
 
       {/* Product Grid */}
@@ -171,10 +180,13 @@ function ACList() {
             <p className="text-gray-500 text-sm">{p.description}</p>
             <Link
               to={`/products/${p.id}`}
-              className="block mt-3 bg-blue-500 text-white text-center py-2 rounded-lg hover:bg-blue-600"
-            >
+              className="block mt-3 bg-blue-600 text-white text-center py-2 rounded-xl font-semibold 
+                        hover:bg-blue-700 active:bg-blue-800 
+                        transition duration-150 ease-in-out"
+              >
               View Details
             </Link>
+
           </div>
         ))}
       </div>

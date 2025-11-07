@@ -81,10 +81,14 @@ function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 sm:py-4 mt-2 bg-gradient-to-r from-blue-700 to-blue-500 text-white font-semibold rounded-xl shadow-md hover:scale-105 hover:shadow-lg transition disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full py-3 sm:py-4 mt-2 bg-blue-600 text-white font-semibold rounded-xl 
+                      hover:bg-blue-700 active:bg-blue-800 
+                      transition duration-150 ease-in-out text-lg shadow-md 
+                      disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {loading ? "Logging in..." : "Log In"}
           </button>
+
         </form>
 
         <div className="flex items-center my-6">
