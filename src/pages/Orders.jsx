@@ -18,8 +18,12 @@ const Orders = () => {
 
       const detailedOrders = await Promise.all(
         data.map(async (order) => {
-          const res = await api.get(`/products/find-by-id/${order.productId}`);
-          return { ...order, product: res.data };
+          try {
+            const res = await api.get(`/products/find-by-id/${order.productId}`);
+            return { ...order, product: res.data };
+          } catch {
+            return { ...order, product: null };
+          }
         })
       );
 
@@ -43,11 +47,14 @@ const Orders = () => {
     }
   };
 
-  if (loading) return <p className="text-center mt-10 text-lg">Loading your orders...</p>;
+  if (loading)
+    return <p className="text-center mt-10 text-lg">Loading your orders...</p>;
 
   return (
     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">🛍️ Your Orders</h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+        🛍️ Your Orders
+      </h1>
 
       {!orders.length ? (
         <p className="text-center text-gray-500 mt-10 text-lg">
@@ -90,12 +97,15 @@ const Orders = () => {
                 Status: {orderStatus}
               </p>
 
-              <button
-                onClick={() => handleCancel(id)}
-                className="w-full mt-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-              >
-                Cancel Order
-              </button>
+              {/* ✅ Hide cancel button if order is completed */}
+              {orderStatus !== "COMPLETED" && (
+                <button
+                  onClick={() => handleCancel(id)}
+                  className="w-full mt-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                >
+                  Cancel Order
+                </button>
+              )}
             </div>
           ))}
         </div>
@@ -105,4 +115,3 @@ const Orders = () => {
 };
 
 export default Orders;
-
