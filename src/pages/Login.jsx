@@ -8,7 +8,7 @@ function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState(""); // backend expects "username"
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,12 +33,11 @@ function Login() {
         const roles = decoded.roles || [];
 
         if (roles.includes("ROLE_ADMIN")) {
-          navigate("/admin"); // Admin goes to admin panel
+          navigate("/admin"); 
         }else {
-          navigate("/products"); // Normal user goes to products
+          navigate("/products"); 
         }
-      } else {
-        // Fallback if token missing
+      } else {       
         navigate("/products");
       }
     } catch (err) {

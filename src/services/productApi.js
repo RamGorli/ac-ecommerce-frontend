@@ -1,18 +1,17 @@
 import api from "./api";
 
-// Fetch all products
+
 export const fetchAllProducts = async () => {
   const res = await api.get("/products/find-all");
   return res.data;
 };
 
-// Add product (admin)
 export const addProduct = async (product) => {
   try {
     const res = await api.post("/products/add", product);
     return res.data;
   } catch (err) {
-    // Handle false 500 (backend operation succeeded but response failed)
+  
     if (
       err.response?.status === 500 &&
       err.response?.data?.includes("No acceptable representation")

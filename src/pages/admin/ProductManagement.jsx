@@ -27,14 +27,14 @@ const ProductManagement = () => {
   const [preview, setPreview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
 
-  // ✅ Fetch all products
+  // Fetch all products
   const loadProducts = async () => {
     try {
       const data = await fetchAllProducts();
       setProducts(data || []);
       setFilteredProducts(data || []);
     } catch (err) {
-      console.error("❌ Failed to load products:", err);
+      console.error("Failed to load products:", err);
     }
   };
 
@@ -46,7 +46,7 @@ const ProductManagement = () => {
     return [...new Set(products.map((p) => p.type))].sort();
   }, [products]);
 
-  // ✅ Filter logic
+  // Filter logic
   useEffect(() => {
     let result = [...products];
     if (filterType) result = result.filter((p) => p.type === filterType);
@@ -69,7 +69,7 @@ const ProductManagement = () => {
     setFilteredProducts(products);
   };
 
-  // ✅ Convert image to Base64
+  // Convert image to Base64
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -79,7 +79,7 @@ const ProductManagement = () => {
     });
   };
 
-  // ✅ Handle image preview
+  // Handle image preview
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -89,7 +89,7 @@ const ProductManagement = () => {
     setPreview(URL.createObjectURL(file));
   };
 
-  // ✅ Add / Update Product
+  // Add / Update Product
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -128,12 +128,12 @@ const ProductManagement = () => {
       setIsEditing(false);
       loadProducts();
     } catch (err) {
-      console.error("❌ Error saving product:", err);
+      console.error("Error saving product:", err);
       alert("Failed to save product!");
     }
   };
 
-  // ✅ Edit product
+  // Edit product
   const handleEdit = (p) => {
     setForm({
       id: p.id,
@@ -149,7 +149,7 @@ const ProductManagement = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // ✅ Delete product
+  // Delete product
   const handleDelete = async (p) => {
     if (!window.confirm("Are you sure you want to delete this product?")) return;
 
@@ -158,7 +158,7 @@ const ProductManagement = () => {
       alert("🗑 Product deleted successfully!");
       loadProducts();
     } catch (err) {
-      console.error("❌ Delete failed:", err);
+      console.error(" Delete failed:", err);
       alert("Failed to delete product!");
     }
   };
@@ -273,7 +273,7 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      {/* ✅ Product Grid */}
+      {/* Product Grid */}
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
         {filteredProducts.map((p) => (
           <div

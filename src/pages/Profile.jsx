@@ -4,7 +4,7 @@ const Profile = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
-    profilePic: null, // optional
+    profilePic: null, 
   });
 
   useEffect(() => {

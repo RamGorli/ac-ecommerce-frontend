@@ -97,7 +97,7 @@ const Orders = () => {
                 Status: {orderStatus}
               </p>
 
-              {/* ✅ Hide cancel button if order is completed */}
+              {/* Hide cancel button if order is completed */}
               {orderStatus !== "COMPLETED" && (
                 <button
                   onClick={() => handleCancel(id)}
