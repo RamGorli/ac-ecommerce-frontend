@@ -184,22 +184,27 @@ const CheckoutPage = () => {
             </div>
 
             <div className="mt-8">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Payment Method
-              </h2>
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Payment</h2>
+              <p className="text-sm text-gray-500 mb-3">
+                All transactions are secure and encrypted.
+              </p>
 
-              <div className="space-y-3">
-                {["Credit / Debit Card", "UPI / NetBanking", "Cash on Delivery"].map(
-                  (method, i) => (
-                    <label
-                      key={i}
-                      className="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-lg p-3 cursor-pointer hover:border-blue-400 transition"
-                    >
-                      <input type="radio" name="payment" defaultChecked={i === 0} />
-                      <span className="text-gray-700">{method}</span>
-                    </label>
-                  )
-                )}
+              <div className="border border-gray-200 rounded-lg overflow-hidden">
+                <div className="bg-blue-50 p-3 border-b border-gray-200 font-medium text-gray-800">
+                  Bank Deposit
+                </div>
+
+                <div className="p-4 text-gray-700 space-y-2">
+                  <p>
+                    <span className="font-semibold">Account Name:</span> AirXSolar Pty Ltd
+                  </p>
+                  <p>
+                    <span className="font-semibold">BSB:</span> 123 123
+                  </p>
+                  <p>
+                    <span className="font-semibold">Account Number:</span> 2152 2551
+                  </p>
+                </div>
               </div>
             </div>
           </div>
