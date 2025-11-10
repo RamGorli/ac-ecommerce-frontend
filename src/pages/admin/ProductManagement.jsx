@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useMemo, useContext, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
   fetchAllProducts,
@@ -11,7 +11,6 @@ const ProductManagement = () => {
   const { user } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
@@ -26,15 +25,23 @@ const ProductManagement = () => {
   });
   const [preview, setPreview] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Infinite scroll
+  const [visibleCount, setVisibleCount] = useState(9);
+  const observerRef = useRef(null);
 
   // Fetch all products
   const loadProducts = async () => {
+    setLoading(true);
     try {
       const data = await fetchAllProducts();
       setProducts(data || []);
       setFilteredProducts(data || []);
     } catch (err) {
       console.error("Failed to load products:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -60,6 +67,7 @@ const ProductManagement = () => {
       }
     }
     setFilteredProducts(result);
+    setVisibleCount(9);
   }, [filterType, filterPrice, priceFilterType, products]);
 
   const resetFilters = () => {
@@ -67,7 +75,25 @@ const ProductManagement = () => {
     setFilterPrice("");
     setPriceFilterType("less");
     setFilteredProducts(products);
+    setVisibleCount(9);
   };
+
+  // ✅ Intersection observer for paging
+  useEffect(() => {
+    if (!observerRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setVisibleCount((prev) => Math.min(prev + 9, filteredProducts.length));
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [filteredProducts.length]);
 
   // Convert image to Base64
   const fileToBase64 = (file) => {
@@ -145,7 +171,6 @@ const ProductManagement = () => {
     });
     setPreview(null);
     setIsEditing(true);
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -158,10 +183,12 @@ const ProductManagement = () => {
       alert("🗑 Product deleted successfully!");
       loadProducts();
     } catch (err) {
-      console.error(" Delete failed:", err);
+      console.error("Delete failed:", err);
       alert("Failed to delete product!");
     }
   };
+
+  if (loading) return <p className="text-center mt-10">Loading products...</p>;
 
   return (
     <div className="p-6 bg-gradient-to-r from-blue-50 via-white to-blue-50 min-h-screen">
@@ -273,9 +300,9 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      {/* Product Grid */}
+      {/* ✅ Product Grid with paging */}
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
-        {filteredProducts.map((p) => (
+        {filteredProducts.slice(0, visibleCount).map((p) => (
           <div
             key={p.id}
             className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition"
@@ -314,6 +341,15 @@ const ProductManagement = () => {
           </div>
         ))}
       </div>
+
+      {visibleCount < filteredProducts.length && (
+        <div
+          ref={observerRef}
+          className="h-10 flex justify-center items-center mt-4 text-gray-500"
+        >
+          Loading more...
+        </div>
+      )}
     </div>
   );
 };
