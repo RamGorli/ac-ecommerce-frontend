@@ -25,7 +25,7 @@ function Layout() {
           href="mailto:support@airxsolar.com.au"
           className="underline font-semibold hover:text-blue-600 transition"
         >
-          support@AirXSolar.com
+          support@airxsolar.com.au
         </a>
         .
       </div>
