@@ -135,57 +135,47 @@ function ACList() {
       </div> */}
 
 
-      {/* 🔹 Filter Section */}
-      <div className="flex flex-wrap justify-center items-center gap-4 mb-10 bg-white shadow-md rounded-xl px-6 py-4">
-        {/* Product Type Filter */}
-        <div className="flex flex-col items-start">
-          <label className="text-sm font-semibold text-gray-700 mb-1">Product Type</label>
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="border border-gray-300 px-3 py-2 rounded-lg w-44 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          >
-            <option value="">All Types</option>
-            {productTypes.map((type) => (
-              <option key={type} value={type}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+  <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:border-blue-400 transition">
+    <select
+      value={filterType}
+      onChange={(e) => setFilterType(e.target.value)}
+      className="outline-none bg-transparent text-gray-700"
+    >
+      <option value="">All Types</option>
+      {productTypes.map((type) => (
+        <option key={type} value={type}>
+          {type}
+        </option>
+      ))}
+    </select>
+  </div>
 
-        {/* Price Filter */}
-        <div className="flex flex-col items-start">
-          <label className="text-sm font-semibold text-gray-700 mb-1">Price</label>
-          <div className="flex gap-2 items-center">
-            <input
-              type="number"
-              placeholder="Enter Price"
-              value={filterPrice}
-              onChange={(e) => setFilterPrice(e.target.value)}
-              className="border border-gray-300 px-3 py-2 rounded-lg w-28 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-            <select
-              value={priceFilterType}
-              onChange={(e) => setPriceFilterType(e.target.value)}
-              className="border border-gray-300 px-2 py-2 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            >
-              <option value="less">Less Than</option>
-              <option value="greater">Greater Than</option>
-            </select>
-          </div>
-        </div>
+  <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:border-blue-400 transition">
+    <input
+      type="number"
+      placeholder="Price"
+      value={filterPrice}
+      onChange={(e) => setFilterPrice(e.target.value)}
+      className="w-24 outline-none bg-transparent text-gray-700"
+    />
+    <select
+      value={priceFilterType}
+      onChange={(e) => setPriceFilterType(e.target.value)}
+      className="outline-none bg-transparent text-gray-700"
+    >
+      <option value="less">≤</option>
+      <option value="greater">≥</option>
+    </select>
+  </div>
 
-        {/* Reset Button */}
-        <div className="flex flex-col justify-end h-full">
-          <button
-            onClick={resetFilters}
-            className="mt-5 sm:mt-6 px-5 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 active:scale-95 transition-all duration-150 ease-in-out"
-          >
-            Reset Filters
-          </button>
-        </div>
-      </div>
+  <button
+    onClick={resetFilters}
+    className="border border-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2 hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out"
+  >
+    Reset
+  </button>
+</div>
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredProducts.slice(0, visibleCount).map((p) => (
