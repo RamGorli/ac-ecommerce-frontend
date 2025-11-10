@@ -22,7 +22,7 @@ function Layout() {
       <div className="bg-blue-100 text-blue-900 text-center py-2 px-3 text-sm sm:text-base font-medium shadow-sm">
         🚚 For deliveries over 45km, please send a request to{" "}
         <a
-          href="mailto:support@AirXSolar.com"
+          href="mailto:support@airxsolar.com.au"
           className="underline font-semibold hover:text-blue-600 transition"
         >
           support@AirXSolar.com
