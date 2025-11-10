@@ -73,7 +73,7 @@ const AdminLayout = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-blue-950 text-blue-100 text-center py-6 mt-auto shadow-inner">
+      <footer className="bg-blue-950 text-blue-100 text-center py-3 mt-auto shadow-inner">
         <p>© {new Date().getFullYear()} AirXSolar Admin — Control Center</p>
       </footer>
     </div>

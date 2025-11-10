@@ -60,10 +60,6 @@ const OrderManagement = () => {
 
   return (
     <div className="p-6 bg-gradient-to-r from-blue-50 via-white to-blue-50 min-h-screen">
-      <h2 className="text-3xl font-bold mb-6 text-center text-blue-900">
-        Order Management
-      </h2>
-
       {orders.length === 0 ? (
         <p className="text-center text-gray-500 mt-10">No orders yet.</p>
       ) : (
@@ -126,24 +122,8 @@ const OrderManagement = () => {
 export default OrderManagement;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // import { useEffect, useState } from "react";
-// import { fetchAllOrders, deleteOrder } from "../../services/orderApi";
+// import { fetchAllOrders } from "../../services/orderApi";
 // import api from "../../services/api";
 
 // const OrderManagement = () => {
@@ -199,19 +179,6 @@ export default OrderManagement;
 //     }
 //   };
 
-//   const handleDelete = async (id) => {
-//     if (!window.confirm("Are you sure you want to delete this order?")) return;
-
-//     try {
-//       await deleteOrder(id);
-//       alert("Order deleted successfully!");
-//       loadOrders();
-//     } catch (err) {
-//       console.error("Delete failed:", err);
-//       alert("Could not delete order.");
-//     }
-//   };
-
 //   if (loading)
 //     return <p className="text-center text-lg mt-10">Loading orders...</p>;
 
@@ -234,7 +201,6 @@ export default OrderManagement;
 //                 <th className="p-3 text-left">Price</th>
 //                 <th className="p-3 text-left">Status</th>
 //                 <th className="p-3 text-left">Date</th>
-//                 <th className="p-3 text-left">Actions</th>
 //               </tr>
 //             </thead>
 //             <tbody>
@@ -257,24 +223,19 @@ export default OrderManagement;
 //                           ? "bg-green-100 text-green-700"
 //                           : o.orderStatus === "IN_PROGRESS"
 //                           ? "bg-yellow-100 text-yellow-700"
-//                           : "bg-gray-200 text-gray-700"
+//                           : o.orderStatus === "DELIVERED"
+//                           ? "bg-gray-200 text-gray-700"
+//                           : "bg-red-100 text-red-700"
 //                       }`}
 //                     >
 //                       <option value="PLACED">PLACED</option>
 //                       <option value="IN_PROGRESS">IN_PROGRESS</option>
 //                       <option value="DELIVERED">DELIVERED</option>
+//                       <option value="CANCELED">CANCELED</option>
 //                     </select>
 //                   </td>
 //                   <td className="p-3">
 //                     {new Date(o.orderTime).toLocaleString()}
-//                   </td>
-//                   <td className="p-3">
-//                     <button
-//                       onClick={() => handleDelete(o.id)}
-//                       className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-//                     >
-//                       Delete
-//                     </button>
 //                   </td>
 //                 </tr>
 //               ))}
@@ -287,3 +248,17 @@ export default OrderManagement;
 // };
 
 // export default OrderManagement;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
