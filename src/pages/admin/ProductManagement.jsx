@@ -353,8 +353,6 @@
 // export default ProductManagement;
 
 
-
-
 import { useEffect, useState, useMemo, useContext, useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {
@@ -386,7 +384,6 @@ const ProductManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Fetch products
   const loadProducts = async () => {
     setLoading(true);
     try {
@@ -408,7 +405,6 @@ const ProductManagement = () => {
     return [...new Set(products.map((p) => p.type))].sort();
   }, [products]);
 
-  // Filtering logic
   useEffect(() => {
     let result = [...products];
     if (filterType) result = result.filter((p) => p.type === filterType);
@@ -433,7 +429,6 @@ const ProductManagement = () => {
     setVisibleCount(9);
   };
 
-  // Infinite scroll
   useEffect(() => {
     if (!observerRef.current) return;
 
@@ -450,7 +445,6 @@ const ProductManagement = () => {
     return () => observer.disconnect();
   }, [filteredProducts.length]);
 
-  // Convert image to Base64
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -460,17 +454,14 @@ const ProductManagement = () => {
     });
   };
 
-  // Handle image preview
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const base64Image = await fileToBase64(file);
     setForm({ ...form, image: base64Image });
     setPreview(URL.createObjectURL(file));
   };
 
-  // Add / Update Product
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -533,7 +524,7 @@ const ProductManagement = () => {
 
     try {
       await deleteProduct(p);
-      alert(" Product deleted successfully!");
+      alert("Product deleted successfully!");
       loadProducts();
     } catch (err) {
       console.error("Delete failed:", err);
@@ -545,17 +536,13 @@ const ProductManagement = () => {
 
   return (
     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8 text-center">
-        Product Management
-      </h1>
-
       {/* Product Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-md rounded-xl p-6 mb-10 max-w-3xl mx-auto border border-gray-200"
       >
         <h3 className="text-2xl font-semibold text-blue-700 mb-4">
-          {isEditing ? "✏️ Edit Product" : "➕ Add New Product"}
+          {isEditing ? "Edit Product" : "Add New Product"}
         </h3>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -619,7 +606,7 @@ const ProductManagement = () => {
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
-            className="outline-none bg-transparent text-blue-600 font-medium"
+            className="outline-none bg-transparent text-gray-700 font-medium"
           >
             <option value="">All Types</option>
             {productTypes.map((type) => (
@@ -636,12 +623,12 @@ const ProductManagement = () => {
             placeholder="Price"
             value={filterPrice}
             onChange={(e) => setFilterPrice(e.target.value)}
-            className="w-24 outline-none bg-transparent text-blue-600 font-medium placeholder-gray-400"
+            className="w-24 outline-none bg-transparent text-gray-700 font-medium placeholder-gray-400"
           />
           <select
             value={priceFilterType}
             onChange={(e) => setPriceFilterType(e.target.value)}
-            className="outline-none bg-transparent text-blue-600 font-medium"
+            className="outline-none bg-transparent text-gray-700 font-medium"
           >
             <option value="less">≤</option>
             <option value="greater">≥</option>
@@ -650,7 +637,7 @@ const ProductManagement = () => {
 
         <button
           onClick={resetFilters}
-          className="border border-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2 hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out"
+          className="border border-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2 hover:border-blue-500 hover:text-blue-600 transition"
         >
           Reset
         </button>
@@ -675,9 +662,9 @@ const ProductManagement = () => {
               </div>
             )}
 
-            <h4 className="font-semibold text-gray-800">{p.name}</h4>
+            <h4 className="font-semibold text-blue-700">{p.name}</h4>
             <p className="text-blue-600 font-semibold">₹{p.price}</p>
-            <p className="text-sm text-blue-500">{p.type}</p>
+            <p className="text-sm text-gray-600">{p.type}</p>
             <p className="text-gray-500 text-sm mt-1">{p.description}</p>
 
             <div className="flex gap-2 mt-3">
@@ -711,11 +698,3 @@ const ProductManagement = () => {
 };
 
 export default ProductManagement;
-
-
-
-
-
-
-
-
