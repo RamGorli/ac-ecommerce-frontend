@@ -134,41 +134,43 @@ function ACList() {
         </button>
       </div> */}
 
-
-      <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+    <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+  {/* Type Filter */}
   <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:border-blue-400 transition">
     <select
       value={filterType}
       onChange={(e) => setFilterType(e.target.value)}
-      className="outline-none bg-transparent text-gray-700"
+      className="outline-none bg-transparent text-blue-600 font-medium hover:text-blue-700 focus:text-blue-700"
     >
-      <option value="">All Types</option>
+      <option value="" className="text-gray-500">All Types</option>
       {productTypes.map((type) => (
-        <option key={type} value={type}>
+        <option key={type} value={type} className="text-gray-700">
           {type}
         </option>
       ))}
     </select>
   </div>
 
+  {/* Price Filter */}
   <div className="flex items-center gap-2 border border-gray-300 rounded-lg px-3 py-2 hover:border-blue-400 transition">
     <input
       type="number"
       placeholder="Price"
       value={filterPrice}
       onChange={(e) => setFilterPrice(e.target.value)}
-      className="w-24 outline-none bg-transparent text-gray-700"
+      className="w-24 outline-none bg-transparent text-blue-600 font-medium placeholder-gray-400"
     />
     <select
       value={priceFilterType}
       onChange={(e) => setPriceFilterType(e.target.value)}
-      className="outline-none bg-transparent text-gray-700"
+      className="outline-none bg-transparent text-blue-600 font-medium hover:text-blue-700 focus:text-blue-700"
     >
       <option value="less">≤</option>
       <option value="greater">≥</option>
     </select>
   </div>
 
+  {/* Reset Button */}
   <button
     onClick={resetFilters}
     className="border border-gray-300 text-gray-800 font-medium rounded-lg px-4 py-2 hover:border-blue-500 hover:text-blue-600 transition duration-150 ease-in-out"
@@ -176,6 +178,7 @@ function ACList() {
     Reset
   </button>
 </div>
+
 
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {filteredProducts.slice(0, visibleCount).map((p) => (
