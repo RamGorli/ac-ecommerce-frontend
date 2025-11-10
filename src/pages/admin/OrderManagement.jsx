@@ -107,20 +107,18 @@ const OrderManagement = () => {
                   <td className="p-3 font-semibold">
                     <select
                       value={o.orderStatus}
-                      onChange={(e) =>
-                        handleStatusChange(o, e.target.value)
-                      }
+                      onChange={(e) => handleStatusChange(o, e.target.value)}
                       className={`border rounded-lg px-2 py-1 font-semibold transition-colors duration-200 ${
                         o.orderStatus === "PLACED"
                           ? "bg-green-100 text-green-700"
-                          : o.orderStatus === "ONGOING"
+                          : o.orderStatus === "IN_PROGRESS"
                           ? "bg-yellow-100 text-yellow-700"
                           : "bg-gray-200 text-gray-700"
                       }`}
                     >
                       <option value="PLACED">PLACED</option>
-                      <option value="ONGOING">ONGOING</option>
-                      <option value="COMPLETED">COMPLETED</option>
+                      <option value="IN_PROGRESS">IN_PROGRESS</option>
+                      <option value="DELIVERED">DELIVERED</option>
                     </select>
                   </td>
                   <td className="p-3">

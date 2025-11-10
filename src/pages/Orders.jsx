@@ -89,7 +89,7 @@ const Orders = () => {
                 className={`mt-2 font-semibold ${
                   orderStatus === "PLACED"
                     ? "text-green-600"
-                    : orderStatus === "ONGOING"
+                    : orderStatus === "IN_PROGRESS"
                     ? "text-yellow-600"
                     : "text-gray-600"
                 }`}
@@ -97,8 +97,8 @@ const Orders = () => {
                 Status: {orderStatus}
               </p>
 
-              {/* Hide cancel button if order is completed */}
-              {orderStatus !== "COMPLETED" && (
+              {/* Hide cancel button if order is delivered */}
+              {orderStatus !== "DELIVERED" && (
                 <button
                   onClick={() => handleCancel(id)}
                   className="w-full mt-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
