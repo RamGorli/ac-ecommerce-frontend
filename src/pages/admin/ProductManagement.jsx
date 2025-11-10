@@ -27,7 +27,7 @@ const ProductManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Infinite scroll
+  // Infinite scroll
   const [visibleCount, setVisibleCount] = useState(9);
   const observerRef = useRef(null);
 
@@ -78,7 +78,7 @@ const ProductManagement = () => {
     setVisibleCount(9);
   };
 
-  // ✅ Intersection observer for paging
+  // Intersection observer for paging
   useEffect(() => {
     if (!observerRef.current) return;
 
@@ -136,10 +136,10 @@ const ProductManagement = () => {
 
       if (isEditing) {
         await updateProduct(productPayload);
-        alert("✅ Product updated successfully!");
+        alert(" Product updated successfully!");
       } else {
         await addProduct(productPayload);
-        alert("✅ Product added successfully!");
+        alert(" Product added successfully!");
       }
 
       setForm({
@@ -300,7 +300,7 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      {/* ✅ Product Grid with paging */}
+      {/* Product Grid with paging */}
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-4">
         {filteredProducts.slice(0, visibleCount).map((p) => (
           <div
