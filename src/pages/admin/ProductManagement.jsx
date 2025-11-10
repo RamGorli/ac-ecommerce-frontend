@@ -131,7 +131,7 @@ const ProductManagement = () => {
         type: form.type,
         price: parseFloat(form.price),
         description: form.description,
-        image: form.image || null,
+        image: form.image,
       };
 
       if (isEditing) {
@@ -167,9 +167,9 @@ const ProductManagement = () => {
       type: p.type,
       price: p.price,
       description: p.description || "",
-      image: null,
+      image: p.image,
     });
-    setPreview(null);
+    setPreview(p.image ? `data:image/jpeg;base64,${p.image}` : null);
     setIsEditing(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
