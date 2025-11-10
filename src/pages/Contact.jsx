@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { addContactQuery } from "../services/contactApi";
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -13,24 +13,26 @@ export default function Contact() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Your message has been sent successfully!");
-    setFormData({ name: "", email: "", phone: "", comment: "" });
+    try {
+      const res = await addContactQuery(formData);
+      alert(res.message || "Your message has been sent successfully!");
+      setFormData({ name: "", email: "", phone: "", comment: "" });
+    } catch (err) {
+      console.error("Error submitting contact form:", err);
+      alert("Failed to send message. Please try again.");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 sm:py-16">
       <div className="w-full max-w-3xl p-6 sm:p-10 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800 transition-all duration-300">
-        {/* Title */}
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-8 sm:mb-10 text-blue-900">
           Contact
         </h1>
 
-        {/* Contact Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name and Email */}
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <input
               type="text"
@@ -52,7 +54,6 @@ export default function Contact() {
             />
           </div>
 
-          {/* Phone */}
           <input
             type="tel"
             name="phone"
@@ -62,7 +63,6 @@ export default function Contact() {
             className="w-full px-4 py-3 sm:py-4 border border-blue-300 rounded-xl bg-white/50 placeholder-blue-900 text-blue-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
           />
 
-          {/* Comment */}
           <textarea
             name="comment"
             value={formData.comment}
@@ -73,7 +73,6 @@ export default function Contact() {
             required
           ></textarea>
 
-          {/* Send Button */}
           <div className="text-center">
             <button
               type="submit"
