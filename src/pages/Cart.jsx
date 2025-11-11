@@ -117,7 +117,7 @@ const Cart = () => {
                     e.stopPropagation();
                     handleRemove(product.id);
                   }}
-                  className="mt-1 text-sm text-red-600 hover:text-red-700 cursor-pointer underline w-fit"
+                  className="mt-1 text-sm text-red-600 hover:text-red-700 cursor-pointer w-fit"
                 >
                   <span role="img" aria-label="delete">
                     🗑️
