@@ -1,149 +1,11 @@
 
-// import { useEffect, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { getCart, removeFromCart, emptyCart } from "../services/cartApi";
-// import api from "../services/api";
-
-// const Cart = () => {
-//   const [cart, setCart] = useState([]);
-//   const [products, setProducts] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const email = localStorage.getItem("email");
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//     if (email) fetchCart();
-//   }, [email]);
-
-//   const fetchCart = async () => {
-//     try {
-//       setLoading(true);
-//       const { cart } = await getCart(email);
-//       setCart(cart);
-
-//       const items = await Promise.all(
-//         cart.map((id) => api.get(`/products/find-by-id/${id}`).then((res) => res.data))
-//       );
-//       setProducts(items);
-//     } catch (err) {
-//       console.error("Error loading cart:", err);
-//       alert("Error loading cart. Please try again.");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleRemove = async (productId) => {
-//     try {
-//       await removeFromCart(email, productId);
-//       alert("Product removed");
-//       fetchCart();
-//     } catch (err) {
-//       console.error(err);
-//       alert("Failed to remove product");
-//     }
-//   };
-
-//   const handleEmpty = async () => {
-//     try {
-//       await emptyCart(email);
-//       alert("Cart cleared");
-//       fetchCart();
-//     } catch (err) {
-//       console.error(err);
-//       alert("Failed to clear cart");
-//     }
-//   };
-
-//   const handleCheckout = () => {
-//     if (!products.length) {
-//       alert("Your cart is empty!");
-//       return;
-//     }
-//     navigate("/checkout");
-//   };
-
-//   if (loading)
-//     return <p className="text-center mt-10 text-lg">Loading cart...</p>;
-
-//   return (
-//     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
-//       <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">🛒 Your Cart</h1>
-
-//       {!products.length ? (
-//         <p className="text-center text-gray-500 mt-10 text-lg">Your cart is empty</p>
-//       ) : (
-//         <>
-//           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-//             {products.map((product) => (
-//               <div
-//                 key={product.id}
-//                 className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition"
-//               >
-//                 {product.image ? (
-//                   <img
-//                     src={`data:image/jpeg;base64,${product.image}`}
-//                     alt={product.name}
-//                     className="w-full h-48 object-cover rounded-lg mb-3"
-//                   />
-//                 ) : (
-//                   <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-//                     No Image
-//                   </div>
-//                 )}
-
-//                 <h4 className="font-semibold">{product.name}</h4>
-//                 <p>₹{product.price}</p>
-//                 <p className="text-gray-600 text-sm">{product.type}</p>
-//                 <p className="text-gray-500 text-sm">{product.description}</p>
-
-//                 <div className="flex gap-2 mt-3">
-//                   <Link
-//                     to={`/products/${product.id}`}
-//                     className="flex-1 py-2 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition"
-//                   >
-//                     View
-//                   </Link>
-//                   <button
-//                     onClick={() => handleRemove(product.id)}
-//                     className="flex-1 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-//                   >
-//                     Remove
-//                   </button>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-
-//           <div className="text-center mt-6 flex flex-col sm:flex-row justify-center gap-4">
-//             <button
-//               onClick={handleEmpty}
-//               className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
-//             >
-//               🗑️ Empty Cart
-//             </button>
-//             <button
-//               onClick={handleCheckout}
-//               className="px-6 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
-//             >
-//               Proceed to Checkout
-//             </button>
-//           </div>
-//         </>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Cart;
-
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCart, removeFromCart, emptyCart } from "../services/cartApi";
 import api from "../services/api";
 
 const Cart = () => {
+  const [cart, setCart] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const email = localStorage.getItem("email");
@@ -157,19 +19,12 @@ const Cart = () => {
     try {
       setLoading(true);
       const { cart } = await getCart(email);
+      setCart(cart);
 
       const items = await Promise.all(
         cart.map((id) => api.get(`/products/find-by-id/${id}`).then((res) => res.data))
       );
-
-      // Group duplicates to simulate quantity
-      const grouped = {};
-      items.forEach((p) => {
-        if (grouped[p.id]) grouped[p.id].quantity += 1;
-        else grouped[p.id] = { ...p, quantity: 1 };
-      });
-
-      setProducts(Object.values(grouped));
+      setProducts(items);
     } catch (err) {
       console.error("Error loading cart:", err);
       alert("Error loading cart. Please try again.");
@@ -180,7 +35,8 @@ const Cart = () => {
 
   const handleRemove = async (productId) => {
     try {
-      await removeFromCart(email, productId); // removes 1 instance
+      await removeFromCart(email, productId);
+      alert("Product removed");
       fetchCart();
     } catch (err) {
       console.error(err);
@@ -191,6 +47,7 @@ const Cart = () => {
   const handleEmpty = async () => {
     try {
       await emptyCart(email);
+      alert("Cart cleared");
       fetchCart();
     } catch (err) {
       console.error(err);
@@ -211,9 +68,7 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        Your Cart
-      </h1>
+      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">🛒 Your Cart</h1>
 
       {!products.length ? (
         <p className="text-center text-gray-500 mt-10 text-lg">Your cart is empty</p>
@@ -238,9 +93,9 @@ const Cart = () => {
                 )}
 
                 <h4 className="font-semibold">{product.name}</h4>
-                <p className="text-blue-600 font-semibold">₹{product.price}</p>
-                <p className="text-gray-600 text-sm">Quantity: {product.quantity}</p>
-                <p className="text-gray-500 text-sm">{product.type}</p>
+                <p>₹{product.price}</p>
+                <p className="text-gray-600 text-sm">{product.type}</p>
+                <p className="text-gray-500 text-sm">{product.description}</p>
 
                 <div className="flex gap-2 mt-3">
                   <Link
@@ -265,7 +120,7 @@ const Cart = () => {
               onClick={handleEmpty}
               className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
             >
-              Empty Cart
+              🗑️ Empty Cart
             </button>
             <button
               onClick={handleCheckout}
@@ -281,3 +136,4 @@ const Cart = () => {
 };
 
 export default Cart;
+
