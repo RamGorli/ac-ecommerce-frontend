@@ -90,7 +90,7 @@ function Layout() {
               }`}
               onClick={() => setMenuOpen(false)}
             >
-              Quote & Contact
+              Quote & Contact Us
             </Link>
 
             {user ? (
