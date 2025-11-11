@@ -257,7 +257,7 @@ const Orders = () => {
                       e.stopPropagation();
                       handleCancel(order);
                     }}
-                    className="mt-1 text-sm text-red-600 hover:text-red-700 cursor-pointer w-fit underline"
+                    className="mt-1 text-sm text-red-600 hover:text-red-700 cursor-pointer w-fit"
                   >
                     Cancel Order
                   </div>

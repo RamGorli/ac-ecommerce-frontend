@@ -178,23 +178,28 @@ const Cart = () => {
   };
 
   const handleRemove = async (productId) => {
+    if (!window.confirm("Are you sure you want to remove this item from your cart?")) return;
+
     try {
       await removeFromCart(email, productId);
+      alert("Item removed from your cart!");
       fetchCart();
     } catch (err) {
       console.error(err);
-      alert("Failed to remove product");
+      alert("Failed to remove product. Please try again.");
     }
   };
 
   const handleEmpty = async () => {
+    if (!window.confirm("Are you sure you want to empty your cart?")) return;
+
     try {
       await emptyCart(email);
-      alert("Cart cleared");
+      alert("Cart cleared successfully!");
       fetchCart();
     } catch (err) {
       console.error(err);
-      alert("Failed to clear cart");
+      alert("Failed to clear cart. Please try again.");
     }
   };
 
@@ -262,7 +267,7 @@ const Cart = () => {
                   <span role="img" aria-label="delete">
                     🗑️
                   </span>
-                  <span className="underline">Remove</span>
+                  <span >Remove</span>
                 </div>
               </div>
             ))}
