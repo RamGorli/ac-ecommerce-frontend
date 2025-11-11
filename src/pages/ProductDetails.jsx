@@ -10,7 +10,6 @@ function ProductDetails() {
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,6 +20,7 @@ function ProductDetails() {
         const prod = res.data;
         setProduct(prod);
 
+        // Fetch other products for "You may also like"
         const all = await fetchAllProducts();
         const converted = all.map((p) => {
           if (p.image && Array.isArray(p.image)) {
@@ -37,17 +37,22 @@ function ProductDetails() {
           return p;
         });
 
+        // Filter same-type related products (excluding current one)
         let related = converted.filter((p) => p.type === prod.type && p.id !== prod.id);
+
         if (related.length < 4) {
           const needed = 4 - related.length;
           const others = converted
             .filter((p) => p.id !== prod.id && !related.some((r) => r.id === p.id))
-            .sort(() => 0.5 - Math.random())
+            .sort(() => 0.5 - Math.random()) 
             .slice(0, needed);
+
           related = [...related, ...others];
         }
+
         related = related.slice(0, 4);
         setRelatedProducts(related);
+
       } catch (err) {
         console.error("Failed to fetch product:", err);
         alert("Failed to load product details.");
@@ -58,18 +63,10 @@ function ProductDetails() {
     fetchProduct();
   }, [id]);
 
-  const increaseQuantity = () => setQuantity((q) => q + 1);
-  const decreaseQuantity = () => setQuantity((q) => (q > 1 ? q - 1 : 1));
-
   const handleAddToCart = async () => {
     try {
-      const email = localStorage.getItem("email");
-      if (!email) return alert("Please log in to continue.");
-
-      for (let i = 0; i < quantity; i++) {
-        await addToCart(email, product.id);
-      }
-      alert(`${quantity} × ${product.name} added to cart`);
+      const res = await addToCart(localStorage.getItem("email"), product.id);
+      alert(res.message || `${product.name} added to cart 🛒`);
     } catch (err) {
       console.error("Add to cart error:", err);
       alert("Failed to add to cart.");
@@ -79,14 +76,18 @@ function ProductDetails() {
   const handleOrderNow = () => {
     const email = localStorage.getItem("email");
     if (!email) return alert("Please log in to continue.");
-    navigate("/checkout", { state: { productId: product.id, quantity } });
+    navigate("/checkout", { state: { productId: product.id } });
   };
 
   if (loading)
-    return <p className="text-center mt-10 text-gray-700">Loading product details...</p>;
+    return (
+      <p className="text-center mt-10 text-gray-700">Loading product details...</p>
+    );
 
   if (!product)
-    return <p className="text-center mt-10 text-gray-600">Product not found.</p>;
+    return (
+      <p className="text-center mt-10 text-gray-600">Product not found.</p>
+    );
 
   return (
     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
@@ -115,23 +116,6 @@ function ProductDetails() {
             {product.description || "No description available."}
           </p>
           <p className="text-3xl font-bold text-blue-600 mt-4">₹{product.price}</p>
-
-          {/* Quantity Selector */}
-          <div className="flex items-center gap-3 mt-4">
-            <button
-              onClick={decreaseQuantity}
-              className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-            >
-              -
-            </button>
-            <span className="text-lg font-semibold">{quantity}</span>
-            <button
-              onClick={increaseQuantity}
-              className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-            >
-              +
-            </button>
-          </div>
 
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <button
@@ -186,3 +170,5 @@ function ProductDetails() {
 }
 
 export default ProductDetails;
+
+
