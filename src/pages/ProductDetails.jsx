@@ -141,17 +141,36 @@ function ProductDetails() {
         });
 
         // Filter related ones (same type, exclude current)
-        const related = converted
-          .filter((p) => p.type === prod.type && p.id !== prod.id)
-          .slice(0, 4);
+        // const related = converted
+        //   .filter((p) => p.type === prod.type && p.id !== prod.id)
+        //   .slice(0, 4);
 
-        // If fewer than 4, just show random products as fallback
+        // // If fewer than 4, just show random products as fallback
+        // if (related.length < 4) {
+        //   const others = converted.filter((p) => p.id !== prod.id).slice(0, 4);
+        //   setRelatedProducts(others);
+        // } else {
+        //   setRelatedProducts(related);
+        // }
+
+        // Filter same-type related products (excluding current one)
+        let related = converted.filter((p) => p.type === prod.type && p.id !== prod.id);
+
+        // If fewer than 4, fill with random others (excluding duplicates and current product)
         if (related.length < 4) {
-          const others = converted.filter((p) => p.id !== prod.id).slice(0, 4);
-          setRelatedProducts(others);
-        } else {
-          setRelatedProducts(related);
+          const needed = 4 - related.length;
+          const others = converted
+            .filter((p) => p.id !== prod.id && !related.some((r) => r.id === p.id))
+            .sort(() => 0.5 - Math.random()) // shuffle randomly
+            .slice(0, needed);
+
+          related = [...related, ...others];
         }
+
+        // Limit to max 4 items (safety)
+        related = related.slice(0, 4);
+        setRelatedProducts(related);
+
       } catch (err) {
         console.error("Failed to fetch product:", err);
         alert("Failed to load product details.");
