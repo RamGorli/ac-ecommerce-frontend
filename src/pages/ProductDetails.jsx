@@ -11,6 +11,8 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -76,7 +78,8 @@ function ProductDetails() {
   const handleOrderNow = () => {
     const email = localStorage.getItem("email");
     if (!email) return alert("Please log in to continue.");
-    navigate("/checkout", { state: { productId: product.id } });
+    navigate("/checkout", { state: { productId: product.id, quantity } });
+    
   };
 
   if (loading)
@@ -117,6 +120,25 @@ function ProductDetails() {
           </p>
           <p className="text-3xl font-bold text-blue-600 mt-4">₹{product.price}</p>
 
+          
+{/* Quantity Selector */}
+<div className="flex items-center gap-4 mt-4">
+  <button
+    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+    className="w-10 h-10 flex items-center justify-center bg-gray-200 text-xl font-bold rounded-lg hover:bg-gray-300"
+  >
+    -
+  </button>
+
+  <span className="text-2xl font-semibold">{quantity}</span>
+
+  <button
+    onClick={() => setQuantity((q) => q + 1)}
+    className="w-10 h-10 flex items-center justify-center bg-gray-200 text-xl font-bold rounded-lg hover:bg-gray-300"
+  >
+    +
+  </button>
+</div>
           <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <button
               onClick={handleAddToCart}

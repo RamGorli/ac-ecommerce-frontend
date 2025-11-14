@@ -126,8 +126,8 @@ function ACList() {
             onChange={(e) => setPriceFilterType(e.target.value)}
             className="outline-none bg-transparent text-blue-600 font-medium hover:text-blue-700 focus:text-blue-700"
           >
-            <option value="less">≤</option>
-            <option value="greater">≥</option>
+            <option value="less">Lesser</option>
+            <option value="greater">Greater</option>
           </select>
         </div>
 
