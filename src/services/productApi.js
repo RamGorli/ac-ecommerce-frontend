@@ -1,11 +1,9 @@
 
 import api from "./api";
 
-// Fetch all products (handles backend pagination)
 export const fetchAllProducts = async (page = 0, size = 1000) => {
   const res = await api.get(`/products/find-all?page=${page}&size=${size}`);
-  // backend returns { content: [...], totalPages, totalElements, ... }
-  return res.data.content; // return only the array
+  return res.data.content; 
 };
 
 // Add a single product

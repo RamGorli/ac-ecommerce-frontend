@@ -12,28 +12,28 @@ export const placeMultipleOrders = async (orders) => {
   return res.data;
 };
 
-// Fetch user orders by email with pagination
+// Fetch user orders by email (paginated)
 export const fetchUserOrders = async (email, page = 0, size = 10) => {
   const res = await api.get(`/orders/find-by-email/${email}?page=${page}&size=${size}`);
-  return res.data;
+  return res.data.content; // Return only the array
 };
 
-// Fetch user orders filtered by status with pagination
+// Fetch user orders filtered by status (paginated)
 export const fetchUserOrdersByStatus = async (email, status, page = 0, size = 10) => {
   const res = await api.get(`/orders/find-by-email-status/${email}/${status}?page=${page}&size=${size}`);
-  return res.data;
+  return res.data.content;
 };
 
-// Fetch all orders (admin dashboard) with pagination
+// Fetch all orders (admin) paginated
 export const fetchAllOrders = async (page = 0, size = 10) => {
   const res = await api.get(`/orders/find-all?page=${page}&size=${size}`);
-  return res.data;
+  return res.data.content;
 };
 
-// Fetch all orders by status (admin) with pagination
+// Fetch all orders by status (admin) paginated
 export const fetchOrdersByStatus = async (status, page = 0, size = 10) => {
   const res = await api.get(`/orders/find-by-status/${status}?page=${page}&size=${size}`);
-  return res.data;
+  return res.data.content;
 };
 
 // Fetch order by ID
