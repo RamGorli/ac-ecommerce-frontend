@@ -12,114 +12,137 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
-  const convertImage = (p) => {
-    if (p.image) {
-      const binary = Uint8Array.from(p.image);
-      let base64 = "";
-      for (let i = 0; i < binary.length; i++)
-        base64 += String.fromCharCode(binary[i]);
-      return { ...p, imageBase64: `data:image/jpeg;base64,${btoa(base64)}` };
-    }
-    return p;
-  };
-
   useEffect(() => {
-    const load = async () => {
+    const fetchProduct = async () => {
       setLoading(true);
+      try {
+        const res = await api.get(`/products/find-by-id/${id}`);
+        const prod = res.data;
+        setProduct(prod);
 
-      // fetch main product
-      const res = await api.get(`/products/find-by-id/${id}`);
-      setProduct(res.data);
+        const all = await fetchAllProducts();
+        const converted = all.map((p) => {
+          if (p.image && Array.isArray(p.image)) {
+            const binary = Uint8Array.from(p.image);
+            let base64 = "";
+            for (let i = 0; i < binary.length; i++) {
+              base64 += String.fromCharCode(binary[i]);
+            }
+            return { ...p, imageBase64: `data:image/jpeg;base64,${btoa(base64)}` };
+          }
+          if (typeof p.image === "string" && !p.image.startsWith("data:")) {
+            return { ...p, imageBase64: `data:image/jpeg;base64,${p.image}` };
+          }
+          return p;
+        });
 
-      // fetch all others to show related
-      let all = await fetchAllProducts();
-      all = all.map(convertImage);
+        let related = converted.filter((p) => p.type === prod.type && p.id !== prod.id);
 
-      let related = all.filter((p) => p.type === res.data.type && p.id !== res.data.id);
+        if (related.length < 4) {
+          const needed = 4 - related.length;
+          const others = converted
+            .filter((p) => p.id !== prod.id && !related.some((r) => r.id === p.id))
+            .sort(() => 0.5 - Math.random()) 
+            .slice(0, needed);
 
-      if (related.length < 4) {
-        const extra = all
-          .filter((p) => p.id !== res.data.id)
-          .slice(0, 4 - related.length);
-        related = [...related, ...extra];
+          related = [...related, ...others];
+        }
+
+        related = related.slice(0, 4);
+        setRelatedProducts(related);
+
+      } catch (err) {
+        console.error("Failed to fetch product:", err);
+        alert("Failed to load product details.");
+      } finally {
+        setLoading(false);
       }
-
-      setRelatedProducts(related.slice(0, 4));
-      setLoading(false);
     };
-
-    load();
+    fetchProduct();
   }, [id]);
 
   const handleAddToCart = async () => {
-    const email = localStorage.getItem("email");
-    if (!email) return alert("Please login first");
+    try {
+      const res = await addToCart(localStorage.getItem("email"), product.id);
 
-    await addToCart(email, product.id);
+      let qtyStore = JSON.parse(localStorage.getItem("cartQuantities") || "{}");
+      qtyStore[product.id] = (qtyStore[product.id] || 0) + quantity; 
+      localStorage.setItem("cartQuantities", JSON.stringify(qtyStore));
 
-    let qtyStore = JSON.parse(localStorage.getItem("cartQuantities") || "{}");
-    qtyStore[product.id] = (qtyStore[product.id] || 0) + quantity;
-    localStorage.setItem("cartQuantities", JSON.stringify(qtyStore));
-
-    alert(`${product.name} added to cart`);
+      alert(res.message || `${product.name} added to cart 🛒`);
+    } catch (err) {
+      console.error("Add to cart error:", err);
+      alert("Failed to add to cart.");
+    }
   };
 
   const handleOrderNow = () => {
     const email = localStorage.getItem("email");
-    if (!email) return alert("Please login first");
-
+    if (!email) return alert("Please log in to continue.");
     navigate("/checkout", { state: { productId: product.id, quantity } });
   };
 
   if (loading)
-    return <p className="text-center mt-10">Loading...</p>;
+    return <p className="text-center mt-10 text-gray-700">Loading product details...</p>;
 
   if (!product)
-    return <p className="text-center mt-10">Product not found</p>;
+    return <p className="text-center mt-10 text-gray-600">Product not found.</p>;
 
   return (
-    <div className="min-h-screen bg-blue-50 p-6">
-      <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-lg flex gap-8">
-        
-        <div className="flex-1">
+    <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10">
+      <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-6 md:p-10 flex flex-col md:flex-row gap-10 items-center hover:shadow-xl transition">
+        <div className="flex-1 flex justify-center items-center">
           {product.image ? (
             <img
               src={`data:image/jpeg;base64,${product.image}`}
-              className="w-full h-96 object-cover rounded-xl"
+              alt={product.name}
+              className="w-full max-w-sm h-[380px] object-cover rounded-2xl shadow-md"
             />
           ) : (
-            <div className="w-full h-96 bg-gray-200 rounded-xl flex items-center justify-center">
+            <div className="w-full max-w-sm h-[380px] bg-gray-200 rounded-2xl flex justify-center items-center text-gray-500">
               No Image
             </div>
           )}
         </div>
 
-        <div className="flex-1 space-y-4">
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <p className="text-gray-500 text-lg">
-            Type: {product.type}
+        <div className="flex-1 flex flex-col justify-between space-y-5">
+          <h1 className="text-4xl font-bold text-gray-800">{product.name}</h1>
+          <p className="text-gray-600 text-xl">
+            <span className="font-semibold">Type:</span> {product.type}
           </p>
-          <p>{product.description}</p>
-          <p className="text-3xl font-bold text-blue-600">
-            ₹{product.price}
+          <p className="text-gray-700 text-lg leading-relaxed">
+            {product.description || "No description available."}
           </p>
+          <p className="text-3xl font-bold text-blue-600 mt-4">₹{product.price}</p>
 
-          <div className="flex items-center gap-4 mt-3">
-            <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="px-4 py-2 bg-gray-200 rounded-lg">-</button>
-            <span className="text-xl">{quantity}</span>
-            <button onClick={() => setQuantity(q => q + 1)} className="px-4 py-2 bg-gray-200 rounded-lg">+</button>
+          <div className="flex items-center gap-4 mt-4">
+            <button
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              className="w-10 h-10 flex items-center justify-center bg-gray-200 text-xl font-bold rounded-lg hover:bg-gray-300"
+            >
+              -
+            </button>
+
+            <span className="text-2xl font-semibold">{quantity}</span>
+
+            <button
+              onClick={() => setQuantity((q) => q + 1)}
+              className="w-10 h-10 flex items-center justify-center bg-gray-200 text-xl font-bold rounded-lg hover:bg-gray-300"
+            >
+              +
+            </button>
           </div>
 
-          <div className="flex gap-4 pt-5">
+          <div className="flex flex-col sm:flex-row gap-4 mt-6">
             <button
               onClick={handleAddToCart}
-              className="flex-1 bg-green-600 text-white py-3 rounded-lg"
+              className="flex-1 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 active:bg-green-700 transition text-lg"
             >
               Add to Cart
             </button>
             <button
               onClick={handleOrderNow}
-              className="flex-1 bg-blue-600 text-white py-3 rounded-lg"
+              className="flex-1 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 active:bg-blue-800 transition text-lg"
             >
               Order Now
             </button>
@@ -127,29 +150,38 @@ function ProductDetails() {
         </div>
       </div>
 
-      {/* Related */}
       {relatedProducts.length > 0 && (
-        <div className="max-w-6xl mx-auto mt-12">
-          <h2 className="text-2xl font-bold mb-6">You may also like</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="max-w-6xl mx-auto mt-16">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6">You may also like</h2>
+          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {relatedProducts.map((p) => (
               <div
                 key={p.id}
                 onClick={() => navigate(`/products/${p.id}`)}
-                className="bg-white p-4 rounded-lg shadow hover:shadow-lg cursor-pointer"
+                className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
               >
-                <img src={p.imageBase64} className="w-full h-40 object-cover rounded-lg mb-3" />
-                <h4 className="font-semibold">{p.name}</h4>
+                {p.imageBase64 ? (
+                  <img
+                    src={p.imageBase64}
+                    alt={p.name}
+                    className="w-full h-48 object-cover rounded-lg mb-3 transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
+                    No Image
+                  </div>
+                )}
+
+                <h4 className="font-semibold group-hover:underline">{p.name}</h4>
                 <p className="text-gray-700">₹{p.price}</p>
+                <p className="text-gray-600 text-sm group-hover:underline">{p.type}</p>
               </div>
             ))}
           </div>
         </div>
       )}
-
     </div>
   );
 }
 
 export default ProductDetails;
-
