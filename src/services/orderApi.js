@@ -15,7 +15,7 @@ export const placeMultipleOrders = async (orders) => {
 // Fetch user orders by email (paginated)
 export const fetchUserOrders = async (email, page = 0, size = 10) => {
   const res = await api.get(`/orders/find-by-email/${email}?page=${page}&size=${size}`);
-  return res.data.content; // Return only the array
+  return res.data.content; 
 };
 
 // Fetch user orders filtered by status (paginated)

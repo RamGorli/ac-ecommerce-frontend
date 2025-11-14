@@ -1,7 +1,7 @@
 
 import api from "./api";
 
-export const fetchAllProducts = async (page = 0, size = 1000) => {
+export const fetchAllProducts = async (page = 0, size = 10) => {
   const res = await api.get(`/products/find-all?page=${page}&size=${size}`);
   return res.data.content; 
 };
