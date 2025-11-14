@@ -65,21 +65,37 @@ function ProductDetails() {
     fetchProduct();
   }, [id]);
 
+  // const handleAddToCart = async () => {
+  //   try {
+  //     const res = await addToCart(localStorage.getItem("email"), product.id);
+  //     alert(res.message || `${product.name} added to cart 🛒`);
+  //   } catch (err) {
+  //     console.error("Add to cart error:", err);
+  //     alert("Failed to add to cart.");
+  //   }
+  // };
+
   const handleAddToCart = async () => {
-    try {
-      const res = await addToCart(localStorage.getItem("email"), product.id);
-      alert(res.message || `${product.name} added to cart 🛒`);
-    } catch (err) {
-      console.error("Add to cart error:", err);
-      alert("Failed to add to cart.");
-    }
-  };
+  try {
+    const res = await addToCart(localStorage.getItem("email"), product.id);
+
+    // Save quantity in localStorage
+    let qtyStore = JSON.parse(localStorage.getItem("cartQuantities") || "{}");
+    qtyStore[product.id] = (qtyStore[product.id] || 0) + quantity; 
+    localStorage.setItem("cartQuantities", JSON.stringify(qtyStore));
+
+    alert(res.message || `${product.name} added to cart 🛒`);
+  } catch (err) {
+    console.error("Add to cart error:", err);
+    alert("Failed to add to cart.");
+  }
+};
 
   const handleOrderNow = () => {
     const email = localStorage.getItem("email");
     if (!email) return alert("Please log in to continue.");
     navigate("/checkout", { state: { productId: product.id, quantity } });
-    
+
   };
 
   if (loading)
