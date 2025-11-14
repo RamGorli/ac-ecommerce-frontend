@@ -410,8 +410,8 @@ const CheckoutPage = () => {
         needInstallment: installation,
         address,
         pinCode: parseInt(pinCode),
-        customerEmail: finalEmail,
-        phoneNumber: phone,
+       // customerEmail: finalEmail,
+       // phoneNumber: phone,
       }));
 
       if (orders.length === 1) {
