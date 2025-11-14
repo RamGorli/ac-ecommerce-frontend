@@ -1,62 +1,51 @@
 import api from "./api";
 
-
-export const fetchAllProducts = async () => {
-  const res = await api.get("/products/find-all");
-  return res.data;
-};
-
-export const addProduct = async (product) => {
+// Fetch ALL products with pagination
+export const fetchAllProducts = async (page = 0, size = 1000) => {
   try {
-    const res = await api.post("/products/add", product);
-    return res.data;
+    const res = await api.get(`/products/find-all?page=${page}&size=${size}`);
+    return res.data.content || [];
   } catch (err) {
-  
-    if (
-      err.response?.status === 500 &&
-      err.response?.data?.includes("No acceptable representation")
-    ) {
-      return { message: "Product added successfully (handled locally)" };
-    }
-    throw err;
+    console.error("Error fetching all products:", err);
+    return [];
   }
 };
 
-// Update product (admin)
-export const updateProduct = async (product) => {
+// Fetch products by type
+export const fetchProductsByType = async (type, page = 0, size = 1000) => {
   try {
-    const res = await api.put("/products/update", product);
-    return res.data;
+    const res = await api.get(
+      `/products/find-by-type?type=${type}&page=${page}&size=${size}`
+    );
+    return res.data.content || [];
   } catch (err) {
-    if (
-      err.response?.status === 500 &&
-      err.response?.data?.includes("No acceptable representation")
-    ) {
-      return { message: "Product updated successfully (handled locally)" };
-    }
-    throw err;
+    console.error("Error fetching by type:", err);
+    return [];
   }
 };
 
-// Delete product (admin)
-export const deleteProduct = async (product) => {
+// Fetch products by price < X
+export const fetchProductsLessThan = async (price, page = 0, size = 1000) => {
   try {
-    const res = await api.delete("/products/delete", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: JSON.stringify(product),
-    });
-    return res.data;
+    const res = await api.get(
+      `/products/less-than?price=${price}&page=${page}&size=${size}`
+    );
+    return res.data.content || [];
   } catch (err) {
-    if (
-      err.response?.status === 500 &&
-      err.response?.data?.includes("No acceptable representation")
-    ) {
-      return { message: "Product deleted successfully (handled locally)" };
-    }
-    throw err;
+    console.error("Error fetching less-than:", err);
+    return [];
   }
 };
 
-
+// Fetch products by price > X
+export const fetchProductsGreaterThan = async (price, page = 0, size = 1000) => {
+  try {
+    const res = await api.get(
+      `/products/greater-than?price=${price}&page=${page}&size=${size}`
+    );
+    return res.data.content || [];
+  } catch (err) {
+    console.error("Error fetching greater-than:", err);
+    return [];
+  }
+};
