@@ -17,7 +17,7 @@ const Orders = () => {
     try {
       setLoading(true);
       // Fetch first page of user orders (you can add page/size params later)
-      const data = await fetchUserOrders(email, 0, 1000); // large size like product API
+      const data = await fetchUserOrders(email, 0, 10); // large size like product API
       // Fetch product details for each order
       const detailedOrders = await Promise.all(
         data.map(async (order) => {
