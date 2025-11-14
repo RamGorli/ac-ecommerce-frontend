@@ -1,6 +1,4 @@
 
-
-
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -42,7 +40,7 @@ const CheckoutPage = () => {
       alert("No products to checkout.");
       navigate("/cart");
     }
-  }, [email, singleProductId, cartItems]);
+  }, [email, singleProductId, cartItems, navigate]);
 
   const fetchSingleProduct = async (id) => {
     try {
@@ -70,12 +68,17 @@ const CheckoutPage = () => {
   };
 
   const handlePlaceOrder = async () => {
-    if (!phone || !address || !pinCode) {
-      alert("Please fill all delivery and contact details.");
+    // Validate required inputs:
+    if (!address || !pinCode) {
+      alert("Please enter delivery address and pin code.");
+      return;
+    }
+    if (!phone || phone.trim().length === 0) {
+      alert("Please enter a phone number (required).");
       return;
     }
 
-    const finalEmail = userEmail.trim() !== "" ? userEmail : email;
+    const finalEmail = userEmail.trim() !== "" ? userEmail.trim() : email;
 
     try {
       const deliveryCost = deliveryType === "EXPRESS" ? 40 : 30;
@@ -89,10 +92,11 @@ const CheckoutPage = () => {
         quantity: p.quantity,
         totalPrice: p.price * p.quantity + deliveryCost + installationCost,
         orderStatus: "PLACED",
-        deliveryType,
+        deliveryType, 
         needInstallment: installation,
         address,
-        pinCode: parseInt(pinCode),
+        phoneNumber: phone,
+        pinCode: parseInt(pinCode, 10),
       }));
 
       if (orders.length === 1) {
@@ -101,13 +105,18 @@ const CheckoutPage = () => {
         await placeMultipleOrders(orders);
       }
 
+      // Only empty cart if we came from cart
       if (cartItems) await emptyCart(email);
 
       alert("Order placed successfully!");
       navigate("/orders");
     } catch (err) {
-      console.error(err);
-      alert("Failed to place order.");
+      console.error("Order placement failed:", err);
+      if (err?.response) {
+        console.error("Backend response data:", err.response.data);
+        console.error("Backend response status:", err.response.status);
+      }
+      alert("Failed to place order. See console for details.");
     }
   };
 
@@ -123,7 +132,7 @@ const CheckoutPage = () => {
       </p>
     );
 
-  // Delivery Estimate
+  // Delivery Estimate helpers
   const today = new Date();
   const addDays = (days) => {
     const d = new Date();
@@ -133,8 +142,8 @@ const CheckoutPage = () => {
 
   const estimate =
     deliveryType === "STANDARD"
-      ? `${addDays(5)} - ${addDays(6)} (Standard)`
-      : `${addDays(2)} - ${addDays(3)} (Express)`;
+      ? `${addDays(5)} — ${addDays(6)} (Standard delivery)`
+      : `${addDays(2)} — ${addDays(3)} (Express delivery)`;
 
   const deliveryCost = deliveryType === "EXPRESS" ? 40 : 30;
   const installationCost = installation ? 60 : 0;
@@ -155,6 +164,7 @@ const CheckoutPage = () => {
                 {p.image ? (
                   <img
                     src={`data:image/jpeg;base64,${p.image}`}
+                    alt={p.name}
                     className="w-20 h-20 object-cover rounded-lg"
                   />
                 ) : (
@@ -191,11 +201,9 @@ const CheckoutPage = () => {
           )}
 
           <div className="mt-4 text-blue-700 font-medium text-md bg-blue-50 p-3 rounded-lg">
-            <span className="block text-gray-700">Estimated Delivery:</span>
+            <span className="block text-gray-700">Estimated Delivery</span>
             <b className="text-lg">{estimate}</b>
-            <div className="text-sm text-gray-500 mt-1">
-              Fast & reliable shipping 🚚
-            </div>
+            <div className="text-sm text-gray-500 mt-1">Fast & reliable shipping 🚚</div>
           </div>
 
           <div className="mt-4 border-t pt-4 text-xl font-bold flex justify-between">
@@ -218,10 +226,10 @@ const CheckoutPage = () => {
               onChange={(e) => setUserEmail(e.target.value)}
             />
 
-            {/* Phone */}
+            {/* Phone (required by backend) */}
             <input
               type="text"
-              placeholder="Phone number"
+              placeholder="Phone number (required)"
               className="w-full p-3 border rounded-lg mb-4"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
@@ -249,23 +257,17 @@ const CheckoutPage = () => {
             <h3 className="text-xl font-semibold mb-2">Delivery Type</h3>
             <div className="flex gap-4 mb-6">
               <button
-                className={`px-4 py-2 rounded-lg border ${
-                  deliveryType === "STANDARD"
-                    ? "bg-blue-100 border-blue-400"
-                    : ""
-                }`}
+                className={`px-4 py-2 rounded-lg border ${deliveryType === "STANDARD" ? "bg-blue-100 border-blue-400" : ""}`}
                 onClick={() => setDeliveryType("STANDARD")}
+                type="button"
               >
                 Standard (₹30)
               </button>
 
               <button
-                className={`px-4 py-2 rounded-lg border ${
-                  deliveryType === "EXPRESS"
-                    ? "bg-blue-100 border-blue-400"
-                    : ""
-                }`}
+                className={`px-4 py-2 rounded-lg border ${deliveryType === "EXPRESS" ? "bg-blue-100 border-blue-400" : ""}`}
                 onClick={() => setDeliveryType("EXPRESS")}
+                type="button"
               >
                 Express (₹40)
               </button>
@@ -286,21 +288,12 @@ const CheckoutPage = () => {
 
             {/* PAYMENT INFO */}
             <h2 className="text-xl font-semibold mb-4">Payment</h2>
-            <p className="text-sm text-gray-500 mb-3">
-              All transactions are secure and encrypted.
-            </p>
+            <p className="text-sm text-gray-500 mb-3">All transactions are secure and encrypted.</p>
 
             <div className="border rounded-lg p-4">
-              <p>
-                <span className="font-semibold">Account Name:</span>{" "}
-                AirXSolar Pty Ltd
-              </p>
-              <p>
-                <span className="font-semibold">BSB:</span> 123 123
-              </p>
-              <p>
-                <span className="font-semibold">Account Number:</span> 2152 2551
-              </p>
+              <p><span className="font-semibold">Account Name:</span> AirXSolar Pty Ltd</p>
+              <p><span className="font-semibold">BSB:</span> 123 123</p>
+              <p><span className="font-semibold">Account Number:</span> 2152 2551</p>
             </div>
           </div>
 
@@ -312,22 +305,14 @@ const CheckoutPage = () => {
               onChange={() => setAgree(!agree)}
               className="w-4 h-4"
             />
-            <label className="text-sm text-gray-700">
-              I confirm my address is within 65 km.
-            </label>
+            <label className="text-sm text-gray-700">I confirm my address is within 65 km.</label>
           </div>
 
           {/* PLACE ORDER BUTTON */}
           <button
             onClick={handlePlaceOrder}
             disabled={!agree}
-            className={`w-full py-3 rounded-xl font-semibold text-lg transition
-              ${
-                agree
-                  ? "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
-                  : "bg-gray-300 text-gray-400 cursor-not-allowed"
-              }
-            `}
+            className={`w-full py-3 rounded-xl font-semibold text-lg transition ${agree ? "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800" : "bg-gray-300 text-gray-400 cursor-not-allowed"}`}
           >
             Place Order
           </button>
