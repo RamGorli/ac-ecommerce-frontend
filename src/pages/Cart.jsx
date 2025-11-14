@@ -110,7 +110,7 @@ const Cart = () => {
       id: p.id,
       name: p.name,
       price: p.price,
-      quantity: quantities[p.id],  // 👈 using saved quantity
+      quantity: quantities[p.id],  
       image: p.image,
       type: p.type,
     }));
