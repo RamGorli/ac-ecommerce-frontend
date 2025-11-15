@@ -199,7 +199,6 @@
 
 // export default ACList;
 
-
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -228,7 +227,6 @@ function ACList() {
     try {
       let data = [];
 
-      // Apply filters
       if (filterType) {
         data = await fetchProductsByType(filterType, page, pageSize);
       } else if (filterPrice) {
@@ -263,14 +261,22 @@ function ACList() {
     loadData(0);
   }, []);
 
-  // Load more when page changes (NOT filters)
+  // Reload products smoothly whenever filters change
+  useEffect(() => {
+    setProducts([]);
+    setCurrentPage(0);
+    setHasMore(true);
+    loadData(0);
+  }, [filterType, filterPrice, priceFilterType]);
+
+  // Load more pagination
   useEffect(() => {
     if (currentPage > 0) {
       loadData(currentPage);
     }
   }, [currentPage]);
 
-  // Unique product types for dropdown
+  // Dropdown types (must depend on server-loaded products)
   const productTypes = useMemo(
     () => [...new Set(products.map((p) => p.type))].sort(),
     [products]
@@ -280,11 +286,6 @@ function ACList() {
     setFilterType("");
     setFilterPrice("");
     setPriceFilterType("less");
-
-    setProducts([]);
-    setCurrentPage(0);
-    setHasMore(true);
-    loadData(0);
   };
 
   const handleLoadMore = () => {
@@ -302,17 +303,12 @@ function ACList() {
 
       {/* Filters */}
       <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+
         {/* Type Filter */}
         <select
           className="border px-3 py-2 rounded-lg"
           value={filterType}
-          onChange={(e) => {
-            setFilterType(e.target.value);
-            setProducts([]);
-            setCurrentPage(0);
-            setHasMore(true);
-            loadData(0);
-          }}
+          onChange={(e) => setFilterType(e.target.value)}
         >
           <option value="">All Types</option>
           {productTypes.map((t) => (
@@ -328,26 +324,14 @@ function ACList() {
           placeholder="Price"
           className="border px-3 py-2 w-24 rounded-lg"
           value={filterPrice}
-          onChange={(e) => {
-            setFilterPrice(e.target.value);
-            setProducts([]);
-            setCurrentPage(0);
-            setHasMore(true);
-            loadData(0);
-          }}
+          onChange={(e) => setFilterPrice(e.target.value)}
         />
 
         {/* Price filter type */}
         <select
           className="border px-3 py-2 rounded-lg"
           value={priceFilterType}
-          onChange={(e) => {
-            setPriceFilterType(e.target.value);
-            setProducts([]);
-            setCurrentPage(0);
-            setHasMore(true);
-            loadData(0);
-          }}
+          onChange={(e) => setPriceFilterType(e.target.value)}
         >
           <option value="less">≤ Price</option>
           <option value="greater">≥ Price</option>
@@ -412,4 +396,3 @@ function ACList() {
 }
 
 export default ACList;
-
