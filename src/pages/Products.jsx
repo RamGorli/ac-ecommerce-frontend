@@ -200,12 +200,6 @@
 // export default ACList;
 
 
-
-
-
-
-
-
 import { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -213,7 +207,6 @@ import {
   fetchProductsByType,
   fetchProductsLessThan,
   fetchProductsGreaterThan,
-  fetchAllTypes,
 } from "../services/productApi";
 
 function ACList() {
@@ -225,42 +218,21 @@ function ACList() {
 
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
-  const [debouncedPrice, setDebouncedPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
-
-  const [allTypes, setAllTypes] = useState([]);
 
   const pageSize = 10;
   const navigate = useNavigate();
-
-  // Debounce price input (fix for re-rendering on each keypress)
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedPrice(filterPrice), 300);
-    return () => clearTimeout(handler);
-  }, [filterPrice]);
-
-  // Load all types once
-  useEffect(() => {
-    async function loadTypes() {
-      try {
-        const res = await fetchAllTypes();
-        setAllTypes(res);
-      } catch (e) {
-        console.log("Type fetch error", e);
-      }
-    }
-    loadTypes();
-  }, []);
 
   const loadData = async (page) => {
     setLoading(true);
     try {
       let data = [];
 
+      // Apply filters
       if (filterType) {
         data = await fetchProductsByType(filterType, page, pageSize);
-      } else if (debouncedPrice) {
-        const price = Number(debouncedPrice);
+      } else if (filterPrice) {
+        const price = Number(filterPrice);
         if (!isNaN(price)) {
           data =
             priceFilterType === "less"
@@ -286,18 +258,33 @@ function ACList() {
     }
   };
 
+  // Initial load only once
   useEffect(() => {
-    setHasMore(true);
-    loadData(currentPage);
-  }, [currentPage, filterType, debouncedPrice, priceFilterType]);
+    loadData(0);
+  }, []);
+
+  // Load more when page changes (NOT filters)
+  useEffect(() => {
+    if (currentPage > 0) {
+      loadData(currentPage);
+    }
+  }, [currentPage]);
+
+  // Unique product types for dropdown
+  const productTypes = useMemo(
+    () => [...new Set(products.map((p) => p.type))].sort(),
+    [products]
+  );
 
   const resetFilters = () => {
     setFilterType("");
     setFilterPrice("");
-    setDebouncedPrice("");
     setPriceFilterType("less");
+
     setProducts([]);
     setCurrentPage(0);
+    setHasMore(true);
+    loadData(0);
   };
 
   const handleLoadMore = () => {
@@ -315,40 +302,51 @@ function ACList() {
 
       {/* Filters */}
       <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
-
-        {/* Types */}
+        {/* Type Filter */}
         <select
           className="border px-3 py-2 rounded-lg"
           value={filterType}
           onChange={(e) => {
-            setCurrentPage(0);
             setFilterType(e.target.value);
+            setProducts([]);
+            setCurrentPage(0);
+            setHasMore(true);
+            loadData(0);
           }}
         >
           <option value="">All Types</option>
-          {allTypes.map((t) => (
+          {productTypes.map((t) => (
             <option key={t} value={t}>
               {t}
             </option>
           ))}
         </select>
 
-        {/* Price */}
+        {/* Price input */}
         <input
           type="number"
           placeholder="Price"
           className="border px-3 py-2 w-24 rounded-lg"
           value={filterPrice}
-          onChange={(e) => setFilterPrice(e.target.value)}
+          onChange={(e) => {
+            setFilterPrice(e.target.value);
+            setProducts([]);
+            setCurrentPage(0);
+            setHasMore(true);
+            loadData(0);
+          }}
         />
 
-        {/* Price type */}
+        {/* Price filter type */}
         <select
           className="border px-3 py-2 rounded-lg"
           value={priceFilterType}
           onChange={(e) => {
-            setCurrentPage(0);
             setPriceFilterType(e.target.value);
+            setProducts([]);
+            setCurrentPage(0);
+            setHasMore(true);
+            loadData(0);
           }}
         >
           <option value="less">≤ Price</option>
@@ -372,7 +370,7 @@ function ACList() {
               <img
                 src={p.imageBase64}
                 alt={p.name}
-                className="w-full h-48 object-cover rounded-lg transition-transform duration-300 group-hover:scale-95"
+                className="w-full h-48 object-cover rounded-lg transform transition-transform duration-300 group-hover:scale-95"
               />
             ) : (
               <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -380,11 +378,11 @@ function ACList() {
               </div>
             )}
 
-            <h4 className="font-bold mt-2 text-gray-900 group-hover:underline break-words">
+            <h4 className="font-bold mt-2 text-gray-900 group-hover:underline">
               {p.brand || "Unknown Brand"}
             </h4>
 
-            <h3 className="font-semibold text-gray-800 group-hover:underline break-words whitespace-normal">
+            <h3 className="font-semibold text-gray-800 group-hover:underline">
               {p.name}
             </h3>
 
