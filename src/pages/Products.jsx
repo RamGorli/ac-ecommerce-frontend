@@ -74,7 +74,71 @@ const Filters = ({
 };
 
 // Product Grid Component
+// const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) => {
+//   return (
+//     <>
+//       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+//         {products.map((p) => (
+//           <div
+//             key={p.id}
+//             onClick={() => navigate(`/products/${p.id}`)}
+//             className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
+//           >
+//             {p.imageBase64 ? (
+//               <img
+//                 src={p.imageBase64}
+//                 alt={p.name}
+//                 className="w-full h-48 object-cover rounded-lg transform transition-transform duration-300 group-hover:scale-95"
+//               />
+//             ) : (
+//               <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+//                 No Image
+//               </div>
+//             )}
+
+//             <h4 className="font-bold mt-2 text-gray-900 group-hover:underline">
+//               {p.brand || "Unknown Brand"}
+//             </h4>
+
+//             <h3 className="font-semibold text-gray-800 group-hover:underline">
+//               {p.name}
+//             </h3>
+
+//             <p className="text-gray-700 text-sm group-hover:underline">
+//               {p.type} • {p.capacity || "N/A"}
+//             </p>
+
+//             <p className="text-blue-700 font-semibold mt-1 group-hover:underline">
+//               AUD ${p.price}
+//             </p>
+//           </div>
+//         ))}
+//       </div>
+      
+//       {loading && products.length > 0 && (
+//         <p className="text-center mt-6 text-gray-700 text-lg">
+//           Loading products...
+//         </p>
+//       )}
+
+//       {hasMore && !loading && (
+//         <div className="flex justify-center mt-6">
+//           <button
+//             onClick={handleLoadMore}
+//             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+//           >
+//             Show More
+//           </button>
+//         </div>
+//       )}
+//     </>
+//   );
+// };
+
 const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) => {
+  
+  const showLoading = loading;
+
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -114,9 +178,9 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
           </div>
         ))}
       </div>
-      
-      {loading && products.length > 0 && (
-        <p className="text-center mt-6 text-gray-700 text-lg">
+
+      {showLoading && (
+        <p className="text-center mt-10 text-gray-700 text-lg">
           Loading products...
         </p>
       )}
@@ -134,6 +198,7 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
     </>
   );
 };
+
 
 function ACList() {
   const [products, setProducts] = useState([]);
