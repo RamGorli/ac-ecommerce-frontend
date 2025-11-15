@@ -200,8 +200,6 @@
 // export default ACList;
 
 
-
-
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -210,60 +208,7 @@ import {
   fetchProductsLessThan,
   fetchProductsGreaterThan,
 } from "../services/productApi";
-import React from "react";
-
-// ----------------- FILTER BAR (NO RE-RENDERS) -----------------
-const FilterBar = React.memo(function FilterBar({
-  filterType,
-  setFilterType,
-  filterPrice,
-  setFilterPrice,
-  priceFilterType,
-  setPriceFilterType,
-  productTypes,
-  resetFilters,
-}) {
-  return (
-    <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
-      {/* Type Filter */}
-      <select
-        className="border px-3 py-2 rounded-lg"
-        value={filterType}
-        onChange={(e) => setFilterType(e.target.value)}
-      >
-        <option value="">All Types</option>
-        {productTypes.map((t) => (
-          <option key={t} value={t}>
-            {t}
-          </option>
-        ))}
-      </select>
-
-      {/* Price Input */}
-      <input
-        type="number"
-        placeholder="Price"
-        className="border px-3 py-2 w-24 rounded-lg"
-        value={filterPrice}
-        onChange={(e) => setFilterPrice(e.target.value)}
-      />
-
-      {/* Price Filter Type */}
-      <select
-        className="border px-3 py-2 rounded-lg"
-        value={priceFilterType}
-        onChange={(e) => setPriceFilterType(e.target.value)}
-      >
-        <option value="less">≤ Price</option>
-        <option value="greater">≥ Price</option>
-      </select>
-
-      <button onClick={resetFilters} className="border px-4 py-2 rounded-lg">
-        Reset
-      </button>
-    </div>
-  );
-});
+import FilterBar from "../components/FilterBar";
 
 function ACList() {
   const [products, setProducts] = useState([]);
@@ -277,52 +222,22 @@ function ACList() {
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
 
-  // Product types – loaded only once
   const [productTypes, setProductTypes] = useState([]);
 
   const pageSize = 10;
   const navigate = useNavigate();
 
-  // Stable reset function (does NOT re-render FilterBar)
+  // Stable reset function for FilterBar
   const resetFilters = useCallback(() => {
     setFilterType("");
     setFilterPrice("");
     setPriceFilterType("less");
+    setProducts([]);
+    setCurrentPage(0);
   }, []);
 
   // ----------------------------------------
-  // LOAD INITIAL DATA → also build productTypes only once
-  // ----------------------------------------
-  useEffect(() => {
-    async function loadInitial() {
-      setLoading(true);
-      try {
-        const data = await fetchAllProducts(0, pageSize);
-
-        // Set initial products
-        const mapped = data.map((p) => ({
-          ...p,
-          imageBase64: p.imageUrl || null,
-        }));
-        setProducts(mapped);
-
-        // Extract types only once
-        const types = [...new Set(data.map((p) => p.type))].sort();
-        setProductTypes(types);
-
-        if (data.length < pageSize) setHasMore(false);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadInitial();
-  }, []);
-
-  // ----------------------------------------
-  // FETCH BASED ON FILTERS
+  // Load products based on filters and page
   // ----------------------------------------
   const loadData = useCallback(
     async (page) => {
@@ -349,11 +264,7 @@ function ACList() {
           imageBase64: p.imageUrl || null,
         }));
 
-        if (page === 0) {
-          setProducts(mapped);
-        } else {
-          setProducts((prev) => [...prev, ...mapped]);
-        }
+        setProducts((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
 
         if (data.length < pageSize) setHasMore(false);
       } catch (err) {
@@ -366,23 +277,32 @@ function ACList() {
   );
 
   // ----------------------------------------
-  // WHEN FILTERS CHANGE → reload but do NOT re-render filter UI
+  // Initial load & fetch product types once
   // ----------------------------------------
   useEffect(() => {
-    if (!productTypes.length) return; // Wait for initial load
+    async function loadInitial() {
+      const data = await fetchAllProducts(0, pageSize);
+      const types = [...new Set(data.map((p) => p.type))].sort();
+      setProductTypes(types);
 
-    setProducts([]);
-    setCurrentPage(0);
-    setHasMore(true);
-    loadData(0);
-  }, [filterType, filterPrice, priceFilterType, loadData, productTypes]);
+      setProducts(
+        data.map((p) => ({ ...p, imageBase64: p.imageUrl || null }))
+      );
 
-  // Pagination load
-  useEffect(() => {
-    if (currentPage > 0) {
-      loadData(currentPage);
+      if (data.length < pageSize) setHasMore(false);
+      setLoading(false);
     }
-  }, [currentPage, loadData]);
+    loadInitial();
+  }, []);
+
+  // Reload products when filters or page change
+  useEffect(() => {
+    loadData(currentPage);
+  }, [currentPage, filterType, filterPrice, priceFilterType, loadData]);
+
+  const handleLoadMore = () => {
+    if (hasMore) setCurrentPage((prev) => prev + 1);
+  };
 
   if (!products.length && loading)
     return <p className="text-center mt-10">Loading products...</p>;
@@ -393,7 +313,7 @@ function ACList() {
         Our Products
       </h1>
 
-      {/* Perfectly memoized FILTER BAR */}
+      {/* FilterBar never re-renders unnecessarily */}
       <FilterBar
         filterType={filterType}
         setFilterType={setFilterType}
@@ -447,7 +367,7 @@ function ACList() {
       {hasMore && (
         <div className="flex justify-center mt-6">
           <button
-            onClick={() => setCurrentPage((prev) => prev + 1)}
+            onClick={handleLoadMore}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             {loading ? "Loading..." : "Show More"}
@@ -459,4 +379,3 @@ function ACList() {
 }
 
 export default ACList;
-
