@@ -200,7 +200,9 @@
 // export default ACList;
 
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+
+
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchAllProducts,
@@ -210,7 +212,7 @@ import {
 } from "../services/productApi";
 import React from "react";
 
-// ----------------- FILTER BAR (No Re-renders) -----------------
+// ----------------- FILTER BAR (NO RE-RENDERS) -----------------
 const FilterBar = React.memo(function FilterBar({
   filterType,
   setFilterType,
@@ -270,13 +272,58 @@ function ACList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
+  // Filters
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
 
+  // Product types – loaded only once
+  const [productTypes, setProductTypes] = useState([]);
+
   const pageSize = 10;
   const navigate = useNavigate();
 
+  // Stable reset function (does NOT re-render FilterBar)
+  const resetFilters = useCallback(() => {
+    setFilterType("");
+    setFilterPrice("");
+    setPriceFilterType("less");
+  }, []);
+
+  // ----------------------------------------
+  // LOAD INITIAL DATA → also build productTypes only once
+  // ----------------------------------------
+  useEffect(() => {
+    async function loadInitial() {
+      setLoading(true);
+      try {
+        const data = await fetchAllProducts(0, pageSize);
+
+        // Set initial products
+        const mapped = data.map((p) => ({
+          ...p,
+          imageBase64: p.imageUrl || null,
+        }));
+        setProducts(mapped);
+
+        // Extract types only once
+        const types = [...new Set(data.map((p) => p.type))].sort();
+        setProductTypes(types);
+
+        if (data.length < pageSize) setHasMore(false);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadInitial();
+  }, []);
+
+  // ----------------------------------------
+  // FETCH BASED ON FILTERS
+  // ----------------------------------------
   const loadData = useCallback(
     async (page) => {
       setLoading(true);
@@ -302,7 +349,11 @@ function ACList() {
           imageBase64: p.imageUrl || null,
         }));
 
-        setProducts((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
+        if (page === 0) {
+          setProducts(mapped);
+        } else {
+          setProducts((prev) => [...prev, ...mapped]);
+        }
 
         if (data.length < pageSize) setHasMore(false);
       } catch (err) {
@@ -314,40 +365,24 @@ function ACList() {
     [filterType, filterPrice, priceFilterType]
   );
 
-  // Initial load
+  // ----------------------------------------
+  // WHEN FILTERS CHANGE → reload but do NOT re-render filter UI
+  // ----------------------------------------
   useEffect(() => {
-    loadData(0);
-  }, []);
+    if (!productTypes.length) return; // Wait for initial load
 
-  // Filter changes → reload data but DO NOT re-render filter UI
-  useEffect(() => {
     setProducts([]);
     setCurrentPage(0);
     setHasMore(true);
     loadData(0);
-  }, [filterType, filterPrice, priceFilterType, loadData]);
+  }, [filterType, filterPrice, priceFilterType, loadData, productTypes]);
 
-  // Pagination
+  // Pagination load
   useEffect(() => {
     if (currentPage > 0) {
       loadData(currentPage);
     }
   }, [currentPage, loadData]);
-
-  const productTypes = useMemo(
-    () => [...new Set(products.map((p) => p.type))].sort(),
-    [products]
-  );
-
-  const resetFilters = () => {
-    setFilterType("");
-    setFilterPrice("");
-    setPriceFilterType("less");
-  };
-
-  const handleLoadMore = () => {
-    if (hasMore) setCurrentPage((prev) => prev + 1);
-  };
 
   if (!products.length && loading)
     return <p className="text-center mt-10">Loading products...</p>;
@@ -358,7 +393,7 @@ function ACList() {
         Our Products
       </h1>
 
-      {/* FilterBar does NOT re-render */}
+      {/* Perfectly memoized FILTER BAR */}
       <FilterBar
         filterType={filterType}
         setFilterType={setFilterType}
@@ -412,7 +447,7 @@ function ACList() {
       {hasMore && (
         <div className="flex justify-center mt-6">
           <button
-            onClick={handleLoadMore}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             {loading ? "Loading..." : "Show More"}
@@ -424,3 +459,4 @@ function ACList() {
 }
 
 export default ACList;
+
