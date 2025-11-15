@@ -160,14 +160,6 @@
 
 
 
-
-
-
-
-
-
-
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -182,29 +174,18 @@ function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
-  // Convert image array or string to base64
-  const toBase64 = (image) => {
-    if (!image) return null;
-    if (Array.isArray(image)) {
-      const binary = Uint8Array.from(image);
-      let base64 = "";
-      for (let i = 0; i < binary.length; i++) base64 += String.fromCharCode(binary[i]);
-      return `data:image/jpeg;base64,${btoa(base64)}`;
-    } else if (typeof image === "string" && !image.startsWith("data:")) {
-      return `data:image/jpeg;base64,${image}`;
-    } else return image;
-  };
-
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
       try {
+        // Fetch main product
         const res = await api.get(`/products/find-by-id/${id}`);
         const prod = res.data;
-        setProduct({ ...prod, imageBase64: toBase64(prod.image) });
+        setProduct(prod); // Use imageUrl directly
 
+        // Fetch all products to find related
         const all = await fetchAllProducts(0, 1000);
-        const converted = all.map((p) => ({ ...p, imageBase64: toBase64(p.image) }));
+        const converted = all; // No conversion needed
 
         // Related products: same type, exclude main product
         let related = converted.filter((p) => p.type === prod.type && p.id !== prod.id);
@@ -259,9 +240,9 @@ function ProductDetails() {
       {/* Main Product */}
       <div className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-6 md:p-10 flex flex-col md:flex-row gap-10 items-center hover:shadow-xl transition">
         <div className="flex-1 flex justify-center items-center">
-          {product.imageBase64 ? (
+          {product.imageUrl ? (
             <img
-              src={product.imageBase64}
+              src={product.imageUrl}
               alt={product.name}
               className="w-full max-w-sm h-[380px] object-cover rounded-2xl shadow-md"
             />
@@ -332,9 +313,9 @@ function ProductDetails() {
                 onClick={() => navigate(`/products/${p.id}`)}
                 className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
               >
-                {p.imageBase64 ? (
+                {p.imageUrl ? (
                   <img
-                    src={p.imageBase64}
+                    src={p.imageUrl}
                     alt={p.name}
                     className="w-full h-48 object-cover rounded-lg mb-3 transition-transform duration-300 group-hover:scale-105"
                   />
@@ -363,3 +344,4 @@ function ProductDetails() {
 }
 
 export default ProductDetails;
+
