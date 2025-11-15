@@ -199,7 +199,8 @@
 
 // export default ACList;
 
-import { useEffect, useState, useMemo } from "react";
+
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   fetchAllProducts,
@@ -207,6 +208,60 @@ import {
   fetchProductsLessThan,
   fetchProductsGreaterThan,
 } from "../services/productApi";
+import React from "react";
+
+// ----------------- FILTER BAR (No Re-renders) -----------------
+const FilterBar = React.memo(function FilterBar({
+  filterType,
+  setFilterType,
+  filterPrice,
+  setFilterPrice,
+  priceFilterType,
+  setPriceFilterType,
+  productTypes,
+  resetFilters,
+}) {
+  return (
+    <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
+      {/* Type Filter */}
+      <select
+        className="border px-3 py-2 rounded-lg"
+        value={filterType}
+        onChange={(e) => setFilterType(e.target.value)}
+      >
+        <option value="">All Types</option>
+        {productTypes.map((t) => (
+          <option key={t} value={t}>
+            {t}
+          </option>
+        ))}
+      </select>
+
+      {/* Price Input */}
+      <input
+        type="number"
+        placeholder="Price"
+        className="border px-3 py-2 w-24 rounded-lg"
+        value={filterPrice}
+        onChange={(e) => setFilterPrice(e.target.value)}
+      />
+
+      {/* Price Filter Type */}
+      <select
+        className="border px-3 py-2 rounded-lg"
+        value={priceFilterType}
+        onChange={(e) => setPriceFilterType(e.target.value)}
+      >
+        <option value="less">≤ Price</option>
+        <option value="greater">≥ Price</option>
+      </select>
+
+      <button onClick={resetFilters} className="border px-4 py-2 rounded-lg">
+        Reset
+      </button>
+    </div>
+  );
+});
 
 function ACList() {
   const [products, setProducts] = useState([]);
@@ -222,61 +277,63 @@ function ACList() {
   const pageSize = 10;
   const navigate = useNavigate();
 
-  const loadData = async (page) => {
-    setLoading(true);
-    try {
-      let data = [];
+  const loadData = useCallback(
+    async (page) => {
+      setLoading(true);
+      try {
+        let data = [];
 
-      if (filterType) {
-        data = await fetchProductsByType(filterType, page, pageSize);
-      } else if (filterPrice) {
-        const price = Number(filterPrice);
-        if (!isNaN(price)) {
-          data =
-            priceFilterType === "less"
-              ? await fetchProductsLessThan(price, page, pageSize)
-              : await fetchProductsGreaterThan(price, page, pageSize);
+        if (filterType) {
+          data = await fetchProductsByType(filterType, page, pageSize);
+        } else if (filterPrice) {
+          const price = Number(filterPrice);
+          if (!isNaN(price)) {
+            data =
+              priceFilterType === "less"
+                ? await fetchProductsLessThan(price, page, pageSize)
+                : await fetchProductsGreaterThan(price, page, pageSize);
+          }
+        } else {
+          data = await fetchAllProducts(page, pageSize);
         }
-      } else {
-        data = await fetchAllProducts(page, pageSize);
+
+        const mapped = data.map((p) => ({
+          ...p,
+          imageBase64: p.imageUrl || null,
+        }));
+
+        setProducts((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
+
+        if (data.length < pageSize) setHasMore(false);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
       }
+    },
+    [filterType, filterPrice, priceFilterType]
+  );
 
-      const mapped = data.map((p) => ({
-        ...p,
-        imageBase64: p.imageUrl || null,
-      }));
-
-      setProducts((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
-
-      if (data.length < pageSize) setHasMore(false);
-    } catch (err) {
-      console.error("Fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Initial load only once
+  // Initial load
   useEffect(() => {
     loadData(0);
   }, []);
 
-  // Reload products smoothly whenever filters change
+  // Filter changes → reload data but DO NOT re-render filter UI
   useEffect(() => {
     setProducts([]);
     setCurrentPage(0);
     setHasMore(true);
     loadData(0);
-  }, [filterType, filterPrice, priceFilterType]);
+  }, [filterType, filterPrice, priceFilterType, loadData]);
 
-  // Load more pagination
+  // Pagination
   useEffect(() => {
     if (currentPage > 0) {
       loadData(currentPage);
     }
-  }, [currentPage]);
+  }, [currentPage, loadData]);
 
-  // Dropdown types (must depend on server-loaded products)
   const productTypes = useMemo(
     () => [...new Set(products.map((p) => p.type))].sort(),
     [products]
@@ -301,46 +358,17 @@ function ACList() {
         Our Products
       </h1>
 
-      {/* Filters */}
-      <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
-
-        {/* Type Filter */}
-        <select
-          className="border px-3 py-2 rounded-lg"
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
-        >
-          <option value="">All Types</option>
-          {productTypes.map((t) => (
-            <option key={t} value={t}>
-              {t}
-            </option>
-          ))}
-        </select>
-
-        {/* Price input */}
-        <input
-          type="number"
-          placeholder="Price"
-          className="border px-3 py-2 w-24 rounded-lg"
-          value={filterPrice}
-          onChange={(e) => setFilterPrice(e.target.value)}
-        />
-
-        {/* Price filter type */}
-        <select
-          className="border px-3 py-2 rounded-lg"
-          value={priceFilterType}
-          onChange={(e) => setPriceFilterType(e.target.value)}
-        >
-          <option value="less">≤ Price</option>
-          <option value="greater">≥ Price</option>
-        </select>
-
-        <button onClick={resetFilters} className="border px-4 py-2 rounded-lg">
-          Reset
-        </button>
-      </div>
+      {/* FilterBar does NOT re-render */}
+      <FilterBar
+        filterType={filterType}
+        setFilterType={setFilterType}
+        filterPrice={filterPrice}
+        setFilterPrice={setFilterPrice}
+        priceFilterType={priceFilterType}
+        setPriceFilterType={setPriceFilterType}
+        productTypes={productTypes}
+        resetFilters={resetFilters}
+      />
 
       {/* Product Grid */}
       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
