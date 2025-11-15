@@ -114,14 +114,20 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
           </div>
         ))}
       </div>
+      
+      {loading && products.length > 0 && (
+        <p className="text-center mt-6 text-gray-700 text-lg">
+          Loading products...
+        </p>
+      )}
 
-      {hasMore && (
+      {hasMore && !loading && (
         <div className="flex justify-center mt-6">
           <button
             onClick={handleLoadMore}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
-            {loading ? "Loading..." : "Show More"}
+            Show More
           </button>
         </div>
       )}
@@ -224,12 +230,6 @@ function ACList() {
         resetFilters={resetFilters}
         productTypes={productTypes}
       />
-
-      {loading && products.length === 0 && (
-      <p className="text-center mt-10 text-gray-700 text-lg">
-        Loading products...
-      </p>
-      )}
 
       {/* Product Grid */}
       <ProductGrid
