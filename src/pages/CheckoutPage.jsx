@@ -55,7 +55,7 @@ const CheckoutPage = () => {
           brand: product.brand,
           price: product.price,
           quantity: location.state?.quantity || 1,
-          imageUrl: product.imageUrl,  // <-- updated
+          imageUrl: product.imageUrl, 
           type: product.type,
           capacity: product.capacity,
           description: product.description,
@@ -83,8 +83,8 @@ const CheckoutPage = () => {
     const finalEmail = userEmail.trim() !== "" ? userEmail.trim() : email;
 
     try {
-      const deliveryCost = deliveryType === "EXPRESS" ? 40 : 30;
-      const installationCost = installation ? 60 : 0;
+      const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
+      const installationCost = installation ? 50 : 0;
 
       const orders = products.map((p) => ({
         productId: p.id,
@@ -145,8 +145,8 @@ const CheckoutPage = () => {
       ? `${addDays(5)} — ${addDays(6)} (Standard delivery)`
       : `${addDays(2)} — ${addDays(3)} (Express delivery)`;
 
-  const deliveryCost = deliveryType === "EXPRESS" ? 40 : 30;
-  const installationCost = installation ? 60 : 0;
+  const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
+  const installationCost = installation ? 50 : 0;
   const subtotal = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
   const total = subtotal + deliveryCost + installationCost;
 
@@ -180,7 +180,7 @@ const CheckoutPage = () => {
                     {p.type} • {p.capacity || "N/A"}
                   </p>
                   <p className="text-sm text-gray-500">
-                    ₹{p.price} × {p.quantity}
+                    AUD ${p.price} × {p.quantity}
                   </p>
                 </div>
               </div>
@@ -189,18 +189,18 @@ const CheckoutPage = () => {
 
           <div className="mt-6 text-lg font-semibold flex justify-between">
             <span>Subtotal</span>
-            <span>₹{subtotal}</span>
+            <span>AUD ${subtotal}</span>
           </div>
 
           <div className="mt-2 text-lg font-semibold flex justify-between">
             <span>Delivery</span>
-            <span>₹{deliveryCost}</span>
+            <span>AUD ${deliveryCost}</span>
           </div>
 
           {installation && (
             <div className="mt-2 text-lg font-semibold flex justify-between">
               <span>Installation</span>
-              <span>₹{installationCost}</span>
+              <span>AUD ${installationCost}</span>
             </div>
           )}
 
@@ -212,7 +212,7 @@ const CheckoutPage = () => {
 
           <div className="mt-4 border-t pt-4 text-xl font-bold flex justify-between">
             <span>Total</span>
-            <span>₹{total}</span>
+            <span>AUD ${total}</span>
           </div>
         </div>
 
@@ -260,7 +260,7 @@ const CheckoutPage = () => {
                 onClick={() => setDeliveryType("STANDARD")}
                 type="button"
               >
-                Standard (₹30)
+                Standard (AUD $35)
               </button>
 
               <button
@@ -268,7 +268,7 @@ const CheckoutPage = () => {
                 onClick={() => setDeliveryType("EXPRESS")}
                 type="button"
               >
-                Express (₹40)
+                Express (AUD $75)
               </button>
             </div>
 
@@ -280,7 +280,7 @@ const CheckoutPage = () => {
                 className="w-4 h-4"
               />
               <label className="text-sm text-gray-700">
-                Add Installation Service (₹60)
+                Add Installation Service (AUD $50)
               </label>
             </div>
 
