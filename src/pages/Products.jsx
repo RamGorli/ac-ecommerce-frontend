@@ -1,12 +1,7 @@
 
-// import { useEffect, useState, useMemo, useCallback } from "react";
+// import { useEffect, useState, useCallback } from "react";
 // import { useNavigate } from "react-router-dom";
-// import {
-//   fetchAllProducts,
-//   fetchProductsByType,
-//   fetchProductsLessThan,
-//   fetchProductsGreaterThan,
-// } from "../services/productApi";
+// import { fetchFilteredProducts, fetchDropdownData } from "../services/productApi";
 
 // // Debounce hook
 // const useDebounce = (value, delay) => {
@@ -20,7 +15,7 @@
 //   return debouncedValue;
 // };
 
-// // Separate Filter Component
+// // Filters Component
 // const Filters = ({
 //   filterType,
 //   setFilterType,
@@ -40,9 +35,7 @@
 //       >
 //         <option value="">All Types</option>
 //         {productTypes.map((t) => (
-//           <option key={t} value={t}>
-//             {t}
-//           </option>
+//           <option key={t} value={t}>{t}</option>
 //         ))}
 //       </select>
 
@@ -73,72 +66,67 @@
 //   );
 // };
 
+// // Product Grid Component
+// const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) => (
+//   <>
+//     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+//       {products.map((p) => (
+//         <div
+//           key={p.id}
+//           onClick={() => navigate(`/products/${p.id}`)}
+//           className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
+//         >
+//           {p.imageUrl ? (
+//             <img
+//               src={p.imageUrl}
+//               alt={p.name}
+//               className="w-full h-48 object-cover rounded-lg transform transition-transform duration-300 group-hover:scale-95"
+//             />
+//           ) : (
+//             <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+//               No Image
+//             </div>
+//           )}
 
-// const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) => {
-  
-//   const showLoading = loading;
+//           <h4 className="font-bold mt-2 text-gray-900 group-hover:underline">
+//             {p.brand || "Unknown Brand"}
+//           </h4>
 
-//   return (
-//     <>
-//       <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-//         {products.map((p) => (
-//           <div
-//             key={p.id}
-//             onClick={() => navigate(`/products/${p.id}`)}
-//             className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
-//           >
-//             {p.imageBase64 ? (
-//               <img
-//                 src={p.imageBase64}
-//                 alt={p.name}
-//                 className="w-full h-48 object-cover rounded-lg transform transition-transform duration-300 group-hover:scale-95"
-//               />
-//             ) : (
-//               <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
-//                 No Image
-//               </div>
-//             )}
+//           <h3 className="font-semibold text-gray-800 group-hover:underline">
+//             {p.name}
+//           </h3>
 
-//             <h4 className="font-bold mt-2 text-gray-900 group-hover:underline">
-//               {p.brand || "Unknown Brand"}
-//             </h4>
+//           <p className="text-gray-700 text-sm group-hover:underline">
+//             {p.type} • {p.capacity || "N/A"}
+//           </p>
 
-//             <h3 className="font-semibold text-gray-800 group-hover:underline">
-//               {p.name}
-//             </h3>
-
-//             <p className="text-gray-700 text-sm group-hover:underline">
-//               {p.type} • {p.capacity || "N/A"}
-//             </p>
-
-//             <p className="text-blue-700 font-semibold mt-1 group-hover:underline">
-//               AUD ${p.price}
-//             </p>
-//           </div>
-//         ))}
-//       </div>
-
-//       {showLoading && (
-//         <p className="text-center mt-10 text-gray-700 text-lg">
-//           Loading products...
-//         </p>
-//       )}
-
-//       {hasMore && !loading && (
-//         <div className="flex justify-center mt-6">
-//           <button
-//             onClick={handleLoadMore}
-//             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
-//           >
-//             Show More
-//           </button>
+//           <p className="text-blue-700 font-semibold mt-1 group-hover:underline">
+//             AUD ${p.price}
+//           </p>
 //         </div>
-//       )}
-//     </>
-//   );
-// };
+//       ))}
+//     </div>
 
+//     {loading && (
+//       <p className="text-center mt-10 text-gray-700 text-lg">
+//         Loading products...
+//       </p>
+//     )}
 
+//     {hasMore && !loading && (
+//       <div className="flex justify-center mt-6">
+//         <button
+//           onClick={handleLoadMore}
+//           className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+//         >
+//           Show More
+//         </button>
+//       </div>
+//     )}
+//   </>
+// );
+
+// // Main Component
 // function ACList() {
 //   const [products, setProducts] = useState([]);
 //   const [loading, setLoading] = useState(false);
@@ -149,39 +137,43 @@
 //   const [filterPrice, setFilterPrice] = useState("");
 //   const [priceFilterType, setPriceFilterType] = useState("less");
 
+//   const [productTypes, setProductTypes] = useState([]);
+
 //   const debouncedPrice = useDebounce(filterPrice, 300);
 //   const pageSize = 8;
 //   const navigate = useNavigate();
 
-//   // Load data function
+//   // Load dropdown types from backend
+//   useEffect(() => {
+//     const loadDropdown = async () => {
+//       try {
+//         const data = await fetchDropdownData();
+//         setProductTypes(data.types || []);
+//       } catch (err) {
+//         console.error("Dropdown fetch error:", err);
+//       }
+//     };
+//     loadDropdown();
+//   }, []);
+
+//   // Load products function
 //   const loadData = useCallback(
 //     async (page = 0, append = false) => {
 //       setLoading(true);
 //       try {
-//         let data = [];
+//         const filters = {
+//           type: filterType || "",
+//           minPrice: priceFilterType === "greater" ? Number(debouncedPrice) : "",
+//           maxPrice: priceFilterType === "less" ? Number(debouncedPrice) : "",
+//           page,
+//           size: pageSize,
+//         };
 
-//         if (filterType) {
-//           data = await fetchProductsByType(filterType, page, pageSize);
-//         } else if (debouncedPrice) {
-//           const price = Number(debouncedPrice);
-//           if (!isNaN(price)) {
-//             data =
-//               priceFilterType === "less"
-//                 ? await fetchProductsLessThan(price, page, pageSize)
-//                 : await fetchProductsGreaterThan(price, page, pageSize);
-//           }
-//         } else {
-//           data = await fetchAllProducts(page, pageSize);
-//         }
-
-//         const mapped = data.map((p) => ({
-//           ...p,
-//           imageBase64: p.imageUrl || null,
-//         }));
+//         const res = await fetchFilteredProducts(filters);
+//         const mapped = res.content.map((p) => ({ ...p }));
 
 //         setProducts((prev) => (append ? [...prev, ...mapped] : mapped));
-
-//         setHasMore(data.length === pageSize);
+//         setHasMore(page < res.totalPages - 1);
 //       } catch (err) {
 //         console.error("Fetch error:", err);
 //       } finally {
@@ -204,11 +196,6 @@
 //     loadData(nextPage, true);
 //   };
 
-//   const productTypes = useMemo(
-//     () => [...new Set(products.map((p) => p.type))].sort(),
-//     [products]
-//   );
-
 //   const resetFilters = () => {
 //     setFilterType("");
 //     setFilterPrice("");
@@ -223,7 +210,6 @@
 //         Our Products
 //       </h1>
 
-//       {/* Filters always visible */}
 //       <Filters
 //         filterType={filterType}
 //         setFilterType={setFilterType}
@@ -235,7 +221,6 @@
 //         productTypes={productTypes}
 //       />
 
-//       {/* Product Grid */}
 //       <ProductGrid
 //         products={products}
 //         navigate={navigate}
@@ -250,19 +235,19 @@
 // export default ACList;
 
 
-import { useEffect, useState, useCallback } from "react";
+
+
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchFilteredProducts, fetchDropdownData } from "../services/productApi";
 
 // Debounce hook
 const useDebounce = (value, delay) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
-
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(handler);
   }, [value, delay]);
-
   return debouncedValue;
 };
 
@@ -270,12 +255,18 @@ const useDebounce = (value, delay) => {
 const Filters = ({
   filterType,
   setFilterType,
+  filterBrand,
+  setFilterBrand,
+  filterCapacity,
+  setFilterCapacity,
   filterPrice,
   setFilterPrice,
   priceFilterType,
   setPriceFilterType,
   resetFilters,
   productTypes,
+  brands,
+  capacities,
 }) => {
   return (
     <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
@@ -287,6 +278,28 @@ const Filters = ({
         <option value="">All Types</option>
         {productTypes.map((t) => (
           <option key={t} value={t}>{t}</option>
+        ))}
+      </select>
+
+      <select
+        className="border px-3 py-2 rounded-lg"
+        value={filterBrand}
+        onChange={(e) => setFilterBrand(e.target.value)}
+      >
+        <option value="">All Brands</option>
+        {brands.map((b) => (
+          <option key={b} value={b}>{b}</option>
+        ))}
+      </select>
+
+      <select
+        className="border px-3 py-2 rounded-lg"
+        value={filterCapacity}
+        onChange={(e) => setFilterCapacity(e.target.value)}
+      >
+        <option value="">All Capacities</option>
+        {capacities.map((c) => (
+          <option key={c} value={c}>{c}</option>
         ))}
       </select>
 
@@ -307,10 +320,7 @@ const Filters = ({
         <option value="greater">Greater</option>
       </select>
 
-      <button
-        onClick={resetFilters}
-        className="border px-4 py-2 rounded-lg"
-      >
+      <button onClick={resetFilters} className="border px-4 py-2 rounded-lg">
         Reset
       </button>
     </div>
@@ -325,13 +335,13 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
         <div
           key={p.id}
           onClick={() => navigate(`/products/${p.id}`)}
-          className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
+          className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer"
         >
           {p.imageUrl ? (
             <img
               src={p.imageUrl}
               alt={p.name}
-              className="w-full h-48 object-cover rounded-lg transform transition-transform duration-300 group-hover:scale-95"
+              className="w-full h-48 object-cover rounded-lg"
             />
           ) : (
             <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center">
@@ -339,21 +349,12 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
             </div>
           )}
 
-          <h4 className="font-bold mt-2 text-gray-900 group-hover:underline">
-            {p.brand || "Unknown Brand"}
-          </h4>
-
-          <h3 className="font-semibold text-gray-800 group-hover:underline">
-            {p.name}
-          </h3>
-
-          <p className="text-gray-700 text-sm group-hover:underline">
+          <h4 className="font-bold mt-2">{p.brand || "Unknown Brand"}</h4>
+          <h3 className="font-semibold">{p.name}</h3>
+          <p className="text-sm">
             {p.type} • {p.capacity || "N/A"}
           </p>
-
-          <p className="text-blue-700 font-semibold mt-1 group-hover:underline">
-            AUD ${p.price}
-          </p>
+          <p className="text-blue-700 font-semibold mt-1">AUD ${p.price}</p>
         </div>
       ))}
     </div>
@@ -384,24 +385,32 @@ function ACList() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
+  // Filters
   const [filterType, setFilterType] = useState("");
+  const [filterBrand, setFilterBrand] = useState("");
+  const [filterCapacity, setFilterCapacity] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
-
-  const [productTypes, setProductTypes] = useState([]);
-
   const debouncedPrice = useDebounce(filterPrice, 300);
-  const pageSize = 8;
-  const navigate = useNavigate();
 
-  // Load dropdown types from backend
+  // Dropdowns
+  const [productTypes, setProductTypes] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [capacities, setCapacities] = useState([]);
+
+  const navigate = useNavigate();
+  const pageSize = 8;
+
+  // Load dropdown data
   useEffect(() => {
     const loadDropdown = async () => {
       try {
         const data = await fetchDropdownData();
         setProductTypes(data.types || []);
+        setBrands(data.brands || []);
+        setCapacities(data.capacities || []);
       } catch (err) {
-        console.error("Dropdown fetch error:", err);
+        console.error("Failed to fetch dropdown data:", err);
       }
     };
     loadDropdown();
@@ -413,7 +422,9 @@ function ACList() {
       setLoading(true);
       try {
         const filters = {
-          type: filterType || "",
+          type: filterType,
+          brand: filterBrand,
+          capacity: filterCapacity,
           minPrice: priceFilterType === "greater" ? Number(debouncedPrice) : "",
           maxPrice: priceFilterType === "less" ? Number(debouncedPrice) : "",
           page,
@@ -421,20 +432,23 @@ function ACList() {
         };
 
         const res = await fetchFilteredProducts(filters);
-        const mapped = res.content.map((p) => ({ ...p }));
+        const mapped = (res.content || []).map((p) => ({
+          ...p,
+          imageUrl: p.imageUrl || null,
+        }));
 
         setProducts((prev) => (append ? [...prev, ...mapped] : mapped));
-        setHasMore(page < res.totalPages - 1);
+        setHasMore(mapped.length === pageSize);
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {
         setLoading(false);
       }
     },
-    [filterType, debouncedPrice, priceFilterType]
+    [filterType, filterBrand, filterCapacity, debouncedPrice, priceFilterType]
   );
 
-  // Load products on filter change
+  // Load on filter change
   useEffect(() => {
     setCurrentPage(0);
     loadData(0, false);
@@ -449,6 +463,8 @@ function ACList() {
 
   const resetFilters = () => {
     setFilterType("");
+    setFilterBrand("");
+    setFilterCapacity("");
     setFilterPrice("");
     setPriceFilterType("less");
     setCurrentPage(0);
@@ -464,12 +480,18 @@ function ACList() {
       <Filters
         filterType={filterType}
         setFilterType={setFilterType}
+        filterBrand={filterBrand}
+        setFilterBrand={setFilterBrand}
+        filterCapacity={filterCapacity}
+        setFilterCapacity={setFilterCapacity}
         filterPrice={filterPrice}
         setFilterPrice={setFilterPrice}
         priceFilterType={priceFilterType}
         setPriceFilterType={setPriceFilterType}
         resetFilters={resetFilters}
         productTypes={productTypes}
+        brands={brands}
+        capacities={capacities}
       />
 
       <ProductGrid
@@ -484,4 +506,3 @@ function ACList() {
 }
 
 export default ACList;
-
