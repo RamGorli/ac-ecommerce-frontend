@@ -734,6 +734,10 @@ const CheckoutPage = () => {
       return;
     }
 
+    if (guest && finalEmail) {
+      localStorage.setItem("guestEmail", finalEmail);
+    }
+    
     try {
       const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
       const installationCost = installation ? 50 : 0;
