@@ -1,3 +1,4 @@
+
 // import { useEffect, useState } from "react";
 // import { fetchUserOrders } from "../services/orderApi";
 // import api from "../services/api";
@@ -10,11 +11,10 @@
 //   const [hasMore, setHasMore] = useState(true);
 //   const email = localStorage.getItem("email");
 //   const navigate = useNavigate();
-//   const pageSize = 8; // orders per page
+//   const pageSize = 8;
 
 //   useEffect(() => {
 //     if (email) fetchOrders(currentPage);
-  
 //   }, [email, currentPage]);
 
 //   const fetchOrders = async (page) => {
@@ -46,11 +46,12 @@
 
 //   const handleCancel = async (order) => {
 //     if (!window.confirm("Are you sure you want to cancel this order?")) return;
+
 //     const updatedOrder = { ...order, orderStatus: "CANCELED" };
+
 //     try {
 //       await api.put("/orders/update", updatedOrder);
 //       alert("Order cancelled successfully!");
-//       // Reset orders and pagination
 //       setOrders([]);
 //       setCurrentPage(0);
 //       setHasMore(true);
@@ -88,10 +89,10 @@
 //                 }
 //                 className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
 //               >
-//                 {/* Product Image */}
-//                 {order.product?.image ? (
+//                 {/* UPDATED — USE imageUrl DIRECTLY */}
+//                 {order.product?.imageUrl ? (
 //                   <img
-//                     src={`data:image/jpeg;base64,${order.product.image}`}
+//                     src={order.product.imageUrl}
 //                     alt={order.product.name}
 //                     className="w-full h-48 object-cover rounded-lg mb-3 transition-transform duration-300 group-hover:scale-105"
 //                   />
@@ -101,32 +102,26 @@
 //                   </div>
 //                 )}
 
-//                 {/* Product Name */}
 //                 <h4 className="font-semibold text-blue-700 group-hover:underline">
 //                   {order.product?.name}
 //                 </h4>
 
-//                 {/* Quantity & Unit Price */}
 //                 <p className="text-gray-800">
 //                   ₹{order.productPrice} × {order.quantity}
 //                 </p>
 
-//                 {/* Total Price */}
 //                 <p className="text-gray-900 font-semibold">
 //                   Total: ₹{order.totalPrice}
 //                 </p>
 
-//                 {/* Delivery Type */}
 //                 <p className="text-gray-600 text-sm">
 //                   Delivery: {order.deliveryType}
 //                 </p>
 
-//                 {/* Installation Option */}
 //                 {order.needInstallment && (
 //                   <p className="text-gray-600 text-sm">Installation: Added</p>
 //                 )}
 
-//                 {/* Order Date/Time */}
 //                 {order.createdAt && (
 //                   <p className="text-gray-500 text-sm">
 //                     Ordered on:{" "}
@@ -137,7 +132,6 @@
 //                   </p>
 //                 )}
 
-//                 {/* Status */}
 //                 <p
 //                   className={`mt-2 font-semibold ${
 //                     order.orderStatus === "PLACED"
@@ -152,7 +146,6 @@
 //                   Status: {order.orderStatus}
 //                 </p>
 
-//                 {/* Cancel button */}
 //                 {order.orderStatus !== "DELIVERED" &&
 //                   order.orderStatus !== "CANCELED" && (
 //                     <div
@@ -169,7 +162,6 @@
 //             ))}
 //           </div>
 
-//           {/* Load More Button */}
 //           {hasMore && (
 //             <div className="flex justify-center mt-6">
 //               <button
@@ -189,10 +181,11 @@
 // export default Orders;
 
 
-
-
 import { useEffect, useState } from "react";
-import { fetchUserOrders } from "../services/orderApi";
+import {
+  fetchUserOrders,
+  updateOrder,
+} from "../services/orderApi";
 import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
@@ -201,6 +194,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
   const email = localStorage.getItem("email");
   const navigate = useNavigate();
   const pageSize = 8;
@@ -212,10 +206,11 @@ const Orders = () => {
   const fetchOrders = async (page) => {
     try {
       setLoading(true);
-      const data = await fetchUserOrders(email, page, pageSize);
+
+      const pageData = await fetchUserOrders(email, page, pageSize);
 
       const detailedOrders = await Promise.all(
-        data.map(async (order) => {
+        pageData.content.map(async (order) => {
           try {
             const res = await api.get(`/products/find-by-id/${order.productId}`);
             return { ...order, product: res.data };
@@ -227,7 +222,9 @@ const Orders = () => {
 
       setOrders((prev) => [...prev, ...detailedOrders]);
 
-      if (data.length < pageSize) setHasMore(false);
+      if (pageData.last === true) {
+        setHasMore(false);
+      }
     } catch (err) {
       console.error("Error fetching orders:", err);
       alert("Unable to load your orders. Please try again later.");
@@ -242,8 +239,10 @@ const Orders = () => {
     const updatedOrder = { ...order, orderStatus: "CANCELED" };
 
     try {
-      await api.put("/orders/update", updatedOrder);
+      await updateOrder(updatedOrder);
       alert("Order cancelled successfully!");
+
+      // Refresh list
       setOrders([]);
       setCurrentPage(0);
       setHasMore(true);
@@ -281,7 +280,6 @@ const Orders = () => {
                 }
                 className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
               >
-                {/* UPDATED — USE imageUrl DIRECTLY */}
                 {order.product?.imageUrl ? (
                   <img
                     src={order.product.imageUrl}
