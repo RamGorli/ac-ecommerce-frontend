@@ -548,7 +548,6 @@
 // export default ProductManagement;
 
 
-
 import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   fetchAllProducts,
@@ -560,19 +559,25 @@ import {
   deleteProduct,
 } from "../../services/productApi";
 
-/* Debounce */
+/* -------------------------------------------------------------------------- */
+/*                                   DEBOUNCE                                 */
+/* -------------------------------------------------------------------------- */
 const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
+  const [debounced, setDebounced] = useState(value);
+
   useEffect(() => {
-    const h = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(h);
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
   }, [value, delay]);
-  return debouncedValue;
+
+  return debounced;
 };
 
-const pageSize = 8;
+const PAGE_SIZE = 8;
 
-/* ---------------- FILTERS ---------------- */
+/* -------------------------------------------------------------------------- */
+/*                                  FILTERS UI                                */
+/* -------------------------------------------------------------------------- */
 const Filters = React.memo(function Filters({
   filterType,
   setFilterType,
@@ -586,9 +591,9 @@ const Filters = React.memo(function Filters({
   return (
     <div className="flex flex-wrap justify-center items-center gap-4 mb-8">
       <select
-        className="border px-3 py-2 rounded-lg"
         value={filterType}
         onChange={(e) => setFilterType(e.target.value)}
+        className="border px-3 py-2 rounded-lg"
       >
         <option value="">All Types</option>
         {productTypes.map((t) => (
@@ -607,9 +612,9 @@ const Filters = React.memo(function Filters({
       />
 
       <select
-        className="border px-3 py-2 rounded-lg"
         value={priceFilterType}
         onChange={(e) => setPriceFilterType(e.target.value)}
+        className="border px-3 py-2 rounded-lg"
       >
         <option value="less">≤ Price</option>
         <option value="greater">≥ Price</option>
@@ -622,14 +627,16 @@ const Filters = React.memo(function Filters({
   );
 });
 
-/* ---------------- GRID ---------------- */
+/* -------------------------------------------------------------------------- */
+/*                                 PRODUCT GRID                               */
+/* -------------------------------------------------------------------------- */
 const ProductGrid = React.memo(function ProductGrid({
   products,
   onEdit,
   onDelete,
   loading,
-  handleLoadMore,
   hasMore,
+  loadMore,
 }) {
   return (
     <>
@@ -653,19 +660,22 @@ const ProductGrid = React.memo(function ProductGrid({
 
             <h4 className="font-bold mt-2">{p.brand}</h4>
             <h3 className="font-semibold">{p.name}</h3>
-            <p className="text-sm">{p.type} • {p.capacity}</p>
-            <p className="text-blue-700 font-semibold mt-1">AUD ${p.price}</p>
+            <p className="text-sm">
+              {p.type} • {p.capacity}
+            </p>
+            <p className="text-blue-700 font-semibold mt-2">AUD ${p.price}</p>
 
             <div className="flex gap-2 mt-3">
               <button
+                className="bg-green-600 text-white px-3 py-1 rounded-lg"
                 onClick={() => onEdit(p)}
-                className="bg-green-500 text-white px-3 py-1 rounded-lg"
               >
                 Edit
               </button>
+
               <button
+                className="bg-red-600 text-white px-3 py-1 rounded-lg"
                 onClick={() => onDelete(p)}
-                className="bg-red-500 text-white px-3 py-1 rounded-lg"
               >
                 Delete
               </button>
@@ -674,12 +684,12 @@ const ProductGrid = React.memo(function ProductGrid({
         ))}
       </div>
 
-      {loading && <p className="text-center mt-10">Loading products...</p>}
+      {loading && <p className="text-center mt-10">Loading...</p>}
 
       {hasMore && !loading && (
         <div className="flex justify-center mt-6">
           <button
-            onClick={handleLoadMore}
+            onClick={loadMore}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg"
           >
             Show More
@@ -690,43 +700,210 @@ const ProductGrid = React.memo(function ProductGrid({
   );
 });
 
-/* ---------------- FORM ---------------- */
-// Not changed – keeping your original code ↓
-import ProductForm from "./ProductForm"; // assume your existing component
+/* -------------------------------------------------------------------------- */
+/*                               PRODUCT FORM (EDIT + ADD)                    */
+/* -------------------------------------------------------------------------- */
 
-/* ---------------- PARENT ---------------- */
+const ProductForm = ({
+  editingProduct,
+  onCancelEdit,
+  onSubmitCreateOrUpdate,
+}) => {
+  const [formData, setFormData] = useState({
+    name: "",
+    brand: "",
+    type: "",
+    capacity: "",
+    price: "",
+    description: "",
+    imageFile: null,
+  });
+
+  useEffect(() => {
+    if (editingProduct) {
+      setFormData({
+        name: editingProduct.name,
+        brand: editingProduct.brand,
+        type: editingProduct.type,
+        capacity: editingProduct.capacity,
+        price: editingProduct.price,
+        description: editingProduct.description,
+        imageFile: null, // user must re-upload; no URL
+      });
+    } else {
+      setFormData({
+        name: "",
+        brand: "",
+        type: "",
+        capacity: "",
+        price: "",
+        description: "",
+        imageFile: null,
+      });
+    }
+  }, [editingProduct]);
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (files) {
+      setFormData({ ...formData, imageFile: files[0] });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const fd = new FormData();
+    fd.append("name", formData.name);
+    fd.append("brand", formData.brand);
+    fd.append("type", formData.type);
+    fd.append("capacity", formData.capacity);
+    fd.append("price", formData.price);
+    fd.append("description", formData.description);
+
+    if (formData.imageFile) {
+      fd.append("file", formData.imageFile);
+    }
+
+    if (editingProduct) {
+      fd.append("id", editingProduct.id);
+    }
+
+    onSubmitCreateOrUpdate(fd, Boolean(editingProduct));
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl mx-auto bg-white shadow p-6 rounded-lg mb-10"
+    >
+      <h2 className="text-xl font-bold mb-4">
+        {editingProduct ? "Edit Product" : "Add Product"}
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input
+          name="name"
+          placeholder="Name"
+          className="border px-3 py-2 rounded-lg"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="brand"
+          placeholder="Brand"
+          className="border px-3 py-2 rounded-lg"
+          value={formData.brand}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="type"
+          placeholder="Type (Split, Multi-Split, Duct)"
+          className="border px-3 py-2 rounded-lg"
+          value={formData.type}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="capacity"
+          placeholder="Capacity (e.g., 2.5kW)"
+          className="border px-3 py-2 rounded-lg"
+          value={formData.capacity}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="price"
+          type="number"
+          placeholder="Price"
+          className="border px-3 py-2 rounded-lg"
+          value={formData.price}
+          onChange={handleChange}
+          required
+        />
+
+        <textarea
+          name="description"
+          placeholder="Description"
+          className="border px-3 py-2 rounded-lg col-span-2"
+          value={formData.description}
+          onChange={handleChange}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleChange}
+          className="col-span-2 border px-3 py-2 rounded-lg"
+        />
+      </div>
+
+      <div className="flex gap-4 mt-6">
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg"
+        >
+          {editingProduct ? "Update" : "Add"}
+        </button>
+
+        {editingProduct && (
+          <button
+            onClick={onCancelEdit}
+            type="button"
+            className="bg-gray-500 text-white px-6 py-2 rounded-lg"
+          >
+            Cancel
+          </button>
+        )}
+      </div>
+    </form>
+  );
+};
+
+/* -------------------------------------------------------------------------- */
+/*                          MAIN PRODUCT MANAGEMENT PAGE                      */
+/* -------------------------------------------------------------------------- */
+
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-
   const [filterType, setFilterType] = useState("");
   const [filterPrice, setFilterPrice] = useState("");
   const [priceFilterType, setPriceFilterType] = useState("less");
   const debouncedPrice = useDebounce(filterPrice, 300);
 
   const [editingProduct, setEditingProduct] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  /* --------- FIXED loadData (same logic as ACList) --------- */
+  /* ------------------------------ LOAD DATA ------------------------------ */
+
   const loadData = useCallback(
-    async (page = 0, append = false) => {
+    async (pg = 0, append = false) => {
       setLoading(true);
       try {
         let data = [];
 
         if (filterType) {
-          data = await fetchProductsByType(filterType, page, pageSize);
+          data = await fetchProductsByType(filterType, pg, PAGE_SIZE);
         } else if (debouncedPrice) {
-          const price = Number(debouncedPrice);
-          if (!isNaN(price)) {
+          const priceNumber = Number(debouncedPrice);
+          if (!isNaN(priceNumber)) {
             data =
               priceFilterType === "less"
-                ? await fetchProductsLessThan(price, page, pageSize)
-                : await fetchProductsGreaterThan(price, page, pageSize);
+                ? await fetchProductsLessThan(priceNumber, pg, PAGE_SIZE)
+                : await fetchProductsGreaterThan(priceNumber, pg, PAGE_SIZE);
           }
         } else {
-          data = await fetchAllProducts(page, pageSize);
+          data = await fetchAllProducts(pg, PAGE_SIZE);
         }
 
         const mapped = data.map((p) => ({
@@ -735,9 +912,9 @@ const ProductManagement = () => {
         }));
 
         setProducts((prev) => (append ? [...prev, ...mapped] : mapped));
-        setHasMore(data.length === pageSize);
-      } catch (e) {
-        console.error(e);
+        setHasMore(data.length === PAGE_SIZE);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -745,42 +922,46 @@ const ProductManagement = () => {
     [filterType, debouncedPrice, priceFilterType]
   );
 
-  /* --------- LOAD WHEN FILTER CHANGES --------- */
+  /* Re-run load when filters change */
   useEffect(() => {
-    setCurrentPage(0);
+    setPage(0);
     loadData(0, false);
   }, [loadData]);
 
-  const handleLoadMore = () => {
+  /* ------------------------------ LOAD MORE ------------------------------ */
+  const loadMore = () => {
     if (!hasMore) return;
-    const next = currentPage + 1;
-    setCurrentPage(next);
+    const next = page + 1;
+    setPage(next);
     loadData(next, true);
   };
 
+  /* ------------------------------ RESET FILTERS ------------------------------ */
   const resetFilters = () => {
     setFilterType("");
     setFilterPrice("");
     setPriceFilterType("less");
   };
 
+  /* ------------------------------ UNIQUE PRODUCT TYPES ------------------------------ */
   const productTypes = useMemo(
     () => [...new Set(products.map((p) => p.type))].sort(),
     [products]
   );
 
-  const handleDelete = async (p) => {
-    if (!window.confirm("Delete product?")) return;
-    await deleteProduct(p);
-    setCurrentPage(0);
+  /* ------------------------------ DELETE PRODUCT ------------------------------ */
+  const handleDelete = async (product) => {
+    if (!window.confirm("Delete this product?")) return;
+    await deleteProduct(product);
     loadData(0, false);
   };
 
-  const handleSubmitCreateOrUpdate = async (fd, isEditing) => {
+  /* ------------------------------ ADD / UPDATE PRODUCT ------------------------------ */
+  const handleSubmitForm = async (fd, isEditing) => {
     if (isEditing) await updateProduct(fd);
     else await addProduct(fd);
+
     setEditingProduct(null);
-    setCurrentPage(0);
     loadData(0, false);
   };
 
@@ -789,10 +970,9 @@ const ProductManagement = () => {
       <ProductForm
         editingProduct={editingProduct}
         onCancelEdit={() => setEditingProduct(null)}
-        onSubmitCreateOrUpdate={handleSubmitCreateOrUpdate}
+        onSubmitCreateOrUpdate={handleSubmitForm}
       />
 
-      {/* Filters */}
       <Filters
         filterType={filterType}
         setFilterType={setFilterType}
@@ -809,8 +989,8 @@ const ProductManagement = () => {
         onEdit={setEditingProduct}
         onDelete={handleDelete}
         loading={loading}
-        handleLoadMore={handleLoadMore}
         hasMore={hasMore}
+        loadMore={loadMore}
       />
     </div>
   );
