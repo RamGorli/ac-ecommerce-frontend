@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { getCart, emptyCart } from "../services/cartApi";
 import { placeOrder, placeMultipleOrders } from "../services/orderApi";
+import { fetchProductById } from "../services/productApi";
 
 const CheckoutPage = () => {
   const location = useLocation();
@@ -45,8 +46,8 @@ const CheckoutPage = () => {
   const fetchSingleProduct = async (id) => {
     try {
       setLoading(true);
-      const res = await api.get(`/products/find-by-id/${id}`);
-      const product = res.data;
+      const res = await fetchProductById(id);;
+      const product = res;
 
       setProducts([
         {
