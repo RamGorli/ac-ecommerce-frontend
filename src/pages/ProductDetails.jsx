@@ -260,7 +260,7 @@ function ProductDetails() {
       qtyStore[product.id] = (qtyStore[product.id] || 0) + quantity;
       localStorage.setItem("cartQuantities", JSON.stringify(qtyStore));
 
-      // Redirect to cart page
+      alert(`${product.name} added to cart 🛒`);
       navigate("/cart");
     } catch (err) {
       console.error("Add to cart error:", err);
