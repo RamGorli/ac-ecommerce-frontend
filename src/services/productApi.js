@@ -7,11 +7,16 @@ export const fetchAllProducts = async (page = 0, size = 10) => {
   return res.data.content;
 };
 
+
 // Add a single product
-export const addProduct = async (product) => {
-  const res = await api.post("/products/add", product);
+
+export const addProduct = async (formData) => {
+  const res = await api.post("/products/add", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return res.data;
 };
+
 
 // Add all products (bulk)
 export const addAllProducts = async (products) => {
@@ -50,12 +55,15 @@ export const fetchProductsGreaterThan = async (price, page = 0, size = 10) => {
 };
 
 // Update product
-export const updateProduct = async (product) => {
-  const res = await api.put("/products/update", product);
+export const updateProduct = async (formData) => {
+  const res = await api.put("/products/update", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return res.data;
 };
 
-// Delete product
+
+//Delete product
 export const deleteProduct = async (product) => {
   const res = await api.delete("/products/delete", {
     headers: { "Content-Type": "application/json" },
@@ -63,4 +71,3 @@ export const deleteProduct = async (product) => {
   });
   return res.data;
 };
-
