@@ -115,11 +115,11 @@ const Orders = () => {
                 </h4>
 
                 <p className="text-gray-800">
-                  ₹{order.productPrice} × {order.quantity}
+                  AUD ${order.productPrice} × {order.quantity}
                 </p>
 
                 <p className="text-gray-900 font-semibold">
-                  Total: ₹{order.totalPrice}
+                  Total: AUD ${order.totalPrice}
                 </p>
 
                 <p className="text-gray-600 text-sm">
