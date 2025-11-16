@@ -59,8 +59,8 @@ const Filters = ({
         value={priceFilterType}
         onChange={(e) => setPriceFilterType(e.target.value)}
       >
-        <option value="less">≤ Price</option>
-        <option value="greater">≥ Price</option>
+        <option value="less">Lesser</option>
+        <option value="greater">Greater</option>
       </select>
 
       <button
