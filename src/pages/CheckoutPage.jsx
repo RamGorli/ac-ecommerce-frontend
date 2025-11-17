@@ -5,6 +5,7 @@ import { getCart, emptyCart } from "../services/cartApi";
 import { placeOrder, placeMultipleOrders } from "../services/orderApi";
 import { fetchProductById } from "../services/productApi";
 
+
 const CheckoutPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const CheckoutPage = () => {
   const [installation, setInstallation] = useState(false);
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [placingOrder, setPlacingOrder] = useState(false);
 
   useEffect(() => {
     if (!email && !guest) {
@@ -71,6 +73,9 @@ const CheckoutPage = () => {
   };
 
   const handlePlaceOrder = async () => {
+    if (placingOrder) return;
+    setPlacingOrder(true);
+
     if (!address || !pinCode) {
       alert("Please enter delivery address and pin code.");
       return;
@@ -123,6 +128,8 @@ const CheckoutPage = () => {
     } catch (err) {
       console.error("Order placement failed:", err);
       alert("Failed to place order. See console for details.");
+    } finally{
+      setPlacingOrder(false);
     }
   };
 
@@ -303,10 +310,14 @@ const CheckoutPage = () => {
 
           <button
             onClick={handlePlaceOrder}
-            disabled={!agree}
-            className={`w-full py-3 rounded-xl font-semibold text-lg transition ${agree ? "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800" : "bg-gray-300 text-gray-400 cursor-not-allowed"}`}
+            disabled={!agree || placingOrder}
+            className={`w-full py-3 rounded-xl font-semibold text-lg transition 
+              ${!agree || placingOrder 
+                ? "bg-gray-300 text-gray-400 cursor-not-allowed" 
+                : "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
+              }`}
           >
-            Place Order
+            {placingOrder ? "Placing order..." : "Place Order"}
           </button>
         </div>
       </div>
