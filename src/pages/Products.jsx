@@ -91,7 +91,6 @@ const useDebounce = (value, delay) => {
 
 
 
-// Filters Component (Beautiful Click Dropdown UI)
 const Filters = ({
   filterType,
   setFilterType,
@@ -116,7 +115,7 @@ const Filters = ({
 
   const closeAll = () => setOpenMenu(null);
 
-  // Close dropdowns when clicking outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handler = (e) => {
       if (!e.target.closest(".filter-dropdown")) closeAll();
@@ -128,6 +127,9 @@ const Filters = ({
   const dropdownClass =
     "absolute left-0 top-full mt-2 bg-white shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
 
+  const itemClass =
+    "px-4 py-2 cursor-pointer hover:text-blue-600 transition-colors";
+
   return (
     <div className="flex flex-wrap justify-center items-center gap-6 mb-8 relative">
 
@@ -135,31 +137,16 @@ const Filters = ({
       <div className="relative filter-dropdown">
         <button
           onClick={() => toggleMenu("type")}
-          className="px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
         >
-          {filterType || "All Types"}
+          {filterType || "All Types"} <span className="text-gray-500">▾</span>
         </button>
 
         {openMenu === "type" && (
           <div className={dropdownClass}>
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setFilterType("");
-                closeAll();
-              }}
-            >
-              All Types
-            </div>
+            <div className={itemClass} onClick={() => { setFilterType(""); closeAll(); }}>All Types</div>
             {productTypes.map((t) => (
-              <div
-                key={t}
-                className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                onClick={() => {
-                  setFilterType(t);
-                  closeAll();
-                }}
-              >
+              <div key={t} className={itemClass} onClick={() => { setFilterType(t); closeAll(); }}>
                 {t}
               </div>
             ))}
@@ -171,32 +158,16 @@ const Filters = ({
       <div className="relative filter-dropdown">
         <button
           onClick={() => toggleMenu("brand")}
-          className="px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
         >
-          {filterBrand || "All Brands"}
+          {filterBrand || "All Brands"} <span className="text-gray-500">▾</span>
         </button>
 
         {openMenu === "brand" && (
           <div className={dropdownClass}>
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setFilterBrand("");
-                closeAll();
-              }}
-            >
-              All Brands
-            </div>
-
+            <div className={itemClass} onClick={() => { setFilterBrand(""); closeAll(); }}>All Brands</div>
             {brands.map((b) => (
-              <div
-                key={b}
-                className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                onClick={() => {
-                  setFilterBrand(b);
-                  closeAll();
-                }}
-              >
+              <div key={b} className={itemClass} onClick={() => { setFilterBrand(b); closeAll(); }}>
                 {b}
               </div>
             ))}
@@ -208,32 +179,16 @@ const Filters = ({
       <div className="relative filter-dropdown">
         <button
           onClick={() => toggleMenu("capacity")}
-          className="px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
         >
-          {filterCapacity || "All Capacities"}
+          {filterCapacity || "All Capacities"} <span className="text-gray-500">▾</span>
         </button>
 
         {openMenu === "capacity" && (
           <div className={dropdownClass}>
-            <div
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => {
-                setFilterCapacity("");
-                closeAll();
-              }}
-            >
-              All Capacities
-            </div>
-
+            <div className={itemClass} onClick={() => { setFilterCapacity(""); closeAll(); }}>All Capacities</div>
             {capacities.map((c) => (
-              <div
-                key={c}
-                className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                onClick={() => {
-                  setFilterCapacity(c);
-                  closeAll();
-                }}
-              >
+              <div key={c} className={itemClass} onClick={() => { setFilterCapacity(c); closeAll(); }}>
                 {c}
               </div>
             ))}
@@ -241,7 +196,7 @@ const Filters = ({
         )}
       </div>
 
-      {/* PRICE BOX */}
+      {/* PRICE INPUT */}
       <input
         type="number"
         placeholder="Price"
@@ -250,40 +205,29 @@ const Filters = ({
         onChange={(e) => setFilterPrice(e.target.value)}
       />
 
-      {/* PRICE DROPDOWN */}
+      {/* PRICE TYPE DROPDOWN */}
       <div className="relative filter-dropdown">
         <button
           onClick={() => toggleMenu("price")}
-          className="px-4 py-2 bg-white border rounded-lg shadow-sm hover:bg-gray-100"
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
         >
-          {priceFilterType === "less" ? "Less Than" : "Greater Than"}
+          {priceFilterType === "less" ? "Less Than" : "Greater Than"}{" "}
+          <span className="text-gray-500">▾</span>
         </button>
 
         {openMenu === "price" && (
           <div className={dropdownClass}>
-            <div
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-              onClick={() => {
-                setPriceFilterType("less");
-                closeAll();
-              }}
-            >
+            <div className={itemClass} onClick={() => { setPriceFilterType("less"); closeAll(); }}>
               Less Than
             </div>
-            <div
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-              onClick={() => {
-                setPriceFilterType("greater");
-                closeAll();
-              }}
-            >
+            <div className={itemClass} onClick={() => { setPriceFilterType("greater"); closeAll(); }}>
               Greater Than
             </div>
           </div>
         )}
       </div>
 
-      {/* RESET BUTTON */}
+      {/* RESET */}
       <button
         onClick={resetFilters}
         className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600"
