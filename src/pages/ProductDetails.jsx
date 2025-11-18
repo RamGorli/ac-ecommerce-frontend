@@ -206,7 +206,7 @@ function ProductDetails() {
 
                 <h4 className="font-bold text-gray-900 break-words">{p.brand}</h4>
                 <h3 className="font-semibold text-gray-800 break-words">{p.name}</h3>
-                <p className="text-gray-700 text-sm">{p.type} • {p.capacity}</p>
+                <p className="text-gray-700 text-sm">{p.type} • {p.capacity}kW</p>
                 <p className="text-blue-700 font-semibold mt-1">AUD ${p.price}</p>
               </div>
             ))}
