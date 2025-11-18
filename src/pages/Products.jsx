@@ -48,7 +48,7 @@ const Filters = ({
   }, []);
 
   const dropdownClass =
-    "absolute left-0 top-full mt-2 shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
+    "absolute left-0 top-full mt-2 bg-white shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
 
   const itemClass =
     "px-4 py-2 cursor-pointer hover:text-blue-600 transition-colors";
