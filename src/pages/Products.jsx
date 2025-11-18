@@ -14,154 +14,6 @@ const useDebounce = (value, delay) => {
 };
 
 
-// const Filters = ({
-//   filterType,
-//   setFilterType,
-//   filterBrand,
-//   setFilterBrand,
-//   filterCapacity,
-//   setFilterCapacity,
-//   filterPrice,
-//   setFilterPrice,
-//   priceFilterType,
-//   setPriceFilterType,
-//   resetFilters,
-//   productTypes,
-//   brands,
-//   capacities,
-// }) => {
-//   const [openMenu, setOpenMenu] = useState(null);
-
-//   const toggleMenu = (menu) => {
-//     setOpenMenu((prev) => (prev === menu ? null : menu));
-//   };
-
-//   const closeAll = () => setOpenMenu(null);
-
-//   // Close dropdown when clicking outside
-//   useEffect(() => {
-//     const handler = (e) => {
-//       if (!e.target.closest(".filter-dropdown")) closeAll();
-//     };
-//     document.addEventListener("click", handler);
-//     return () => document.removeEventListener("click", handler);
-//   }, []);
-
-//   const dropdownClass =
-//     "absolute left-0 top-full mt-2 bg-white shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
-
-//   const itemClass =
-//     "px-4 py-2 cursor-pointer hover:text-blue-600 transition-colors";
-
-//   return (
-//     <div className="flex flex-wrap justify-center items-center gap-6 mb-8 relative">
-
-//       {/* TYPE */}
-//       <div className="relative filter-dropdown">
-//         <button
-//           onClick={() => toggleMenu("type")}
-//           className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
-//         >
-//           {filterType || "All Types"} <span className="text-gray-500">▾</span>
-//         </button>
-
-//         {openMenu === "type" && (
-//           <div className={dropdownClass}>
-//             <div className={itemClass} onClick={() => { setFilterType(""); closeAll(); }}>All Types</div>
-//             {productTypes.map((t) => (
-//               <div key={t} className={itemClass} onClick={() => { setFilterType(t); closeAll(); }}>
-//                 {t}
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-
-//       {/* BRAND */}
-//       <div className="relative filter-dropdown">
-//         <button
-//           onClick={() => toggleMenu("brand")}
-//           className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
-//         >
-//           {filterBrand || "All Brands"} <span className="text-gray-500">▾</span>
-//         </button>
-
-//         {openMenu === "brand" && (
-//           <div className={dropdownClass}>
-//             <div className={itemClass} onClick={() => { setFilterBrand(""); closeAll(); }}>All Brands</div>
-//             {brands.map((b) => (
-//               <div key={b} className={itemClass} onClick={() => { setFilterBrand(b); closeAll(); }}>
-//                 {b}
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-
-//       {/* CAPACITY */}
-//       <div className="relative filter-dropdown">
-//         <button
-//           onClick={() => toggleMenu("capacity")}
-//           className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
-//         >
-//           {filterCapacity || "All Capacities"} <span className="text-gray-500">▾</span>
-//         </button>
-
-//         {openMenu === "capacity" && (
-//           <div className={dropdownClass}>
-//             <div className={itemClass} onClick={() => { setFilterCapacity(""); closeAll(); }}>All Capacities</div>
-//             {capacities.map((c) => (
-//               <div key={c} className={itemClass} onClick={() => { setFilterCapacity(c); closeAll(); }}>
-//                 {c}
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-
-//       {/* PRICE INPUT */}
-//       <input
-//         type="number"
-//         placeholder="Price"
-//         className="border px-3 py-2 w-28 rounded-lg shadow-sm"
-//         value={filterPrice}
-//         onChange={(e) => setFilterPrice(e.target.value)}
-//       />
-
-//       {/* PRICE TYPE DROPDOWN */}
-//       <div className="relative filter-dropdown">
-//         <button
-//           onClick={() => toggleMenu("price")}
-//           className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
-//         >
-//           {priceFilterType === "less" ? "Less Than" : "Greater Than"}{" "}
-//           <span className="text-gray-500">▾</span>
-//         </button>
-
-//         {openMenu === "price" && (
-//           <div className={dropdownClass}>
-//             <div className={itemClass} onClick={() => { setPriceFilterType("less"); closeAll(); }}>
-//               Less Than
-//             </div>
-//             <div className={itemClass} onClick={() => { setPriceFilterType("greater"); closeAll(); }}>
-//               Greater Than
-//             </div>
-//           </div>
-//         )}
-//       </div>
-
-//       {/* RESET */}
-//       <button
-//         onClick={resetFilters}
-//         className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600"
-//       >
-//         Reset
-//       </button>
-//     </div>
-//   );
-// };
-
-
 const Filters = ({
   filterType,
   setFilterType,
@@ -186,6 +38,7 @@ const Filters = ({
 
   const closeAll = () => setOpenMenu(null);
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handler = (e) => {
       if (!e.target.closest(".filter-dropdown")) closeAll();
@@ -195,19 +48,20 @@ const Filters = ({
   }, []);
 
   const dropdownClass =
-    "absolute left-0 top-full mt-2 bg-white shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
+    "absolute left-0 top-full mt-2 shadow-lg rounded-lg py-2 z-40 border w-48 transition-all duration-200";
 
   const itemClass =
     "px-4 py-2 cursor-pointer hover:text-blue-600 transition-colors";
 
-  const buttonClass =
-    "px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-between gap-2 w-44";
-
   return (
     <div className="flex flex-wrap justify-center items-center gap-6 mb-8 relative">
 
+      {/* TYPE */}
       <div className="relative filter-dropdown">
-        <button onClick={() => toggleMenu("type")} className={buttonClass}>
+        <button
+          onClick={() => toggleMenu("type")}
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
+        >
           {filterType || "All Types"} <span className="text-gray-500">▾</span>
         </button>
 
@@ -223,8 +77,12 @@ const Filters = ({
         )}
       </div>
 
+      {/* BRAND */}
       <div className="relative filter-dropdown">
-        <button onClick={() => toggleMenu("brand")} className={buttonClass}>
+        <button
+          onClick={() => toggleMenu("brand")}
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
+        >
           {filterBrand || "All Brands"} <span className="text-gray-500">▾</span>
         </button>
 
@@ -240,8 +98,12 @@ const Filters = ({
         )}
       </div>
 
+      {/* CAPACITY */}
       <div className="relative filter-dropdown">
-        <button onClick={() => toggleMenu("capacity")} className={buttonClass}>
+        <button
+          onClick={() => toggleMenu("capacity")}
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
+        >
           {filterCapacity || "All Capacities"} <span className="text-gray-500">▾</span>
         </button>
 
@@ -257,6 +119,7 @@ const Filters = ({
         )}
       </div>
 
+      {/* PRICE INPUT */}
       <input
         type="number"
         placeholder="Price"
@@ -265,9 +128,13 @@ const Filters = ({
         onChange={(e) => setFilterPrice(e.target.value)}
       />
 
+      {/* PRICE TYPE DROPDOWN */}
       <div className="relative filter-dropdown">
-        <button onClick={() => toggleMenu("price")} className={buttonClass}>
-          {priceFilterType === "less" ? "Less Than" : "Greater Than"}
+        <button
+          onClick={() => toggleMenu("price")}
+          className="px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center gap-2"
+        >
+          {priceFilterType === "less" ? "Less Than" : "Greater Than"}{" "}
           <span className="text-gray-500">▾</span>
         </button>
 
@@ -283,6 +150,7 @@ const Filters = ({
         )}
       </div>
 
+      {/* RESET */}
       <button
         onClick={resetFilters}
         className="px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600"
@@ -292,6 +160,7 @@ const Filters = ({
     </div>
   );
 };
+
 
 
 const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) => (
