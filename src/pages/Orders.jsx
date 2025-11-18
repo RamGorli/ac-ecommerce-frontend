@@ -62,6 +62,8 @@ const Orders = () => {
       setOrders([]);
       setCurrentPage(0);
       setHasMore(true);
+
+      fetchOrders(0);
     } catch (err) {
       console.error(err);
       alert("Could not cancel order. Please try again later.");
