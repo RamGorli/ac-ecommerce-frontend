@@ -22,18 +22,43 @@ function ProductDetails() {
         const res = await api.get(`/products/everyone/find-by-id/${id}`);
         const prod = res.data;
         setProduct(prod);
-
+        
         const price = parseFloat(prod.price);
-        const relatedRes = await fetchFilteredProducts({
+        let related = await fetchFilteredProducts({
           type: prod.type,
           minPrice: price - 200,
           maxPrice: price + 200,
           page: 0,
-          size: 10,
+          size: 50,
         });
 
-        const filtered = relatedRes.content.filter((p) => p.id !== prod.id);
-        setRelatedProducts(filtered.slice(0, 4));
+        let list = related.content.filter(p => p.id !== prod.id);
+
+        if (list.length < 4) {
+          const sameType = await fetchFilteredProducts({
+            type: prod.type,
+            page: 0,
+            size: 50,
+          });
+
+          sameType.content.forEach(p => {
+            if (p.id !== prod.id && !list.some(x => x.id === p.id)) {
+              list.push(p);
+            }
+          });
+        }
+
+        if (list.length < 4) {
+          const all = await fetchFilteredProducts({ page: 0, size: 50 });
+
+          all.content.forEach(p => {
+            if (p.id !== prod.id && !list.some(x => x.id === p.id)) {
+              list.push(p);
+            }
+          });
+        }
+
+        setRelatedProducts(list.slice(0, 4));
       } catch (err) {
         console.error("Failed to load product:", err);
         alert("Failed to load product details.");
@@ -117,7 +142,7 @@ function ProductDetails() {
             <span className="font-semibold">Type:</span> {product.type}
           </p>
           <p className="text-gray-700 text-lg">
-            <span className="font-semibold">Capacity:</span> {product.capacity}
+            <span className="font-semibold">Capacity:</span> {product.capacity}kW
           </p>
           <p className="text-gray-700 text-lg">{product.description}</p>
           <p className="text-3xl font-bold text-blue-600 mt-4">AUD ${product.price}</p>
