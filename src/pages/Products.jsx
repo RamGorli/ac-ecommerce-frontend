@@ -201,7 +201,7 @@ const Filters = ({
     "px-4 py-2 cursor-pointer hover:text-blue-600 transition-colors";
 
   const buttonClass =
-    "px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-between gap-2 w-40";
+    "px-4 py-2 bg-white rounded-lg shadow-sm hover:bg-gray-100 flex items-center justify-between gap-2 w-44";
 
   return (
     <div className="flex flex-wrap justify-center items-center gap-6 mb-8 relative">
