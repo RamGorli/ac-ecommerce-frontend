@@ -116,7 +116,7 @@ const ProductGrid = ({ products, navigate, loading, handleLoadMore, hasMore }) =
             <h4 className="font-bold mt-2 break-words">{p.brand || "Unknown Brand"}</h4>
             <h3 className="font-semibold break-words">{p.name}</h3>
             <p className="text-sm break-words">
-              {p.type} • {p.capacity || "N/A"}
+              {p.type} • {p.capacity || "N/A"}kW
             </p>
             <p className="text-blue-700 font-semibold mt-1 break-words">AUD ${p.price}</p>
           </div>
@@ -202,7 +202,8 @@ function ACList() {
         }));
 
         setProducts((prev) => (append ? [...prev, ...mapped] : mapped));
-        setHasMore(mapped.length === pageSize);
+        //setHasMore(mapped.length === pageSize);
+        setHasMore(!res.last);
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {

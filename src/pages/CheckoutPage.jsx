@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { getCart, emptyCart } from "../services/cartApi";
+import { emptyCart } from "../services/cartApi";
 import { placeOrder, placeMultipleOrders } from "../services/orderApi";
 import { fetchProductById } from "../services/productApi";
 
