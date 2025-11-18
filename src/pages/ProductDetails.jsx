@@ -187,30 +187,6 @@ function ProductDetails() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">You may also like</h2>
           <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {relatedProducts.map((p) => (
-              // <div
-              //   key={p.id}
-              //   onClick={() => navigate(`/products/${p.id}`)}
-              //   className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition cursor-pointer group"
-              // >
-              //   {p.imageUrl ? (
-              //     <img
-              //       src={p.imageUrl}
-              //       alt={p.name}
-              //       className="w-full h-48 object-cover rounded-lg mb-3 group-hover:scale-105 transition-transform"
-              //     />
-              //   ) : (
-              //     <div className="w-full h-48 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500">
-              //       No Image
-              //     </div>
-              //   )}
-
-              //   <h4 className="font-bold text-gray-900 break-words">{p.brand}</h4>
-              //   <h3 className="font-semibold text-gray-800 break-words">{p.name}</h3>
-              //   <p className="text-gray-700 text-sm">{p.type} • {p.capacity}kW</p>
-              //   <p className="text-blue-700 font-semibold mt-1">AUD ${p.price}</p>
-              // </div>
-
-
               <div
                 key={p.id}
                 onClick={() => navigate(`/products/${p.id}`)}
