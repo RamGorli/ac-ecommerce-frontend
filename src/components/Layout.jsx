@@ -173,11 +173,47 @@ function Layout() {
         <Outlet />
       </main>
 
-      <footer className="bg-blue-950 text-blue-100 text-center py-3 mt-auto shadow-inner">
+      {/* <footer className="bg-blue-950 text-blue-100 text-center py-3 mt-auto shadow-inner">
         <p className="text-xs sm:text-sm font-light px-3">
           © {new Date().getFullYear()} <span className="font-semibold">AirXSolar</span> — Stay Cool with Comfort.
         </p>
-      </footer>
+      </footer> */}
+      
+      <footer className="bg-blue-950 text-blue-100 py-5 mt-auto shadow-inner">
+        <div className="max-w-7xl mx-auto text-center space-y-2 px-4">
+
+          {/* Brand */}
+          <p className="text-sm font-semibold">AirXSolar</p>
+
+          {/* Small About Info */}
+          <p className="text-xs text-blue-200 max-w-md mx-auto leading-relaxed">
+            We are committed to providing affordable,
+            energy-efficient cooling solutions.
+            Our goal is to make sustainable comfort accessible for everyone.
+          </p>
+
+          {/* Founder info */}
+          <p className="text-xs">
+            <span className="font-medium">Founder:</span> Umesh Reddy Vasireddy
+          </p>
+
+          {/* Contact */}
+          <p className="text-xs">
+            📞 <a href="tel:+911234567890" className="underline hover:text-blue-400">
+              +61481705789
+            </a>{" "}
+            | ✉️{" "}
+            <a href="mailto:reddy@airxsolar.com.au" className="underline hover:text-blue-400">
+              reddy@airxsolar.com.au
+            </a>
+          </p>
+
+          <p className="text-[10px] text-blue-300 pt-1">
+            © {new Date().getFullYear()} AirXSolar — All rights reserved.
+          </p>
+          </div>
+        </footer>
+
     </div>
   );
 }
