@@ -301,9 +301,9 @@ const CheckoutPage = () => {
             </p>
 
             <div className="border rounded-lg p-4 mb-6 text-sm sm:text-base">
-              <p><span className="font-semibold">Account Name:</span> AirXSolar Pty Ltd</p>
-              <p><span className="font-semibold">BSB:</span> 123 123</p>
-              <p><span className="font-semibold">Account Number:</span> 2152 2551</p>
+              <p><span className="font-semibold">Account Name:</span> UR GROUP SOLUTIONS PTY LTD</p>
+              <p><span className="font-semibold">BSB:</span> 016080</p>
+              <p><span className="font-semibold">Account Number:</span> 802410917</p>
             </div>
           </div>
 

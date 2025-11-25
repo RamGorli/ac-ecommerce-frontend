@@ -192,10 +192,6 @@ function Layout() {
             Our goal is to make sustainable comfort accessible for everyone.
           </p>
 
-          {/* Founder info */}
-          <p className="text-xs">
-            <span className="font-medium">Founder:</span> Umesh Reddy Vasireddy
-          </p>
 
           {/* Contact */}
           <p className="text-xs">
@@ -203,8 +199,8 @@ function Layout() {
               +61481705789
             </a>{" "}
             | ✉️{" "}
-            <a href="mailto:reddy@airxsolar.com.au" className="underline hover:text-blue-400">
-              reddy@airxsolar.com.au
+            <a href="mailto:info@airxsolar.com.au" className="underline hover:text-blue-400">
+              info@airxsolar.com.au
             </a>
           </p>
 
