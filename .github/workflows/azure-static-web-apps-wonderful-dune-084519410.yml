@@ -1,52 +1,3 @@
-# name: Azure Static Web Apps CI/CD
-
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     types: [opened, synchronize, reopened, closed]
-#     branches:
-#       - main
-
-# jobs:
-#   build_and_deploy_job:
-#     if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed')
-#     runs-on: ubuntu-latest
-#     name: Build and Deploy Job
-#     steps:
-#       - uses: actions/checkout@v3
-#         with:
-#           submodules: true
-#           lfs: false
-#       - name: Build And Deploy
-#         id: builddeploy
-#         uses: Azure/static-web-apps-deploy@v1
-#         with:
-#           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_DUNE_084519410 }}
-#           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-#           action: "upload"
-#           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-#           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-#           app_location: "/" # App source code path
-#           api_location: "" # Api source code path - optional
-#           output_location: "dist" # Built app content directory - optional
-#           ###### End of Repository/Build Configurations ######
-
-#   close_pull_request_job:
-#     if: github.event_name == 'pull_request' && github.event.action == 'closed'
-#     runs-on: ubuntu-latest
-#     name: Close Pull Request Job
-#     steps:
-#       - name: Close Pull Request
-#         id: closepullrequest
-#         uses: Azure/static-web-apps-deploy@v1
-#         with:
-#           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_DUNE_084519410 }}
-#           action: "close"
-
-
-
 name: Azure Static Web Apps CI/CD
 
 on:
@@ -64,37 +15,23 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-      # Step 1: Checkout repo
       - uses: actions/checkout@v3
         with:
           submodules: true
           lfs: false
-
-      # Step 2: Set correct Node.js version for Vite
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22.x'  # Upgrade to Node 22 for Vite
-
-      # Step 3: Install dependencies
-      - name: npm install
-        run: npm install
-
-      # Step 4: Build app
-      - name: Build
-        run: npm run build
-
-      # Step 5: Deploy to Azure Static Web Apps
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_DUNE_084519410 }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          app_location: "/"        # App source code path
-          api_location: ""         # API path if any
-          output_location: "dist"  # Vite build output
+          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+          app_location: "/" # App source code path
+          api_location: "" # Api source code path - optional
+          output_location: "dist" # Built app content directory - optional
+          ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
@@ -107,7 +44,5 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_WONDERFUL_DUNE_084519410 }}
           action: "close"
-
-
 
 
