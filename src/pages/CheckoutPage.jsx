@@ -77,16 +77,19 @@ const CheckoutPage = () => {
 
     if (!address || !pinCode) {
       alert("Please enter delivery address and pin code.");
+      setPlacingOrder(false);
       return;
     }
     if (!phone || phone.trim().length === 0) {
       alert("Please enter a phone number (required).");
+      setPlacingOrder(false);
       return;
     }
 
     const finalEmail = userEmail.trim() !== "" ? userEmail.trim() : email;
     if (!finalEmail && !guest) {
       alert("Please provide an email to place order.");
+      setPlacingOrder(false);
       return;
     }
 
