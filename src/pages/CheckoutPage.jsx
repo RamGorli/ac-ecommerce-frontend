@@ -529,6 +529,7 @@ const CheckoutPage = () => {
 
   const subtotal = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
   const total = subtotal + deliveryCost + installationCost;
+  const tax = (total * 0.10).toFixed(2);
 
   return (
     <div className="min-h-screen bg-blue-50 px-4 sm:px-6 lg:px-10 py-10 flex justify-center">
@@ -579,7 +580,7 @@ const CheckoutPage = () => {
                     }
                     className="w-4 h-4"
                   />
-                  <label className="text-sm text-gray-700">
+                  <label className="text-sm text-blue-700">
                     Add Installation for this unit (AUD {getInstallationFee(p.capacity)})
                   </label>
                 </div>
@@ -614,6 +615,11 @@ const CheckoutPage = () => {
             <span>Total</span>
             <span>AUD ${total}</span>
           </div>
+
+          <div className="text-sm text-gray-500 mt-1">
+            Including AUD ${tax} in taxes
+          </div>
+
         </div>
 
         {/* DELIVERY DETAILS */}
