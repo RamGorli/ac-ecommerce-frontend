@@ -456,12 +456,6 @@ const CheckoutPage = () => {
     try {
       const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
 
-      // total installation cost (sum of per-product fees * quantity if needsInstallation)
-      const installationCost = products.reduce((sum, p) => {
-        if (!p.needsInstallation) return sum;
-        return sum + getInstallationFee(p.capacity) * (p.quantity || 1);
-      }, 0);
-
       // Build orders — keep existing pattern: include deliveryCost + per-product installationFee in totalPrice
       const orders = products.map((p) => {
         const perProductInstallationFee = p.needsInstallation
