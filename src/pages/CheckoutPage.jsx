@@ -464,7 +464,9 @@ const CheckoutPage = () => {
 
       // Build orders — keep existing pattern: include deliveryCost + per-product installationFee in totalPrice
       const orders = products.map((p) => {
-        const perProductInstallationFee = p.needsInstallation ? getInstallationFee(p.capacity) : 0;
+        const perProductInstallationFee = p.needsInstallation
+              ? getInstallationFee(p.capacity) * (p.quantity || 1)
+              : 0;
         return {
           productId: p.id,
           userEmail: finalEmail,
@@ -476,7 +478,6 @@ const CheckoutPage = () => {
           orderStatus: "PLACED",
           deliveryType,
           needInstallment: p.needsInstallation,
-          installationFee: perProductInstallationFee,
           address,
           phoneNumber: phone,
           pinCode: parseInt(pinCode, 10),
