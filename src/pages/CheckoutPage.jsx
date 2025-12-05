@@ -343,6 +343,8 @@
 
 
 
+
+
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { emptyCart } from "../services/cartApi";
@@ -364,12 +366,12 @@ const CheckoutPage = () => {
   const [address, setAddress] = useState("");
   const [pinCode, setPinCode] = useState("");
   const [deliveryType, setDeliveryType] = useState("STANDARD");
-  // removed single global installation toggle; we use per-product needsInstallation
+  // removed global installation boolean — we use per-product needsInstallation
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  // Installation fee logic (including GST amounts you provided)
+  // Installation fee logic (per your rules; amounts include GST)
   const getInstallationFee = (capacity) => {
     const cap = Number(capacity) || 0;
     if (cap < 4) return 840;
@@ -460,6 +462,7 @@ const CheckoutPage = () => {
         return sum + getInstallationFee(p.capacity) * (p.quantity || 1);
       }, 0);
 
+      // Build orders — keep existing pattern: include deliveryCost + per-product installationFee in totalPrice
       const orders = products.map((p) => {
         const perProductInstallationFee = p.needsInstallation ? getInstallationFee(p.capacity) : 0;
         return {
@@ -468,7 +471,7 @@ const CheckoutPage = () => {
           productName: p.name,
           productPrice: p.price,
           quantity: p.quantity,
-          // follow existing behavior: include deliveryCost and installation fee per product in totalPrice
+          // existing behavior: include deliveryCost and per-product installation fee in each item's totalPrice
           totalPrice: p.price * p.quantity + deliveryCost + perProductInstallationFee,
           orderStatus: "PLACED",
           deliveryType,
@@ -523,7 +526,7 @@ const CheckoutPage = () => {
 
   const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
 
-  // compute installationCost from per-product selection
+  // compute installationCost from per-product selection (used for UI totals)
   const installationCost = products.reduce((sum, p) => {
     if (!p.needsInstallation) return sum;
     return sum + getInstallationFee(p.capacity) * (p.quantity || 1);
@@ -546,6 +549,8 @@ const CheckoutPage = () => {
           <div className="space-y-4 max-h-[55vh] sm:max-h-[60vh] overflow-y-auto pr-2">
             {products.map((p) => (
               <div key={p.id} className="flex flex-col gap-2 p-3 bg-white rounded-xl shadow">
+
+                {/* PRODUCT INFO */}
                 <div className="flex items-center gap-4">
                   {p.imageUrl ? (
                     <img src={p.imageUrl} alt={p.name} className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg" />
@@ -554,11 +559,12 @@ const CheckoutPage = () => {
                       No Image
                     </div>
                   )}
+
                   <div className="flex-1">
                     <h3 className="font-semibold text-sm sm:text-base">{p.name}</h3>
                     <p className="text-xs sm:text-sm text-gray-500">
                       {p.brand && <span className="mr-1">{p.brand} •</span>}
-                      {p.type} • {p.capacity || "N/A"}
+                      {p.type} • {p.capacity || "N/A"} kW
                     </p>
                     <p className="text-xs sm:text-sm text-gray-500">
                       AUD ${p.price} × {p.quantity}
@@ -675,8 +681,6 @@ const CheckoutPage = () => {
               </button>
             </div>
 
-            {/* removed global installation toggle (replaced with per-product) */}
-
             <h2 className="text-lg sm:text-xl font-semibold mb-4">Payment</h2>
             <p className="text-xs sm:text-sm text-gray-500 mb-3">
               All transactions are secure and encrypted.
@@ -719,4 +723,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
