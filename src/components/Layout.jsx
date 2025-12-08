@@ -172,12 +172,6 @@ function Layout() {
       <main className="flex-grow px-4 sm:px-8 py-6 max-w-7xl mx-auto w-full">
         <Outlet />
       </main>
-
-      {/* <footer className="bg-blue-950 text-blue-100 text-center py-3 mt-auto shadow-inner">
-        <p className="text-xs sm:text-sm font-light px-3">
-          © {new Date().getFullYear()} <span className="font-semibold">AirXSolar</span> — Stay Cool with Comfort.
-        </p>
-      </footer> */}
       
       <footer className="bg-blue-950 text-blue-100 py-5 mt-auto shadow-inner">
         <div className="max-w-7xl mx-auto text-center space-y-2 px-4">
