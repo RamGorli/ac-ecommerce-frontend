@@ -50,14 +50,15 @@ function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 relative">
 
-      <Link
+     <Link
         to="/"
-        className="absolute top-5 left-1/2 -translate-x-1/2 flex items-center gap-2
+        className="fixed top-5 left-1/2 -translate-x-1/2 flex items-center gap-2
                   text-blue-700 hover:text-blue-900 font-semibold text-lg
                   underline-offset-4 hover:underline transition"
       >
         🏠 Home
       </Link>
+
 
 
       <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800">
