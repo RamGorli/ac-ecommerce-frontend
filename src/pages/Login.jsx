@@ -168,12 +168,12 @@ function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 sm:py-16">
 
-      {/* ✅ HOME BUTTON */}
       <Link
-        to="/"
-        className="absolute top-5 right-5 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700"
-      >
-        Home
+          to="/"
+          className="absolute top-5 right-5 text-blue-700 hover:text-blue-900 font-medium
+                    underline-offset-4 hover:underline transition"
+        >
+          Home
       </Link>
 
       <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800 transition-all duration-300">

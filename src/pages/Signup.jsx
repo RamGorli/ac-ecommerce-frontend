@@ -167,13 +167,15 @@ function Signup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10">
 
-      {/* ✅ HOME BUTTON */}
-      <Link
-        to="/"
-        className="absolute top-5 right-5 px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700"
-      >
-        Home
-      </Link>
+      {/* Home link */}
+        <Link
+          to="/"
+          className="absolute top-5 right-5 text-blue-700 hover:text-blue-900 font-medium
+                    underline-offset-4 hover:underline transition"
+        >
+          Home
+        </Link>
+
 
       <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-8 text-blue-900">
@@ -238,7 +240,12 @@ function Signup() {
           <p className="text-center mt-4 text-blue-800 font-medium">{message}</p>
         )}
 
-        {/* ✅ LOGIN LINK */}
+        <div className="flex items-center my-6">
+          <hr className="flex-grow border-blue-300/50" />
+          <span className="px-2 text-sm text-blue-700/60">OR</span>
+          <hr className="flex-grow border-blue-300/50" />
+        </div>
+
         <p className="text-center mt-6 text-blue-800 text-sm sm:text-base">
           Already have an account?{" "}
           <Link
