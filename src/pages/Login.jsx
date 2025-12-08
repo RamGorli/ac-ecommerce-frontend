@@ -53,7 +53,7 @@ function Login() {
       
       <Link
         to="/"
-        className="fixed top-5 left-1/2 -translate-x-1/2 w-[200px] text-center flex items-center gap-2
+        className="fixed top-5 left-1/2 -translate-x-1/2 flex items-center gap-2
                   text-blue-700 hover:text-blue-900 font-semibold text-lg
                   underline-offset-4 hover:underline transition"
       >
