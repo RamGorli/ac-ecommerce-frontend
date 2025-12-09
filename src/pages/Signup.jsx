@@ -48,28 +48,26 @@ function Signup() {
   };
 
   return (
-    // <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 relative">
-
-    //  <Link
-    //     to="/"
-    //     className="fixed top-5 left-1/2 -translate-x-1/2 flex items-center gap-2
-    //               text-blue-700 hover:text-blue-900 font-semibold text-lg
-    //               underline-offset-4 hover:underline transition"
-    //   >
-    //     🏠 Home
-    //   </Link>
-      
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-200 via-blue-50 to-blue-200 px-4 py-10 relative">
-
-      <Link
+{/* 
+     <Link
         to="/"
-        className="fixed top-5 flex justify-center w-full
+        className="fixed top-5 left-1/2 -translate-x-1/2 flex items-center gap-2
                   text-blue-700 hover:text-blue-900 font-semibold text-lg
                   underline-offset-4 hover:underline transition"
       >
         🏠 Home
-      </Link>
+      </Link> */}
 
+      <Link
+        to="/"
+        className="fixed top-5 w-full flex justify-center
+                  text-blue-700 hover:text-blue-900 font-semibold text-lg
+                  underline-offset-4 hover:underline transition z-50"
+      >
+        🏠 Home
+      </Link>
+ 
 
       <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl shadow-lg backdrop-blur-md bg-white/40 border border-white/30 text-slate-800">
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-8 text-blue-900">
