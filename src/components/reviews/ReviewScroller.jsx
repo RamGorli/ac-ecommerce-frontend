@@ -169,9 +169,9 @@ function ReviewScroller() {
         <button
           onClick={() => {
             console.log("Right arrow clicked. Current page:", page);
-            setPage((p) => p - 1);
+            setPage((p) => p + 1);
           }}
-          disabled={page >= totalPages + 1}
+          disabled={page >= totalPages - 1}
           className={`absolute right-0 top-1/2 -translate-y-1/2 
             bg-white shadow-md rounded-full p-2
             ${page >= totalPages - 1
