@@ -188,7 +188,7 @@ function Layout() {
 
 
           {/* Contact */}
-          <p className="text-xs">
+          {/* <p className="text-xs">
             📞{" "}
             <a href="tel:+61481705789" className="underline hover:text-blue-400">
               +61 481 705 789
@@ -201,7 +201,35 @@ function Layout() {
             <a href="mailto:info@airxsolar.com.au" className="underline hover:text-blue-400">
               info@airxsolar.com.au
             </a>
+          </p> */}
+
+          <p className="text-xs flex flex-wrap justify-center items-center gap-x-3 gap-y-1 text-center">
+            <span className="whitespace-nowrap">
+              📞{" "}
+              <a href="tel:+61481705789" className="underline hover:text-blue-400">
+                +61 481 705 789
+              </a>
+            </span>
+
+            <span className="whitespace-nowrap">
+              📞{" "}
+              <a href="tel:+61468428494" className="underline hover:text-blue-400">
+                +61 468 428 494
+              </a>
+            </span>
+
+            <span className="whitespace-nowrap">
+              ✉️{" "}
+              <a
+                href="mailto:info@airxsolar.com.au"
+                className="underline hover:text-blue-400"
+              >
+                info@airxsolar.com.au
+              </a>
+            </span>
           </p>
+
+
 
           <p className="text-[10px] text-blue-300 pt-1">
             © {new Date().getFullYear()} AirXSolar — All rights reserved.
