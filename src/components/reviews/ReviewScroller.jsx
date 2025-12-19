@@ -7,7 +7,7 @@ function ReviewScroller() {
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
-    fetchRecentReviews(0, 5).then((data) => {
+    fetchRecentReviews(0, 3).then((data) => {
       setReviews(data.content || []);
     });
   }, []);
