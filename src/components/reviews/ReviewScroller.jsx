@@ -93,34 +93,26 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 function ReviewScroller() {
   const [reviews, setReviews] = useState([]);
   const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1); // ✅ safe default
 
   useEffect(() => {
-
-    if (page < 0 || (totalPages > 0 && page >= totalPages)) {
-      console.warn("Invalid page prevented:", page);
-      return;
-    }
-
     console.log("Fetching reviews for page:", page);
 
     fetchRecentReviews(page, 3)
       .then((data) => {
         console.log("API response:", data);
         setReviews(data.content || []);
-        setTotalPages(data.totalPages ?? 0);
+        setTotalPages(data.totalPages || 1);
       })
       .catch((err) => console.error("Error fetching reviews:", err));
-  }, [page, totalPages]);
+  }, [page]);
 
   const handlePrev = () => {
     setPage((p) => Math.max(p - 1, 0));
   };
 
   const handleNext = () => {
-    setPage((p) =>
-      totalPages > 0 ? Math.min(p + 1, totalPages - 1) : p
-    );
+    setPage((p) => Math.min(p + 1, totalPages - 1));
   };
 
   return (
@@ -141,8 +133,15 @@ function ReviewScroller() {
           <ChevronLeft className="w-6 h-6 text-blue-700" />
         </button>
 
-        {/* REVIEWS */}
+        {/* REVIEWS GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {/* EMPTY STATE */}
+          {reviews.length === 0 && (
+            <p className="text-center text-gray-500 col-span-full">
+              No reviews yet. Be the first to write one!
+            </p>
+          )}
+
           {reviews.map((r) => (
             <ReviewCard key={r.id} review={r} />
           ))}
@@ -151,11 +150,11 @@ function ReviewScroller() {
         {/* RIGHT ARROW */}
         <button
           onClick={handleNext}
-          disabled={page >= totalPages - 1 || totalPages === 0}
+          disabled={page >= totalPages - 1}
           className={`absolute right-0 top-1/2 -translate-y-1/2 
             bg-white shadow-md rounded-full p-2
             ${
-              page >= totalPages - 1 || totalPages === 0
+              page >= totalPages - 1
                 ? "opacity-30 cursor-not-allowed"
                 : "hover:bg-blue-100"
             }`}
