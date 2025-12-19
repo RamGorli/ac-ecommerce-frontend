@@ -125,7 +125,9 @@ function ReviewScroller() {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
+    
     console.log("Fetching reviews for page:", page);
+    if (Number.isNaN(page)) return;
     fetchRecentReviews(page, 3)
       .then((data) => {
         console.log("API response:", data);
@@ -146,7 +148,7 @@ function ReviewScroller() {
         <button
           onClick={() => {
             console.log("Left arrow clicked. Current page:", page);
-            setPage((p) => Math.max(p - 1, 0));
+            setPage((p) => p - 1);
           }}
           disabled={page === 0}
           className={`absolute left-0 top-1/2 -translate-y-1/2 
@@ -167,7 +169,7 @@ function ReviewScroller() {
         <button
           onClick={() => {
             console.log("Right arrow clicked. Current page:", page);
-            setPage((p) => Math.min(p + 1, totalPages - 1));
+            setPage((p) => p - 1);
           }}
           disabled={page >= totalPages - 1}
           className={`absolute right-0 top-1/2 -translate-y-1/2 
