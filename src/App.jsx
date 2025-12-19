@@ -10,6 +10,7 @@ import ProductDetails from "./pages/ProductDetails.jsx";
 import Orders from "./pages/Orders.jsx";
 import Products from "./pages/Products.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
+import AddReview from "./pages/AddReview.jsx";
 
 import AdminRoute from "./components/AdminRoute.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
@@ -43,8 +44,7 @@ function App() {
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="orders" element={<Orders />} />
         <Route path="contact" element={<Contact />} />
-        {/* <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} /> */}
+        <Route path="add-review" element={<AddReview />} />
       </Route>
 
       <Route path="/login" element={<Login />} />
