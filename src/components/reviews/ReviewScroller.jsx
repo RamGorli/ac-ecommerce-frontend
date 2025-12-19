@@ -168,12 +168,13 @@ function ReviewScroller() {
 
       <div className="text-center mt-8">
         <Link
-          to="/reviews"
-          className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          to="/add-review"
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
         >
-          View all reviews
+          Write a Review
         </Link>
       </div>
+
     </div>
   );
 }
