@@ -189,10 +189,15 @@ function Layout() {
 
           {/* Contact */}
           <p className="text-xs">
-            📞 <a href="tel:+911234567890" className="underline hover:text-blue-400">
-              +61481705789
-            </a>{" "}
-            | ✉️{" "}
+            📞{" "}
+            <a href="tel:+61481705789" className="underline hover:text-blue-400">
+              +61 481 705 789
+            </a>
+            {" "} | 📞{" "}
+            <a href="tel:+61468428494" className="underline hover:text-blue-400">
+              +61 468 428 494
+            </a>
+            {" "} | ✉️{" "}
             <a href="mailto:info@airxsolar.com.au" className="underline hover:text-blue-400">
               info@airxsolar.com.au
             </a>
