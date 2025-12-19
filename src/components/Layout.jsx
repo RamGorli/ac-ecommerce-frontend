@@ -203,7 +203,7 @@ function Layout() {
             </a>
           </p> */}
 
-          <p className="text-xs flex flex-col gap-1 sm:flex-row sm:gap-2">
+          <p className="text-xs flex flex-col items-center gap-1 sm:flex-row sm:gap-2">
             <span>
               📞{" "}
               <a href="tel:+61481705789" className="underline hover:text-blue-400">
@@ -228,7 +228,7 @@ function Layout() {
               </a>
             </span>
           </p>
-
+          
 
           <p className="text-[10px] text-blue-300 pt-1">
             © {new Date().getFullYear()} AirXSolar — All rights reserved.
