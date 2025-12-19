@@ -91,7 +91,6 @@
 
 // export default ReviewScroller;
 
-
 import { useEffect, useState } from "react";
 import { fetchRecentReviews } from "../../services/reviewService";
 import ReviewCard from "./ReviewCard";
@@ -112,13 +111,9 @@ function ReviewScroller() {
       .catch(console.error);
   }, [page]);
 
-  const handlePrev = () => {
-    setPage((p) => Math.max(p - 1, 0));
-  };
-
-  const handleNext = () => {
+  const handlePrev = () => setPage((p) => Math.max(p - 1, 0));
+  const handleNext = () =>
     setPage((p) => Math.min(p + 1, totalPages - 1));
-  };
 
   return (
     <div className="bg-blue-50 py-14">
@@ -126,14 +121,13 @@ function ReviewScroller() {
         Recent Reviews
       </h2>
 
-      {/* ⬇️ Wider padding container */}
-      <div className="relative max-w-7xl mx-auto px-6 sm:px-12 lg:px-20">
-        {/* LEFT ARROW (desktop only) */}
+      <div className="relative max-w-6xl mx-auto px-6 sm:px-8">
+        {/* LEFT ARROW */}
         <button
           onClick={handlePrev}
           disabled={page === 0}
-          className={`hidden md:flex absolute -left-10 top-1/2 -translate-y-1/2
-            bg-white shadow-lg rounded-full p-2
+          className={`absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 
+            bg-white shadow-md rounded-full p-2 z-10
             ${
               page === 0
                 ? "opacity-30 cursor-not-allowed"
@@ -143,8 +137,8 @@ function ReviewScroller() {
           <ChevronLeft className="w-6 h-6 text-blue-700" />
         </button>
 
-        {/* RESPONSIVE GRID */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* GRID — mobile + tablet = single column */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {reviews.length === 0 && (
             <p className="text-center text-gray-500 col-span-full">
               No reviews yet. Be the first to write one!
@@ -156,12 +150,12 @@ function ReviewScroller() {
           ))}
         </div>
 
-        {/* RIGHT ARROW (desktop only) */}
+        {/* RIGHT ARROW */}
         <button
           onClick={handleNext}
           disabled={page >= totalPages - 1}
-          className={`hidden md:flex absolute -right-10 top-1/2 -translate-y-1/2
-            bg-white shadow-lg rounded-full p-2
+          className={`absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 
+            bg-white shadow-md rounded-full p-2 z-10
             ${
               page >= totalPages - 1
                 ? "opacity-30 cursor-not-allowed"
@@ -174,10 +168,10 @@ function ReviewScroller() {
 
       <div className="text-center mt-8">
         <Link
-          to="/add-review"
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+          to="/reviews"
+          className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
         >
-          Write a Review
+          View all reviews
         </Link>
       </div>
     </div>
