@@ -83,7 +83,6 @@
 
 // export default ReviewScroller;
 
-
 import { useEffect, useState } from "react";
 import { fetchRecentReviews } from "../../services/reviewService";
 import ReviewCard from "./ReviewCard";
@@ -93,7 +92,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 function ReviewScroller() {
   const [reviews, setReviews] = useState([]);
   const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(1); // ✅ safe default
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     console.log("Fetching reviews for page:", page);
@@ -102,7 +101,7 @@ function ReviewScroller() {
       .then((data) => {
         console.log("API response:", data);
         setReviews(data.content || []);
-        setTotalPages(data.totalPages || 1);
+        setTotalPages(data.page?.totalPages ?? 1); // ✅ FIX
       })
       .catch((err) => console.error("Error fetching reviews:", err));
   }, [page]);
@@ -122,7 +121,7 @@ function ReviewScroller() {
       </h2>
 
       <div className="relative max-w-6xl mx-auto px-10">
-        {/* LEFT ARROW */}
+        {/* LEFT */}
         <button
           onClick={handlePrev}
           disabled={page === 0}
@@ -133,9 +132,8 @@ function ReviewScroller() {
           <ChevronLeft className="w-6 h-6 text-blue-700" />
         </button>
 
-        {/* REVIEWS GRID */}
+        {/* GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {/* EMPTY STATE */}
           {reviews.length === 0 && (
             <p className="text-center text-gray-500 col-span-full">
               No reviews yet. Be the first to write one!
@@ -147,7 +145,7 @@ function ReviewScroller() {
           ))}
         </div>
 
-        {/* RIGHT ARROW */}
+        {/* RIGHT */}
         <button
           onClick={handleNext}
           disabled={page >= totalPages - 1}
