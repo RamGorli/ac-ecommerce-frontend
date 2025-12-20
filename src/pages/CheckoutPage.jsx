@@ -141,17 +141,10 @@ const CheckoutPage = () => {
       if (!guest) await emptyCart(email);
       else localStorage.removeItem("guestCart");
 
-      // alert("Order placed successfully!");
-
-      alert(
-          `✅ Order placed successfully!
-
-        📧 Order details have been sent to your email.
-        Please check your inbox and also your spam/junk folder.
-
-        Thank you for shopping with us!`
-      );
-      navigate("/orders");
+      navigate("/order-success", {
+        state: { email: finalEmail }
+      });
+ 
     } catch (err) {
       console.error("Order placement failed:", err);
       alert("Failed to place order. See console for details.");

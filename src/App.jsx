@@ -11,6 +11,7 @@ import Orders from "./pages/Orders.jsx";
 import Products from "./pages/Products.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import AddReview from "./pages/AddReview.jsx";
+import OrderSuccessPage from "./pages/OrderSuccessPage.jsx";
 
 import AdminRoute from "./components/AdminRoute.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
@@ -43,6 +44,7 @@ function App() {
         <Route path="cart" element={<Cart />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="orders" element={<Orders />} />
+        <Route path="order-success" element={<OrderSuccessPage />} />
         <Route path="contact" element={<Contact />} />
         <Route path="add-review" element={<AddReview />} />
       </Route>
