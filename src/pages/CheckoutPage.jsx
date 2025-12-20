@@ -141,7 +141,16 @@ const CheckoutPage = () => {
       if (!guest) await emptyCart(email);
       else localStorage.removeItem("guestCart");
 
-      alert("Order placed successfully!");
+      // alert("Order placed successfully!");
+
+      alert(
+          `✅ Order placed successfully!
+
+        📧 Order details have been sent to your email.
+        Please check your inbox and also your spam/junk folder.
+
+        Thank you for shopping with us!`
+      );
       navigate("/orders");
     } catch (err) {
       console.error("Order placement failed:", err);
@@ -360,7 +369,7 @@ const CheckoutPage = () => {
             </label>
           </div>
 
-          <button
+          {/* <button
             onClick={handlePlaceOrder}
             disabled={!agree || placingOrder}
             className={`w-full py-3 rounded-xl font-semibold text-lg transition 
@@ -370,7 +379,27 @@ const CheckoutPage = () => {
               }`}
           >
             {placingOrder ? "Placing order..." : "Place Order"}
+          </button> */}
+
+          <button
+            onClick={handlePlaceOrder}
+            disabled={!agree || placingOrder}
+            className={`w-full py-3 rounded-xl font-semibold text-lg transition flex items-center justify-center gap-2
+              ${!agree || placingOrder 
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                : "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
+              }`}
+          >
+            {placingOrder ? (
+              <>
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                <span>Processing your order...</span>
+              </>
+            ) : (
+              "Place Order"
+            )}
           </button>
+
         </div>
       </div>
     </div>
