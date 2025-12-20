@@ -21,13 +21,6 @@ const OrderSuccessPage = () => {
     <div className="min-h-screen bg-blue-50 flex items-center justify-center px-4">
       <div className="max-w-xl w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8">
 
-        {/* SUCCESS ICON */}
-        <div className="flex justify-center mb-4">
-          <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-3xl">
-            ✓
-          </div>
-        </div>
-
         {/* TITLE */}
         <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-2">
           Order Placed Successfully!
@@ -55,11 +48,12 @@ const OrderSuccessPage = () => {
         {/* PAYMENT DETAILS */}
         <div className="border rounded-xl p-4 mb-6 text-sm sm:text-base">
           <h2 className="font-semibold text-gray-800 mb-2">
-            💳 Payment Instructions
+            💳 Payment Reminder
           </h2>
 
           <p className="text-gray-600 mb-3">
-            Please complete the payment using the bank details below:
+            If you haven’t completed the payment yet, please use the bank details
+            below:
           </p>
 
           <div className="space-y-1 text-gray-700">
@@ -88,9 +82,12 @@ const OrderSuccessPage = () => {
           <p className="text-gray-600">
             After completing the payment, please send the payment screenshot to:
           </p>
-          <p className="font-semibold text-gray-800 mt-1">
+          <a
+            href="mailto:admin@airxsolar.com.au?subject=Payment%20Proof%20for%20Order"
+            className="font-semibold text-blue-600 mt-1 inline-block hover:underline"
+          >
             admin@airxsolar.com.au
-          </p>
+          </a>
         </div>
 
         {/* ACTION BUTTON */}
