@@ -17,6 +17,7 @@ import AdminRoute from "./components/AdminRoute.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import ProductManagement from "./pages/admin/ProductManagement.jsx";
 import OrderManagement from "./pages/admin/OrderManagement.jsx";
+import ReviewManagement from "./pages/admin/ReviewManagement.jsx";
 
 import "./index.css";
 
@@ -34,6 +35,7 @@ function App() {
         <Route index element={<ProductManagement />} />
         <Route path="products" element={<ProductManagement />} />
         <Route path="orders" element={<OrderManagement />} />
+        <Route path="reviews" element={<ReviewManagement />} />
       </Route>
 
       <Route path="/" element={<Layout />}>

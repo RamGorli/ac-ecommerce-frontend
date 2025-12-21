@@ -121,7 +121,6 @@ const CheckoutPage = () => {
           productName: p.name,
           productPrice: p.price,
           quantity: p.quantity,
-          // existing behavior: include deliveryCost and per-product installation fee in each item's totalPrice
           totalPrice: p.price * p.quantity + deliveryCost + perProductInstallationFee,
           orderStatus: "PLACED",
           deliveryType,
