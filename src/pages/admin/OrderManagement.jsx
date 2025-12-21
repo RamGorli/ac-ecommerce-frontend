@@ -37,6 +37,8 @@ const OrderManagement = () => {
         response = await fetchAllOrders(pageToLoad, size);
       }
 
+      console.log("API response:", response);
+      
       const list = response.content || [];
 
       const withProducts = await Promise.all(
