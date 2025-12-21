@@ -62,7 +62,6 @@
 
 // export default AddReview;
 
-
 import { useState } from "react";
 import { addReview } from "../services/reviewService";
 import { useNavigate } from "react-router-dom";
@@ -71,7 +70,7 @@ function AddReview() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
     userName: "",
-    rating: 5,
+    rating: 0,
     comment: "",
   });
 
@@ -79,6 +78,10 @@ function AddReview() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.rating === 0) {
+      alert("Please select a rating");
+      return;
+    }
     await addReview(form);
     alert("Thanks for your review!");
     navigate("/");
@@ -86,21 +89,13 @@ function AddReview() {
 
   return (
     <div className="max-w-md mx-auto mt-12 bg-white p-6 rounded-xl shadow">
-      <h2 className="text-2xl font-bold mb-4 text-blue-800">
+      <h2 className="text-2xl font-bold mb-4 text-blue-800 text-center">
         Write a Review
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          placeholder="Your Name"
-          className="w-full border p-2 rounded"
-          onChange={(e) =>
-            setForm({ ...form, userName: e.target.value })
-          }
-        />
-
-        {/* Star Rating */}
-        <div className="flex items-center space-x-2">
+        {/* Star Rating - First Row */}
+        <div className="flex justify-center space-x-1 mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               type="button"
@@ -108,27 +103,37 @@ function AddReview() {
               onClick={() => setForm({ ...form, rating: star })}
               onMouseEnter={() => setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
-              className={`text-2xl ${
-                star <= (hoverRating || form.rating)
-                  ? "text-yellow-400"
-                  : "text-gray-300"
-              }`}
+              className="text-3xl focus:outline-none transition-colors"
             >
-              ★
+              <span
+                className={
+                  star <= (hoverRating || form.rating)
+                    ? "text-yellow-400"
+                    : "text-gray-300"
+                }
+              >
+                ★
+              </span>
             </button>
           ))}
-          <span className="ml-2 text-gray-700">{form.rating} Stars</span>
         </div>
 
+        {/* Name - Second Row */}
+        <input
+          placeholder="Your Name"
+          className="w-full border p-2 rounded"
+          onChange={(e) => setForm({ ...form, userName: e.target.value })}
+        />
+
+        {/* Experience - Third Row */}
         <textarea
           placeholder="Your experience..."
           className="w-full border p-2 rounded"
           rows="4"
-          onChange={(e) =>
-            setForm({ ...form, comment: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, comment: e.target.value })}
         />
 
+        {/* Submit */}
         <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
           Submit Review
         </button>
