@@ -16,16 +16,16 @@ const CheckoutPage = () => {
 
   const [products, setProducts] = useState([]);
   const [userEmail, setUserEmail] = useState(email || "");
+  const [userName, setUserName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [pinCode, setPinCode] = useState("");
   const [deliveryType, setDeliveryType] = useState("STANDARD");
-  // removed global installation boolean — we use per-product needsInstallation
+
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(true);
   const [placingOrder, setPlacingOrder] = useState(false);
 
-  // Installation fee logic (per your rules; amounts include GST)
   const getInstallationFee = (capacity) => {
     const cap = Number(capacity) || 0;
     if (cap < 4) return 840;
@@ -40,7 +40,6 @@ const CheckoutPage = () => {
       return;
     }
 
-    // When loading products from any source, ensure each product has needsInstallation (default false)
     if (cartItems) {
       setProducts(cartItems.map((p) => ({ ...p, needsInstallation: false })));
       setLoading(false);
@@ -85,6 +84,12 @@ const CheckoutPage = () => {
     if (placingOrder) return;
     setPlacingOrder(true);
 
+    if (!userName || userName.trim().length === 0) {
+      alert("Please enter your full name.");
+      setPlacingOrder(false);
+      return;
+    }
+
     if (!address || !pinCode) {
       alert("Please enter delivery address and pin code.");
       setPlacingOrder(false);
@@ -110,13 +115,13 @@ const CheckoutPage = () => {
     try {
       const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
 
-      // Build orders — keep existing pattern: include deliveryCost + per-product installationFee in totalPrice
       const orders = products.map((p) => {
         const perProductInstallationFee = p.needsInstallation
               ? getInstallationFee(p.capacity) * (p.quantity || 1)
               : 0;
         return {
           productId: p.id,
+          userName: userName.trim(),
           userEmail: finalEmail,
           productName: p.name,
           productPrice: p.price,
@@ -176,7 +181,6 @@ const CheckoutPage = () => {
 
   const deliveryCost = deliveryType === "EXPRESS" ? 75 : 35;
 
-  // compute installationCost from per-product selection (used for UI totals)
   const installationCost = products.reduce((sum, p) => {
     if (!p.needsInstallation) return sum;
     return sum + getInstallationFee(p.capacity) * (p.quantity || 1);
@@ -283,6 +287,14 @@ const CheckoutPage = () => {
           <div>
             <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Delivery Details</h2>
 
+            <input
+              type="text"
+              placeholder="Full name (required)"
+              className="w-full p-3 border rounded-lg mb-4"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+            />
+
             {!email && guest && (
               <input
                 type="email"
@@ -360,18 +372,6 @@ const CheckoutPage = () => {
               I confirm my address is within 65 km.
             </label>
           </div>
-
-          {/* <button
-            onClick={handlePlaceOrder}
-            disabled={!agree || placingOrder}
-            className={`w-full py-3 rounded-xl font-semibold text-lg transition 
-              ${!agree || placingOrder 
-                ? "bg-gray-300 text-gray-400 cursor-not-allowed" 
-                : "bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800"
-              }`}
-          >
-            {placingOrder ? "Placing order..." : "Place Order"}
-          </button> */}
 
           <button
             onClick={handlePlaceOrder}

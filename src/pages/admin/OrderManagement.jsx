@@ -14,7 +14,6 @@ const OrderManagement = () => {
   const size = 6;
   const [hasMore, setHasMore] = useState(true);
 
-  // FILTER — only status
   const [statusFilter, setStatusFilter] = useState("ALL");
 
   useEffect(() => {
@@ -70,7 +69,7 @@ const OrderManagement = () => {
     try {
       await updateOrder(updated);
     } catch (err) {
-      alert("Failed to update order status");
+      alert("Failed to update order status "+err);
     }
   };
 
@@ -132,6 +131,9 @@ const OrderManagement = () => {
 
                 {/* Customer Info */}
                 <div className="text-sm mt-3">
+                  <p>
+                    <b>Name:</b> {o.userName}
+                  </p>
                   <p>
                     <b>Email:</b> {o.userEmail}
                   </p>
