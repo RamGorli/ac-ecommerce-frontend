@@ -286,8 +286,10 @@ function ACList() {
         }));
 
         setProducts((prev) => (append ? [...prev, ...mapped] : mapped));
-        //setHasMore(mapped.length === pageSize);
-        setHasMore(!res.last);
+        
+        const isLastPage = res.page.number >= res.page.totalPages - 1;
+        setHasMore(!isLastPage);
+        
       } catch (err) {
         console.error("Fetch error:", err);
       } finally {

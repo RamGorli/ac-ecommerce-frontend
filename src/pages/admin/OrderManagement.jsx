@@ -55,7 +55,8 @@ const OrderManagement = () => {
       if (isReset) setOrders(withProducts);
       else setOrders((prev) => [...prev, ...withProducts]);
 
-      setHasMore(!response.last);
+      const isLastPage = response.page.number >= response.page.totalPages - 1;
+      setHasMore(!isLastPage);
     } catch (err) {
       console.error(err);
       alert("Failed to load orders");

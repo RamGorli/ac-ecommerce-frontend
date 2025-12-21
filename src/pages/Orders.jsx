@@ -42,7 +42,8 @@ const Orders = () => {
       );
 
       setOrders((prev) => [...prev, ...detailedOrders]);
-      setHasMore(!pageData.last);
+      const isLastPage = pageData.page.number >= pageData.page.totalPages - 1;
+      setHasMore(!isLastPage);
     } catch (err) {
       console.error(err);
       alert("Unable to load your orders. Please try again later.");
