@@ -19,19 +19,6 @@ const AdminLayout = () => {
     { path: "/admin/reviews", label: "Review Management" },
   ];
 
-  // Function to determine if a nav item is active
-  // const isActive = (itemPath) => {
-  //   // Highlight Product Management for both /admin and /admin/products
-  //   if (itemPath === "/admin/products") {
-  //     return (
-  //       location.pathname === "/admin" ||
-  //       location.pathname.startsWith("/admin/products")
-  //     );
-  //   }
-  //   // Highlight other routes normally
-  //   return location.pathname.startsWith(itemPath);
-  // };
-
   const isActive = (itemPath) => {
     if (itemPath === "/admin/products") {
       return (
@@ -46,7 +33,7 @@ const AdminLayout = () => {
 
     return location.pathname.startsWith(itemPath);
   };
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-r from-blue-200 via-blue-100 to-blue-200
 ">
